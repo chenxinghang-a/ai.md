@@ -1,0 +1,134 @@
+{
+  "board": {
+    "3dviewports": [],
+    "design_settings": {
+      "rules": {
+        "min_clearance": 0.15,
+        "min_track_width": 0.2,
+        "min_via_diameter": 0.45,
+        "min_via_drill": 0.25,
+        "min_microvia_diameter": 0.3,
+        "min_microvia_drill": 0.1,
+        "min_hole_to_hole": 0.25,
+        "allow_use_microvia": false,
+        "solder_mask_clearance": 0.05,
+        "solder_mask_min_width": 0.1,
+        "solder_paste_margin": 0,
+        "solder_paste_ratio": 0,
+        "clearance_overrides": [
+          { "clearance": 0.3, "layers": ["F.Cu", "B.Cu"] }
+        ],
+        "track_widths": [0.2, 0.25, 0.3, 0.5, 1.0],
+        "via_sizes": [0.45, 0.5, 0.6, 0.8],
+        "via_drills": [0.25, 0.3, 0.4, 0.5],
+        "uvias_allowed": false
+      }
+    },
+    "layer_presets": []
+  },
+  "boards": [],
+  "cvpcb": {
+    "equivalence_files": []
+  },
+  "erc": {
+    "erc_exclusions": []
+  },
+  "git": {
+    "remote_origin": ""
+  },
+  "ipc2581": {
+    "dist": ""
+  },
+  "lib_table": {
+    "dirs": [
+      {
+        "description": "ESP32-S3 Connector",
+        "path": "${KICAD_SYMBOL_DIR}/esp32-s3"
+      }
+    ]
+  },
+  "meta": {
+    "version": 1
+  },
+  "net_settings": {
+    "classes": [
+      {
+        "name": "Default",
+        "clearance": 0.15,
+        "track_width": 0.25,
+        "via_diameter": 0.5,
+        "via_drill": 0.25,
+        "uvia_diameter": 0.3,
+        "uvia_drill": 0.1,
+        "wire_width": 6,
+        "bus_width": 12
+      },
+      {
+        "name": "POWER",
+        "clearance": 0.3,
+        "track_width": 0.5,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "uvia_diameter": 0.3,
+        "uvia_drill": 0.1,
+        "wire_width": 6,
+        "bus_width": 12
+      },
+      {
+        "name": "DIFF",
+        "clearance": 0.25,
+        "track_width": 0.25,
+        "via_diameter": 0.5,
+        "via_drill": 0.25,
+        "uvia_diameter": 0.3,
+        "uvia_drill": 0.1,
+        "wire_width": 6,
+        "bus_width": 12
+      }
+    ],
+    "meta": {
+      "version": 1
+    },
+    "net_colors": null
+  },
+  "pcbnew": {
+    "last_paths": {
+      "gerber": "",
+      "netlist": ""
+    },
+    "page_layout_descr_file": ""
+  },
+  "project": {
+    "name": "ModbusDiag",
+    "title": "ModbusDiag - Portable Modbus Diagnostic Tool",
+    "company": "",
+    "version": "1.0",
+    "board": {
+      "width": 100,
+      "height": 65
+    },
+    "schematic": {
+      "editing": {
+        "page_width": 1189,
+        "page_height": 841
+      }
+    }
+  },
+  "schematic": {
+    "annotate_start_num": 0,
+    "drawings": [],
+    "version": 20240314
+  },
+  "sexpr": {
+    "version": 1
+  },
+  "spice": {
+    "workbook_filename": ""
+  },
+  "template": {
+    "title": "ModbusDiag",
+    "company": "",
+    "revision": "1.0",
+    "date": "2026-05-27"
+  }
+}

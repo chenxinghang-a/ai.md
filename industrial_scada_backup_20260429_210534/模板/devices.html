@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}设备管理 - 工业SCADA系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-hdd-rack"></i> 设备统计</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <h3 id="total-devices" class="text-primary">0</h3>
+                        <small class="text-muted">设备总数</small>
+                    </div>
+                    <div class="col-4">
+                        <h3 id="online-devices" class="text-success">0</h3>
+                        <small class="text-muted">在线</small>
+                    </div>
+                    <div class="col-4">
+                        <h3 id="offline-devices" class="text-danger">0</h3>
+                        <small class="text-muted">离线</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-gear"></i> 设备操作</h5>
+            </div>
+            <div class="card-body">
+                <button id="refresh-devices-btn" class="btn btn-primary">刷新状态</button>
+                <button id="connect-all-btn" class="btn btn-success">连接所有设备</button>
+                <button id="disconnect-all-btn" class="btn btn-danger">断开所有设备</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-list-ul"></i> 设备列表</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="device-table">
+                        <thead>
+                            <tr>
+                                <th>设备ID</th>
+                                <th>设备名称</th>
+                                <th>协议</th>
+                                <th>地址</th>
+                                <th>状态</th>
+                                <th>最后通信</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="device-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    loadDevices();
+    
+    document.getElementById('refresh-devices-btn').addEventListener('click', loadDevices);
+    document.getElementById('connect-all-btn').addEventListener('click', () => toggleAllDevices(true));
+    document.getElementById('disconnect-all-btn').addEventListener('click', () => toggleAllDevices(false));
+});
+
+function loadDevices() {
+    fetch('/api/devices')
+        .then(r => r.json())
+        .then(data => {
+            const devices = data.devices || [];
+            const tbody = document.getElementById('device-tbody');
+            
+            // 更新统计
+            document.getElementById('total-devices').textContent = devices.length;
+            document.getElementById('online-devices').textContent = devices.filter(d => d.connected).length;
+            document.getElementById('offline-devices').textContent = devices.filter(d => !d.connected).length;
+            
+            // 更新表格
+            tbody.innerHTML = devices.map(d => `
+                <tr>
+                    <td>${d.device_id}</td>
+                    <td>${d.name || d.device_id}</td>
+                    <td>${d.protocol || 'Modbus TCP'}</td>
+                    <td>${d.host || '-'}:${d.port || 502}</td>
+                    <td><span class="badge bg-${d.connected ? 'success' : 'danger'}">${d.connected ? '在线' : '离线'}</span></td>
+                    <td>${d.stats && d.stats.last_read_time ? new Date(d.stats.last_read_time * 1000).toLocaleString() : '-'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary" onclick="toggleDevice('${d.device_id}', ${!d.connected})">
+                            ${d.connected ? '断开' : '连接'}
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        });
+}
+
+function toggleDevice(deviceId, connect) {
+    const action = connect ? 'connect' : 'disconnect';
+    fetch(`/api/devices/${deviceId}/${action}`, { method: 'POST' })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                loadDevices();
+            }
+        });
+}
+
+async function toggleAllDevices(connect) {
+    const action = connect ? 'connect' : 'disconnect';
+    const response = await fetch('/api/devices');
+    const data = await response.json();
+    const devices = data.devices || [];
+    
+    for (const device of devices) {
+        await fetch(`/api/devices/${device.device_id}/${action}`, { method: 'POST' });
+    }
+    
+    loadDevices();
+}
+</script>
+{% endblock %}

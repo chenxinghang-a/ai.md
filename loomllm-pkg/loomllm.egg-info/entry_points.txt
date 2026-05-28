@@ -1,0 +1,2 @@
+[console_scripts]
+loomllm = ai_staff_v4.__main__:main

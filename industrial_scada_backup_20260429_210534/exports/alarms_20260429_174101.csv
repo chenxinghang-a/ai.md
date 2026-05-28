@@ -1,0 +1,14 @@
+﻿id,alarm_id,device_id,register_name,alarm_level,alarm_message,threshold,actual_value,timestamp,acknowledged,acknowledged_at,acknowledged_by,created_at
+13,pressure_low,pressure_sensor_01,pressure,warning,压力过低,0.35,0.3443,2026-04-29 17:40:01.303350,0,,,2026-04-29 09:40:01
+12,temp_high,temp_sensor_01,temperature,critical,温度过高,32.0,32.3355,2026-04-29 17:39:11.194759,0,,,2026-04-29 09:39:11
+11,current_high,power_meter_01,current,critical,电流过高,65.0,66.9388,2026-04-29 17:39:05.796529,0,,,2026-04-29 09:39:05
+10,pressure_high,pressure_sensor_01,pressure,critical,压力过高,0.65,0.6514,2026-04-29 17:37:41.009966,0,,,2026-04-29 09:37:41
+9,temp_low,temp_sensor_01,temperature,warning,温度过低,22.0,21.991,2026-04-29 17:36:10.842005,0,,,2026-04-29 09:36:10
+8,current_high,power_meter_01,current,critical,电流过高,65.0,66.1554,2026-04-29 17:35:55.632658,0,,,2026-04-29 09:35:55
+7,pressure_low,pressure_sensor_01,pressure,warning,压力过低,0.35,0.3444,2026-04-29 17:35:15.757285,0,,,2026-04-29 09:35:15
+6,temp_high,temp_sensor_01,temperature,critical,温度过高,32.0,32.5934,2026-04-29 17:32:55.534851,0,,,2026-04-29 09:32:55
+5,pressure_high,pressure_sensor_01,pressure,critical,压力过高,0.65,0.6637,2026-04-29 17:32:55.534593,0,,,2026-04-29 09:32:55
+4,current_high,power_meter_01,current,critical,电流过高,65.0,65.5355,2026-04-29 17:32:45.483687,0,,,2026-04-29 09:32:45
+3,voltage_low,power_meter_01,voltage,warning,电压过低,215.0,22.0912,2026-04-29 17:29:02.111533,0,,,2026-04-29 09:29:02
+2,pressure_low,pressure_sensor_01,pressure,warning,压力过低,0.35,0.0051,2026-04-29 17:29:02.111425,0,,,2026-04-29 09:29:02
+1,temp_low,temp_sensor_01,temperature,warning,温度过低,22.0,2.7527,2026-04-29 17:29:02.111239,0,,,2026-04-29 09:29:02

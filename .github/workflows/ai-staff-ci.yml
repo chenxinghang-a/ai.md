@@ -1,0 +1,53 @@
+name: AI-Staff V4 CI
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'ai_staff_v4/**'
+      - '.github/workflows/ai-staff-ci.yml'
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          pip install pyyaml httpx
+        working-directory: .
+
+      - name: Run unit tests
+        run: |
+          python -m unittest ai_staff_v4.tests.test_core -v
+        env:
+          AI_STAFF_PROXY: ""
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install lint tools
+        run: pip install ruff
+
+      - name: Ruff check
+        run: ruff check ai_staff_v4/ --ignore E501,W291 --select E,F,W
+        continue-on-error: true

@@ -1,0 +1,1 @@
+[{"action": "screenshot", "prefix": "start"}, {"action": "detect", "target": "mouse"}, {"action": "ocr"}, {"action": "wait", "seconds": 1}]

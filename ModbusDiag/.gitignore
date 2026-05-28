@@ -1,0 +1,15 @@
+hardware/gerber/
+firmware/build/
+firmware/sdkconfig
+*.o
+*.d
+*.bin
+*.elf
+*.map
+__pycache__/
+.vscode/
+.idea/
+*.swp
+*.bak
+.DS_Store
+Thumbs.db

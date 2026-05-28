@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}仪表盘 - 工业SCADA系统{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 系统概览卡片 -->
+    <div class="col-md-3">
+        <div class="card bg-primary text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-hdd-rack"></i> 设备总数</h5>
+                <h2 class="card-text" id="device-count">0</h2>
+                <small>在线: <span id="device-online">0</span> | 离线: <span id="device-offline">0</span></small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-success text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-database"></i> 数据采集</h5>
+                <h2 class="card-text" id="data-count">0</h2>
+                <small>今日: <span id="data-today">0</span> 条</small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-bell"></i> 活动报警</h5>
+                <h2 class="card-text" id="alarm-count-card">0</h2>
+                <small>严重: <span id="alarm-critical">0</span> | 警告: <span id="alarm-warning">0</span></small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card bg-info text-white mb-3">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-clock"></i> 运行时间</h5>
+                <h2 class="card-text" id="uptime">-</h2>
+                <small>模式: <span id="run-mode" class="badge bg-light text-dark">-</span></small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 实时数据表格 -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-table"></i> 实时数据</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="realtime-table">
+                        <thead>
+                            <tr>
+                                <th>设备</th>
+                                <th>参数</th>
+                                <th>当前值</th>
+                                <th>单位</th>
+                                <th>更新时间</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="realtime-data">
+                            <!-- 数据将通过JavaScript动态填充 -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 设备状态 -->
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-hdd-rack"></i> 设备状态</h5>
+            </div>
+            <div class="card-body">
+                <div id="device-status-list">
+                    <!-- 设备状态将通过JavaScript动态填充 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 最新报警 -->
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-bell"></i> 最新报警</h5>
+            </div>
+            <div class="card-body">
+                <div id="latest-alarms">
+                    <!-- 报警将通过JavaScript动态填充 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 实时图表 -->
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-graph-up"></i> 温度趋势</h5>
+            </div>
+            <div class="card-body">
+                <div id="temperature-chart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0"><i class="bi bi-graph-up"></i> 压力趋势</h5>
+            </div>
+            <div class="card-body">
+                <div id="pressure-chart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

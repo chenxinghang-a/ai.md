@@ -1,0 +1,24 @@
+[
+  {"type":"h1","text":"基本信息"},
+  {"type":"bullet","text":"姓名：陈星行"},
+  {"type":"bullet","text":"学号：2025180301305"},
+  {"type":"bullet","text":"住址：广东省佛山市"},
+  {"type":"bullet","text":"邮箱：xinghang_c@example.com"},
+
+  {"type":"h1","text":"技能特长"},
+  {"type":"numbered","text":"Python 编程与 AI 应用开发"},
+  {"type":"numbered","text":"PLC 控制系统设计（西门子 S7）"},
+  {"type":"numbered","text":"电气 CAD 绘图（EPLAN）"},
+
+  {"type":"h1","text":"项目经历"},
+  {"type":"body","text":"<b>LoomLLM 多智能体协作系统</b>：基于 Python 的 AI 任务调度框架，支持多后端 LLM 自动路由与质量门控。"},
+  {"type":"body","text":"<b>学习通自动化工具</b>：基于 OCR 和 PyAutoGUI 的自动化答题脚本，实现屏幕识别与自动操作。"},
+
+  {"type":"h1","text":"兴趣爱好"},
+  {"type":"body","text":"篮球、编程、阅读技术文档"},
+
+  {"type":"pagebreak"},
+  {"type":"h1","text":"My Resume & Me"},
+
+  {"type":"body","text":"I am Chen Xinghang, an Electrical Engineering student from Foshan, Guangdong. I specialize in PLC control system design for Siemens S7 platforms and Python-based AI application development. My key project, LoomLLM, is a multi-agent collaboration framework that automatically routes tasks to different AI models with quality control. I also built an automation tool using OCR and PyAutoGUI for screen recognition. In my spare time, I enjoy basketball and coding. I aim to become an electrical engineer who bridges traditional industry and modern AI technology."}
+]

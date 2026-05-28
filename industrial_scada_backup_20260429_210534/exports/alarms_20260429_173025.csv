@@ -1,0 +1,4 @@
+﻿id,alarm_id,device_id,register_name,alarm_level,alarm_message,threshold,actual_value,timestamp,acknowledged,acknowledged_at,acknowledged_by,created_at
+3,voltage_low,power_meter_01,voltage,warning,电压过低,215.0,22.0912,2026-04-29 17:29:02.111533,0,,,2026-04-29 09:29:02
+2,pressure_low,pressure_sensor_01,pressure,warning,压力过低,0.35,0.0051,2026-04-29 17:29:02.111425,0,,,2026-04-29 09:29:02
+1,temp_low,temp_sensor_01,temperature,warning,温度过低,22.0,2.7527,2026-04-29 17:29:02.111239,0,,,2026-04-29 09:29:02

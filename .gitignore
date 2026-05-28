@@ -1,0 +1,40 @@
+# Large files
+*.pt
+*.zip
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.exe
+*.dll
+*.so
+*.jpg
+*.pdf
+*.whl
+*.db
+*.log
+
+# Embedded repos
+_ref/
+
+# Tools (mingit/aria2c - too large, don't need to backup)
+tools/
+
+# Temp files
+__pycache__/
+*.pyc
+*.pyo
+.tmp/
+.workbuddy/temp/
+.evolution_data/
+
+# WorkBuddy internal (keep memory locally only)
+.workbuddy/memory/
+.workbuddy/expert-history.json
+
+# Sensitive (never commit)
+*.env
+*.key
+
+# Single char filename artifact
+'
