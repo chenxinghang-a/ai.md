@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拼多多安卓平板对比 · 百亿补贴 / 官方旗舰店（1000-5000 仅全新）</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#ffffff; --ink:#1f2733; --sub:#6b7686;
+    --line:#e6e9ef; --brand:#ff4646; --brand2:#ff7a45; --ok:#16a34a; --warn:#d97706;
+    --chip:#eef2ff; --chipink:#3b5bdb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55}
+  header{background:linear-gradient(120deg,#ff4646,#ff7a45);color:#fff;padding:26px 28px 22px}
+  header h1{margin:0 0 6px;font-size:22px}
+  header p{margin:2px 0;opacity:.95;font-size:13px}
+  .wrap{max-width:1280px;margin:0 auto;padding:18px}
+  .note{background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;padding:10px 14px;border-radius:10px;font-size:12.5px;margin:14px 0}
+  .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0 16px}
+  .tools select,.tools input{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px}
+  .tools label{font-size:12.5px;color:var(--sub);margin-left:6px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 16px 14px;box-shadow:0 1px 3px rgba(20,30,50,.04)}
+  .chead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .chead h3{margin:0;font-size:16px}
+  .brandtag{display:inline-block;font-size:11px;color:var(--chipink);background:var(--chip);padding:2px 8px;border-radius:20px;margin-bottom:6px}
+  .score{font-size:13px;font-weight:700;color:#fff;background:linear-gradient(120deg,#16a34a,#22c55e);padding:4px 10px;border-radius:20px;white-space:nowrap}
+  .score.s80{background:linear-gradient(120deg,#16a34a,#22c55e)}
+  .score.s70{background:linear-gradient(120deg,#ca8a04,#eab308)}
+  .spec{margin:10px 0 6px;font-size:12.5px;color:var(--sub)}
+  .spec b{color:var(--ink)}
+  .pvars{margin:8px 0;border-top:1px dashed var(--line);padding-top:8px}
+  .pvar{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted #eef0f4;font-size:13px}
+  .pvar .cfg{color:var(--sub)}
+  .pvar .price{font-weight:700;color:var(--brand)}
+  .pvar .price small{color:var(--sub);font-weight:400}
+  .rev{font-size:12px;color:#475467;background:#f8fafc;border:1px solid #eef2f7;border-radius:8px;padding:8px 10px;margin-top:8px}
+  .rev b{color:#334155}
+  .src{font-size:11px;color:#9aa4b2;margin-top:8px}
+  .pill{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:20px;margin:2px 4px 2px 0;border:1px solid var(--line);color:var(--sub)}
+  table.mini{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px}
+  table.mini td{padding:3px 4px;border-bottom:1px solid #f0f2f6;vertical-align:top}
+  table.mini td.k{color:var(--sub);width:84px;white-space:nowrap}
+  footer{max-width:1280px;margin:0 auto;padding:10px 18px 40px;color:#9aa4b2;font-size:12px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin:4px 0 0;font-size:12px;color:var(--sub)}
+</style>
+</head>
+<body>
+<header>
+  <h1>拼多多安卓平板对比报告</h1>
+  <p>渠道：拼多多「百亿补贴」+ 品牌官方旗舰店 ｜ 区间：¥1000–5000 ｜ 仅全新（不含二手）｜ 数据抓取日：2026-07-11</p>
+  <p>覆盖品牌：小米/Redmi · 华为 · 荣耀 · 联想 · 三星 · OPPO · vivo · iQOO 共 20+ 机型</p>
+</header>
+
+<div class="wrap">
+  <div class="note">
+    ⚠️ 价格说明：拼多多价波动极快（常以「百亿补贴 + 平台券 + 国补」叠加，每日/每时段不同）。下表价格为<b>比价站（什么值得买 / 慢慢买 / 飞小猪）抓取的近期 PDD 百亿补贴/旗舰店成交价</b>，仅供参考，下单前请以拼多多 APP 实时页面为准。评分（推荐分 0–100）由我根据「性价比 + 性能 + 屏幕 + 生态 + 口碑」综合给出，非官方。
+  </div>
+
+  <div class="tools">
+    <label>品牌
+      <select id="brand">
+        <option value="">全部</option>
+        <option>小米</option><option>Redmi</option><option>华为</option><option>荣耀</option>
+        <option>联想</option><option>三星</option><option>OPPO</option><option>vivo</option><option>iQOO</option>
+      </select>
+    </label>
+    <label>价格下限 <input id="pmin" type="number" value="1000" style="width:80px"></label>
+    <label>上限 <input id="pmax" type="number" value="5000" style="width:80px"></label>
+    <label>排序
+      <select id="sort">
+        <option value="score">推荐分↓</option>
+        <option value="priceAsc">价格↑</option>
+        <option value="priceDesc">价格↓</option>
+        <option value="brand">品牌</option>
+      </select>
+    </label>
+    <span id="count" class="legend"></span>
+  </div>
+
+  <div class="legend">
+    <span>推荐分：<span style="color:#16a34a;font-weight:700">≥90 强烈推荐</span> ｜ <span style="color:#ca8a04;font-weight:700">80–89 值得买</span> ｜ <span style="color:#9a3412;font-weight:700">70–79 入门够用</span></span>
+  </div>
+
+  <div id="grid" class="grid"></div>
+</div>
+
+<footer>
+  数据来源：什么值得买（smzdm）、慢慢买（manmanbuy）、飞小猪（ftxia）、指南室（zhinanshi）、品牌官网参数页等公开比价/参数信息整理。
+  本页为工具生成的选型参考，非拼多多官方数据；实际成交价与库存以拼多多 APP 为准。
+</footer>
+
+<script>
+const DATA = [
+  {
+    brand:"小米", model:"小米平板 8 Pro", score:95,
+    screen:"11.2″ 3.2K(3200×2136) 144Hz LCD · 800nit · 3:2 · 真DC调光",
+    chip:"骁龙 8 至尊版 (Snapdragon 8 Elite)", battery:"9200mAh / 67W", weight:"485g",
+    extra:["HyperOS 3","Wi-Fi 7","USB 3.2 Gen1","侧边指纹","支持焦点触控笔 Pro","4扬声器"],
+    vars:[["8+128","¥1903"],["8+256","¥2124"],["12+256","¥2250"],["12+512","≈¥2400"],["16+512","≈¥2800"]],
+    rev:"用户口碑：性价比炸裂，1900 出头拿到旗舰芯+3.2K屏，追剧/原神都顶。吐槽点：拼多多券需要抢、常限购；柔光版更护眼但贵 200。",
+    src:"PDD百亿补贴（smzdm 6-13 / zhinanshi）"
+  },
+  {
+    brand:"小米", model:"小米平板 7 Pro", score:88,
+    screen:"11.2″ 3.2K(3200×2136) 144Hz LCD", chip:"骁龙 8s Gen 3",
+    battery:"8850mAh / 67W", weight:"≈500g",
+    extra:["HyperOS 2","Wi-Fi 7","USB 3.2 Gen1","支持手写笔"],
+    vars:[["8+128","¥1979"],["12+256","¥2429"]],
+    rev:"口碑：去年旗舰，现在价格很香，屏幕与 8 Pro 同代。短板：芯片略弱于 8 至尊版，重度游戏不如 8 Pro。",
+    src:"PDD百亿补贴（meidebi / smzdm）"
+  },
+  {
+    brand:"小米", model:"小米平板 8（标准版）", score:85,
+    screen:"11.2″ 3.2K 144Hz LCD", chip:"第四代骁龙 8s Gen 4",
+    battery:"9200mAh / 67W", weight:"≈500g",
+    extra:["HyperOS 3","Wi-Fi 7","支持柔光版(AG屏)","支持手写笔"],
+    vars:[["8+128","≈¥1999"],["8+256","≈¥2197"],["12+256","≈¥2499"]],
+    rev:"口碑：比 Pro 便宜近千元，骁龙 8s Gen4 日常足够。注：上表为百补估算（8+256 实见 ¥2197），未抢到券时按官网 ¥2199/¥2499/¥2799。",
+    src:"PDD百亿补贴（toutiao实测 / 官网参考）"
+  },
+  {
+    brand:"Redmi", model:"Redmi Pad Pro 12.1", score:78,
+    screen:"12.1″ 2.5K 120Hz", chip:"骁龙 7s Gen 2",
+    battery:"10000mAh / 33W", weight:"≈571g",
+    extra:["金属机身","四扬声器","杜比","适合学生/网课"],
+    vars:[["6+128","¥1218"],["8+128","≈¥1329"]],
+    rev:"口碑：千元出头大屏性价比机，追剧网课够用。短板：性能一般，别指望重游戏。",
+    src:"PDD百亿补贴（sina / smzdm）"
+  },
+  {
+    brand:"华为", model:"华为 MatePad 11.5 (2026)", score:84,
+    screen:"11.5″ 120Hz", chip:"麒麟/骁龙平台 · 鸿蒙 HarmonyOS",
+    battery:"≈7700mAh", weight:"≈499g",
+    extra:["鸿蒙生态","多屏协同","教育/笔记体验好","支持 M-Pencil"],
+    vars:[["8+128(含笔套餐)","¥1619"],["8+128(标准)","≈¥1799"]],
+    rev:"口碑：鸿蒙协同是最大卖点，学生党/华为手机用户首选。短板：性能中规中矩，重度游戏弱。",
+    src:"PDD百亿补贴（smzdm）"
+  },
+  {
+    brand:"华为", model:"华为 MatePad 11.5″S 灵动版", score:86,
+    screen:"11.5″ 144Hz 高刷全面屏", chip:"鸿蒙 HarmonyOS",
+    battery:"≈8800mAh", weight:"≈510g",
+    extra:["华为笔记","PC级 WPS","云晰柔光屏可选","支持手写笔"],
+    vars:[["8+256","¥2054"]],
+    rev:"口碑：144Hz 柔光屏护眼，书写体验好，鸿蒙生产力到位。价格比 Air 低一档，性价比之选。",
+    src:"PDD百亿补贴（diqian / smzdm）"
+  },
+  {
+    brand:"华为", model:"华为 MatePad Air 12″", score:87,
+    screen:"12″ 2.8K 柔光屏 · 防眩光护眼", chip:"鸿蒙 HarmonyOS",
+    battery:"≈10100mAh", weight:"≈555g",
+    extra:["柔光护眼","多屏协同","笔记生态","支持手写笔/键盘"],
+    vars:[["12+256","≈¥2110"]],
+    rev:"口碑：学生党首选柔光屏，护眼+协同体验最佳。短板：芯片非顶级，价格比同配安卓略贵。",
+    src:"PDD百亿补贴（toutiao毕业季清单）"
+  },
+  {
+    brand:"华为", model:"华为 MatePad Air 11.5″", score:83,
+    screen:"11.5″ 2.8K", chip:"鸿蒙 HarmonyOS",
+    battery:"≈8300mAh", weight:"≈555g",
+    extra:["凝霜工艺手感","多屏协同","支持手写笔"],
+    vars:[["12+256","¥2229"]],
+    rev:"口碑：做工手感好，鸿蒙体验稳。偏小屏，适合随身记笔记。",
+    src:"PDD百亿补贴（smzdm）"
+  },
+  {
+    brand:"华为", model:"华为 MatePad Edge 14.2（二合一）", score:85,
+    screen:"14.2″ 3K OLED 柔显", chip:"骁龙 8 Gen 3",
+    battery:"9000mAh / 88W", weight:"≈609g",
+    extra:["鸿蒙二合一","可拆卸磁吸键盘","多屏协同","商务办公"],
+    vars:[["12+256","¥3299"]],
+    rev:"口碑：鸿蒙大屏二合一，文档/会议神器。注：16+512 版 PDD ≈¥5289（超 5000 已排除）。短板：重、贵、游戏弱。",
+    src:"PDD百亿补贴（toutiao TOP5 / zhinanshi）"
+  },
+  {
+    brand:"荣耀", model:"荣耀平板 9（柔光版）", score:80,
+    screen:"12.1″ 2.5K 120Hz 柔光屏", chip:"骁龙 6 Gen 1",
+    battery:"8300mAh / 35W", weight:"555g",
+    extra:["八扬声器","类自然光护眼","莱茵认证","未成年人守护","MagicOS"],
+    vars:[["8+256 / 12+256","¥1459"],["12+256(柔光)","¥1629"]],
+    rev:"口碑：护眼+八扬声器影音好，价格亲民。短板：芯片弱，仅适合网课/追剧/轻办公。",
+    src:"PDD百亿补贴（smzdm）"
+  },
+  {
+    brand:"联想", model:"联想小新 Pad Pro 12.7 (2025)", score:90,
+    screen:"12.7″ 2.9K 144Hz · P3 广色域", chip:"天玑 8300",
+    battery:"10200mAh / 45W", weight:"615g",
+    extra:["JBL 四扬声器","杜比视界/全景声","硬件低蓝光","1TB 扩展","手写笔9.6ms","超级互联"],
+    vars:[["8+128","¥1277"],["12+256","¥1515"]],
+    rev:"口碑：千元档「卷王」，12.7大屏+144Hz+天玑8300，追剧游戏都行。短板：615g偏重，充电 45W 一般。",
+    src:"PDD百亿补贴（smzdm / sina）"
+  },
+  {
+    brand:"联想", model:"联想小新平板 Pro 13", score:82,
+    screen:"13″ 2.9K 144Hz", chip:"骁龙/天玑旗舰级",
+    battery:"≈10200mAh", weight:"≈615g",
+    extra:["大屏生产力","超级互联","手写笔支持"],
+    vars:[["8+128","¥1369"]],
+    rev:"口碑：13寸大屏轻办公性价比高，百亿补贴价低。短板：高配缺货（256/512 价格未明）。",
+    src:"PDD百亿补贴（zhinanshi）"
+  },
+  {
+    brand:"三星", model:"三星 Galaxy Tab S9 FE+", score:82,
+    screen:"12.4″ 高刷 LCD", chip:"骁龙 870（FE 定制）",
+    battery:"≈10090mAh / 45W", weight:"≈628g",
+    extra:["IP68 防水","S Pen 手写笔(自带)","Galaxy 生态互联","多年系统更新"],
+    vars:[["8+128","¥2399"],["12+256","¥2899"]],
+    rev:"口碑：自带 S Pen + IP68 独一无二，三星生态/长更新。短板：芯片旧（870），国内生态弱、价偏高。",
+    src:"PDD百亿补贴（smzdm / ftxia）"
+  },
+  {
+    brand:"OPPO", model:"OPPO Pad 3", score:87,
+    screen:"11.6″ 2.8K(2800×2000) 144Hz LCD", chip:"天玑 8350",
+    battery:"9520mAh / 67W", weight:"533g",
+    extra:["ColorOS 15","四扬声器","NFC","智能键盘","低蓝光","柔光版可选"],
+    vars:[["8+128","¥1240"],["12+256","¥1699"]],
+    rev:"口碑：2.8K 144Hz 屏+天玑8350，千二档性价比高，OPPO手机用户协同好。短板：8+128 偏丐。",
+    src:"PDD百亿补贴（zhizhizhi / smzdm）"
+  },
+  {
+    brand:"vivo", model:"vivo Pad 3 Pro", score:86,
+    screen:"13″ 3.1K(3096×2064) 144Hz", chip:"天玑 9300",
+    battery:"11500mAh / 66W", weight:"679g",
+    extra:["蓝晶×天玑9300","144Hz护眼","多窗协同","通信共享","手写笔/键盘"],
+    vars:[["8+128","¥2276"],["8+256","¥2838"],["12+256","¥3098"]],
+    rev:"口碑：天玑9300 性能猛，13寸大屏影音/轻办公强。短板：679g 重，8+128 偏小。",
+    src:"PDD百亿补贴（diqian / ftxia / smzdm）"
+  },
+  {
+    brand:"iQOO", model:"iQOO Pad 2 Pro", score:85,
+    screen:"13″ 3.1K 144Hz", chip:"天玑 9300+",
+    battery:"≈11500mAh", weight:"≈679g",
+    extra:["蓝晶芯片栈","游戏向调校","多任务","手写笔/键盘"],
+    vars:[["12+256","¥2633"],["16+512","¥3104"]],
+    rev:"口碑：比同芯 vivo Pad3 Pro 调校更激进，游戏玩家更合适。短板：偏游戏定位、重。",
+    src:"PDD百亿补贴（smzdm / diqian）"
+  }
+];
+
+const grid=document.getElementById('grid');
+const $=id=>document.getElementById(id);
+
+function render(){
+  const b=$('brand').value, pmin=+$('pmin').value, pmax=+$('pmax').value, sort=$('sort').value;
+  let list=DATA.filter(d=>{
+    const minP=Math.min(...d.vars.map(v=>parseInt(v[1].replace(/[^\d]/g,''))));
+    const maxP=Math.max(...d.vars.map(v=>parseInt(v[1].replace(/[^\d]/g,''))));
+    if(b && d.brand!==b) return false;
+    // 机型需在 1000-5000 区间内有版本（任一版本在范围内即保留，但价超5000的版本标灰）
+    if(maxP<pmin || minP>pmax) return false;
+    return true;
+  });
+  if(sort==='score') list.sort((a,b)=>b.score-a.score);
+  else if(sort==='priceAsc') list.sort((a,b)=>Math.min(...a.vars.map(v=>+v[1].replace(/\D/g,'')))-Math.min(...b.vars.map(v=>+v[1].replace(/\D/g,''))));
+  else if(sort==='priceDesc') list.sort((a,b)=>Math.max(...b.vars.map(v=>+v[1].replace(/\D/g,'')))-Math.max(...a.vars.map(v=>+v[1].replace(/\D/g,''))));
+  else if(sort==='brand') list.sort((a,b)=>a.brand.localeCompare(b.brand,'zh'));
+
+  grid.innerHTML=list.map(d=>{
+    const scls=d.score>=90?'s80':(d.score>=80?'s80':'s70');
+    const vars=d.vars.map(v=>{
+      const p=+v[1].replace(/\D/g,'');
+      const out=(p<pmin||p>pmax);
+      return `<div class="pvar"><span class="cfg">${v[0]}</span><span class="price" ${out?'style="color:#9aa4b2"':''}>${v[1]}${out?' <small>(超区间)</small>':''}</span></div>`;
+    }).join('');
+    const extra=d.extra.map(e=>`<span class="pill">${e}</span>`).join('');
+    return `<div class="card">
+      <div class="chead">
+        <div><span class="brandtag">${d.brand}</span><h3>${d.model}</h3></div>
+        <div class="score ${scls}">推荐 ${d.score}</div>
+      </div>
+      <div class="spec"><b>屏幕：</b>${d.screen}</div>
+      <div class="spec"><b>芯片：</b>${d.chip} ｜ <b>电池：</b>${d.battery} ｜ <b>重量：</b>${d.weight}</div>
+      <div>${extra}</div>
+      <div class="pvars">${vars}</div>
+      <div class="rev"><b>用户评价：</b>${d.rev}</div>
+      <div class="src">来源：${d.src}</div>
+    </div>`;
+  }).join('');
+  $('count').textContent=`共 ${list.length} 款（按当前筛选）`;
+}
+['brand','pmin','pmax','sort'].forEach(id=>$(id).addEventListener('input',render));
+render();
+</script>
+</body>
+</html>

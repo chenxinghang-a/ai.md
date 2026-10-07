@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>数字温度计 PCB 30x24</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Microsoft YaHei',Arial,sans-serif;background:#e8e8e8;padding:10px}
+.wrap{max-width:1100px;margin:0 auto;background:#fff;border-radius:8px;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1)}
+h1{text-align:center;font-size:20px;margin-bottom:8px}
+h1 em{color:#C00;font-style:normal}
+.legend{display:flex;gap:16px;justify-content:center;margin:8px 0;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:4px;font-size:12px}
+.legend .sw{display:inline-block;width:14px;height:14px;border:1px solid #999;border-radius:2px}
+.toolbar{text-align:center;margin:8px 0}
+.toolbar button{padding:5px 14px;margin:0 3px;cursor:pointer;font-size:13px;border:1px solid #999;border-radius:3px;background:#fff}
+.toolbar button:hover{background:#e0e0e0}
+canvas{display:block;margin:0 auto;border:1px solid #aaa;max-width:100%;height:auto}
+.foot{text-align:center;font-size:11px;color:#666;margin-top:6px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>数字温度计 PCB 布线图 <em>30x24</em></h1>
+<div class="legend">
+<span><span class="sw" style="background:#4472C4"></span>B面走线</span>
+<span><span class="sw" style="background:#F00"></span>A面飞线</span>
+<span><span class="sw" style="background:#00B050"></span>+12V</span>
+<span><span class="sw" style="background:#FFF2CC;border-color:#C90"></span>IC</span>
+<span><span class="sw" style="background:#E2EFDA"></span>电阻</span>
+<span><span class="sw" style="background:#D9E1F2"></span>电容</span>
+<span><span class="sw" style="background:#FCE4D6"></span>电位器</span>
+<span><span class="sw" style="background:#CCC"></span>端子</span>
+</div>
+<div class="toolbar">
+<button onclick="Z(0.2)">放大+</button>
+<button onclick="Z(-0.2)">缩小-</button>
+<button onclick="Z(0,true)">自适应</button>
+<button onclick="window.print()" style="background:#2F5496;color:#fff;border-color:#2F5496">打印</button>
+</div>
+<canvas id="c"></canvas>
+<div class="foot">
+飞线2条: J1=C4左端→U2-Pin2(IN-) | J2=C7左端→U4-Pin2(IN-)<br>
+下半部Y≥13区域 -12V单侧供电 | 左侧7端子 | B面蓝色实线 A面红色虚线
+</div>
+</div>
+
+<script>
+const COLS=30, ROWS=24;
+let CELL=22, scale=1;
+const C=document.getElementById('c'), G=C.getContext('2d');
+
+function Z(d,f){scale=f?Math.floor((window.innerWidth-40)/COLS)/22:Math.max(0.5,Math.min(3,scale+d));D();}
+
+// ==== Layout data ====
+const T=[]; // traces
+function H(x1,x2,y,c='#4472C4',w=3){T.push({t:'h',x1,x2,y,c,w})}
+function V(x,y1,y2,c='#4472C4',w=3){T.push({t:'v',x,y1,y2,c,w})}
+
+const B=[]; // boxes: {x,y,w,h,txt,bg}
+function BX(x,y,w,h,txt,bg){B.push({x,y,w,h,txt,bg})}
+
+const L=[]; // labels: {x,y,txt,tc,fs}
+function LB(x,y,txt,tc,fs){L.push({x,y,txt,tc,fs})}
+
+const TN=[]; // terminals: {y,lab,bg}
+
+// --- Power rails ---
+H(0,29,0,'#4472C4',5); H(0,29,12,'#4472C4',5); H(0,29,23,'#000',5);
+
+// --- Left 7 terminals ---
+TN.push({y:3,lab:'+12V',bg:'#00B050'},{y:4,lab:'-12V',bg:'#006100'},
+  {y:5,lab:'GND',bg:'#000'},{y:6,lab:'M+',bg:'#C00000'},{y:7,lab:'M-',bg:'#C00000'},
+  {y:8,lab:'AD590+',bg:'#00B050'},{y:9,lab:'Resv',bg:'#888'});
+
+// --- Upper half: Temperature channel ---
+BX(2,3,2,2,'U1\nAD590','#FFF2CC');
+LB(2.3,3.3,'1','#FFF',6); LB(2.3,4.3,'2','#FFF',6); LB(3.3,4.3,'3','#FFF',6);
+V(3,0,3);
+
+BX(5,4,2,1,'R1 2K','#E2EFDA');
+H(4,5,4);
+BX(8,4,2,1,'C1\n103','#D9E1F2');
+H(5,8,4);
+
+BX(11,3,4,5,'U2\nOP-07','#FFF2CC');
+for(let i=0;i<4;i++){LB(10.7,i+3.3,String(i+1),'#FFF',7);LB(14.3,i+3.3,String(8-i),'#FFF',7)}
+V(12,0,3); V(15,0,3); V(12,7,12);
+
+BX(5,5,2,1,'R2\n2.6K','#E2EFDA');
+H(5,12,5); V(6,6,23);
+
+BX(9,6,2,1,'C3\n103','#D9E1F2');
+H(7,12,6); V(10,7,23);
+
+BX(9,8,2,1,'C2\n103','#D9E1F2');
+H(9,12,8); V(10,9,23);
+
+BX(16,3,2,2,'W3\n20K','#FCE4D6');
+LB(15.7,3.3,'1','#000',6); LB(17.3,3.3,'3','#000',6); LB(17.3,4.3,'2','#000',6);
+V(17,0,3); H(15,18,4);
+
+// M+
+LB(21.5,6.5,'M+','#C00',13);
+H(15,21,6);
+
+BX(19,5,2,2,'W1\n10K','#FCE4D6');
+LB(18.7,5.3,'3','#000',6); LB(20.3,5.3,'1','#000',6); LB(20.3,6.3,'2','#000',6);
+H(18,19,6);
+
+BX(19,8,2,1,'R3 1K','#E2EFDA');
+BX(23,8,2,1,'R4 1K','#E2EFDA');
+V(24,9,23);
+
+BX(21,7,2,1,'C4\n103','#D9E1F2');
+H(20,23,8); V(21,6,8);
+
+// J1 RED fly wire
+H(12,21,7,'#F00',4);
+LB(16.5,7.5,'J1','#FFF',8);
+
+// M+ route back to terminal
+V(21,6,10); H(0,21,10); V(0,6,10);
+
+// --- Lower half: Reference channel ---
+BX(2,14,2,2,'U3\nMC1403','#FFF2CC');
+LB(1.7,14.3,'1','#FFF',6); LB(2.3,14.3,'2','#FFF',6); LB(2.3,15.3,'3','#FFF',6);
+V(3,0,14); V(5,15,23);
+
+BX(5,14,2,1,'R5\n10K','#E2EFDA');
+H(4,5,14);
+
+BX(9,16,2,1,'C5\n103','#D9E1F2');
+
+BX(11,15,4,5,'U4\nOP-07','#FFF2CC');
+for(let i=0;i<4;i++){LB(10.7,i+15.3,String(i+1),'#FFF',7);LB(14.3,i+15.3,String(8-i),'#FFF',7)}
+V(12,0,15); V(15,0,15); V(12,13,19);
+H(5,12,17); H(9,12,18); V(10,18,23);
+
+BX(9,20,2,1,'C6\n103','#D9E1F2');
+H(9,12,20); V(10,21,23);
+
+BX(16,15,2,2,'W4\n20K','#FCE4D6');
+LB(15.7,15.3,'1','#000',6); LB(17.3,15.3,'3','#000',6); LB(17.3,16.3,'2','#000',6);
+V(17,0,15); H(15,18,16);
+
+// M-
+LB(21.5,18.5,'M-','#C00',13);
+H(15,21,18);
+
+BX(19,17,2,2,'W2\n10K','#FCE4D6');
+LB(18.7,17.3,'3','#000',6); LB(20.3,17.3,'1','#000',6); LB(20.3,18.3,'2','#000',6);
+H(18,19,18);
+
+BX(19,20,2,1,'R6\n680','#E2EFDA');
+BX(23,20,2,1,'R7\n1K','#E2EFDA');
+V(24,21,23);
+
+BX(21,19,2,1,'C7\n103','#D9E1F2');
+H(20,23,20); V(21,18,20);
+
+// J2 RED fly wire
+H(12,21,19,'#F00',4);
+LB(16.5,19.5,'J2','#FFF',8);
+
+// M- route back to terminal
+V(21,18,22); H(0,21,22); V(0,7,22);
+
+// Power labels
+LB(0.3,0.3,'+12V','#FFF',9);
+LB(0.3,12.3,'-12V','#FFF',9);
+LB(0.3,23.3,'GND','#FFF',9);
+
+// ===== Draw =====
+function D(){
+  CELL=Math.round(22*scale);
+  C.width=COLS*CELL; C.height=ROWS*CELL;
+  G.clearRect(0,0,C.width,C.height);
+  
+  // Background
+  G.fillStyle='#FFF'; G.fillRect(0,0,C.width,C.height);
+  
+  // Grid
+  G.strokeStyle='#E0E0E0'; G.lineWidth=0.5;
+  for(let x=0;x<=COLS;x++){G.beginPath();G.moveTo(x*CELL,0);G.lineTo(x*CELL,ROWS*CELL);G.stroke()}
+  for(let y=0;y<=ROWS;y++){G.beginPath();G.moveTo(0,y*CELL);G.lineTo(COLS*CELL,y*CELL);G.stroke()}
+  
+  // Coord labels
+  G.font='8px Arial'; G.fillStyle='#999'; G.textAlign='center';
+  for(let x=0;x<COLS;x++) G.fillText(x,x*CELL+CELL/2,8);
+  G.textAlign='right';
+  for(let y=0;y<ROWS;y++) G.fillText(y,9,y*CELL+CELL/2+3);
+  
+  // Terminals
+  TN.forEach(t=>{
+    const yy=t.y*CELL;
+    G.fillStyle=t.bg; G.fillRect(0,yy,CELL,CELL);
+    G.fillStyle='#FFF'; G.font='bold 8px Arial'; G.textAlign='center';
+    G.fillText(t.lab,CELL/2,yy+CELL/2+3);
+  });
+  
+  // Traces
+  T.sort((a,b)=>a.w-b.w).forEach(t=>{
+    G.strokeStyle=t.c; G.lineWidth=t.w;
+    G.beginPath();
+    if(t.t==='h'){G.moveTo(t.x1*CELL,t.y*CELL+CELL/2);G.lineTo((t.x2+1)*CELL,t.y*CELL+CELL/2)}
+    else{G.moveTo(t.x*CELL+CELL/2,t.y1*CELL);G.lineTo(t.x*CELL+CELL/2,(t.y2+1)*CELL)}
+    G.stroke();
+  });
+  
+  // Components
+  B.forEach(b=>{
+    G.fillStyle=b.bg; G.fillRect(b.x*CELL,b.y*CELL,b.w*CELL,b.h*CELL);
+    G.strokeStyle='#666'; G.lineWidth=1.5;
+    G.strokeRect(b.x*CELL,b.y*CELL,b.w*CELL,b.h*CELL);
+    G.fillStyle='#000'; G.font='bold 7px Arial'; G.textAlign='center';
+    const ls=b.txt.split('\n'); const my=b.y*CELL+b.h*CELL/2-2*(ls.length-1);
+    ls.forEach((l,i)=>G.fillText(l,b.x*CELL+b.w*CELL/2,my+6+i*10));
+  });
+  
+  // Labels
+  L.forEach(l=>{
+    if(l.tc){G.fillStyle='#808080';G.fillRect(l.x*CELL-7,l.y*CELL-7,14,14)}
+    G.fillStyle=l.tc||'#666'; G.font=(l.fs||7)+'px bold Arial'; G.textAlign='center';
+    G.textBaseline='middle'; G.fillText(l.txt,l.x*CELL,l.y*CELL);
+  });
+}
+
+Z(0,true);
+window.onresize=()=>Z(0,true);
+</script>
+</body>
+</html>

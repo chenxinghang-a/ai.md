@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大一暑假硬件自学 · 行动清单</title>
+<style>
+  :root{
+    --bg:#fafafa; --card:#fff; --ink:#1f2329; --mut:#6b7280; --line:#e5e7eb;
+    --blue:#185FA5; --bluebg:#E6F1FB; --teal:#0F6E56; --tealbg:#E1F5EE;
+    --amber:#854F0B; --amberbg:#FAEEDA; --green:#3B6D11; --greenbg:#EAF3DE;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    line-height:1.65;font-size:15px}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 18px 80px}
+  header{border-bottom:3px solid var(--blue);padding-bottom:14px;margin-bottom:18px}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:14px}
+  h2{font-size:19px;margin:34px 0 12px;padding-left:10px;border-left:4px solid var(--blue)}
+  .note{background:var(--amberbg);border:1px solid #f0d9a8;color:var(--amber);
+    padding:10px 14px;border-radius:8px;font-size:14px;margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:14px 16px;margin:10px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .map{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;font-size:13.5px}
+  .map div{padding:3px 0;border-bottom:1px dashed #eee}
+  .map b{color:var(--blue)}
+  details{border:1px solid var(--line);border-radius:10px;padding:0;margin:6px 0;background:var(--card)}
+  details summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none}
+  details summary::-webkit-details-marker{display:none}
+  details summary:before{content:"▸ ";color:var(--mut)}
+  details[open] summary:before{content:"▾ "}
+  details .body{padding:0 16px 12px;color:#374151}
+  table{width:100%;border-collapse:collapse;background:var(--card);
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:13.5px}
+  th,td{border-bottom:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:#f3f4f6;font-weight:600;font-size:12.5px}
+  tr:last-child td{border-bottom:none}
+  .must{color:var(--green);font-weight:600}
+  .opt{color:var(--mut)}
+  input[type=checkbox]{width:17px;height:17px;accent-color:var(--blue);cursor:pointer}
+  .week{border:1px solid var(--line);border-radius:12px;background:var(--card);
+    padding:12px 16px;margin:10px 0;position:relative}
+  .week .top{display:flex;align-items:flex-start;gap:10px}
+  .week .top input{margin-top:4px}
+  .week .wtitle{font-weight:600;font-size:16px}
+  .week .row{display:grid;grid-template-columns:60px 1fr;gap:6px;margin-top:8px;font-size:14px}
+  .week .row b{color:var(--blue);font-weight:600}
+  .pill{display:inline-block;font-size:12px;padding:2px 9px;border-radius:20px;
+    background:var(--tealbg);color:var(--teal);margin-left:8px}
+  .budget{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}
+  .budget .b{flex:1;min-width:230px;background:var(--card);border:1px solid var(--line);
+    border-radius:12px;padding:14px 16px}
+  .budget .b.low{border-left:4px solid var(--green)}
+  .budget .b.mid{border-left:4px solid var(--blue)}
+  .budget .b.adv{border-left:4px solid var(--amber)}
+  .budget .bt{font-weight:600;margin-bottom:4px}
+  .budget .bp{font-size:21px;color:var(--ink);font-weight:700}
+  .budget .bd{font-size:13px;color:var(--mut);margin-top:4px}
+  .res{background:var(--greenbg);border:1px solid #cfe3b0;border-radius:12px;padding:14px 16px}
+  .res li{margin:5px 0}
+  .printbar{position:sticky;top:0;background:var(--card);border-bottom:1px solid var(--line);
+    padding:10px 18px;display:flex;gap:10px;align-items:center;z-index:9;flex-wrap:wrap}
+  .btn{background:var(--blue);color:#fff;border:none;border-radius:8px;
+    padding:8px 16px;font-size:14px;cursor:pointer}
+  .btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
+  @media print{
+    .printbar{display:none} body{background:#fff}
+    .card,details,table,.week,.budget .b{break-inside:avoid}
+  }
+  a{color:var(--blue);text-decoration:none;border-bottom:1px solid #bcd}
+</style>
+</head>
+<body>
+<div class="printbar">
+  <button class="btn" onclick="window.print()">🖨 打印 / 存PDF</button>
+  <button class="btn ghost" onclick="document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=true)">全勾</button>
+  <button class="btn ghost" onclick="document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=false)">清空</button>
+  <span style="color:#6b7280;font-size:13px">勾选框刷新前有效 · 链接点开跳购物平台搜索</span>
+</div>
+
+<div class="wrap">
+<header>
+  <h1>大一暑假硬件自学 · 行动清单</h1>
+  <div class="sub">适用：电气工程及其自动化 · 大一下 · 只学过《电工学(下)》(=模拟电子+数字电子) · 老师要求自学焊接+PCB+单片机</div>
+</header>
+
+<div class="note">📌 路线：先玩 <b>Arduino</b> 入门（低配就够），第 8 周再上 <b>STM32</b> 进阶。示波器新手<b>不用急着买</b>。电弧焊/点焊用不到，跳过。你已学的《电工学(下)》是模电+数电，正好给单片机打底（见下方对照）。</div>
+
+<!-- ============ 课本对照 ============ -->
+<h2>〇、你已学的《电工学(下)》怎么用上</h2>
+<div class="card">
+<div class="map">
+  <div><b>第1章 半导体器件</b>（二极管/三极管）→ 第1–2周 LED、第9周 驱动电路</div>
+  <div><b>第3章 集成运放</b> → 第9–10周 传感器信号放大调理</div>
+  <div><b>第5章 直流稳压电源</b>（7805/LM317）→ 第3周 给板子供电</div>
+  <div><b>第7章 门电路/组合逻辑</b> → 第4–5周 GPIO 高低电平、数字逻辑</div>
+  <div><b>第8章 触发器/时序逻辑</b> → 第6周 定时器/中断/计数器（直接对应！）</div>
+  <div><b>第9章 信号发生(方波/555)</b> → 第7周 PWM 占空比</div>
+  <div><b>第11章 AD/DA 转换</b> → 第9–10周 模拟传感器采集</div>
+  <div><b>第6章 电力电子/放大电路</b> → 初学暂用不到，可略过</div>
+</div>
+</div>
+
+<!-- ============ 名词速懂 ============ -->
+<h2>一、名词速懂（看不懂就点开）</h2>
+<div class="sub" style="margin-bottom:6px">这些名词本质是把《电工学(下)》里的二极管、三极管、门电路、触发器，换成能焊、能画、能编程的实体工具。</div>
+
+<details><summary>🔧 电烙铁 / 焊台</summary><div class="body">加热到高温的金属头，把锡熔在焊点上固定元件。类比：更精细的"接线工具"。所有元件连成电路全靠它。</div></details>
+<details><summary>🔧 焊锡丝</summary><div class="body">带助焊剂的细锡丝，受热熔化形成焊点，是连接两个引脚的"导电胶水"。必须买<b>含松香芯</b>的，否则不沾锡。</div></details>
+<details><summary>🔧 松香</summary><div class="body">助焊剂，帮锡更容易粘上金属、去氧化。没它焊点又黑又虚。</div></details>
+<details><summary>🔧 吸锡器 / 吸锡线</summary><div class="body">焊错时把多余熔锡吸走的"后悔药"。吸锡器吸不到的细脚锡渣用铜编织吸锡线补。</div></details>
+<details><summary>🔧 虚焊</summary><div class="body">看似焊上实际没导通、时通时断。类比导线"接触不良"。新手最易犯，导致电路莫名不工作。</div></details>
+<details><summary>🔧 直插元件 / 贴片元件(SMD)</summary><div class="body">直插=腿长、穿板孔焊，新手首选好拿好焊；贴片=贴在板面无长腿、体积小，是现代板主流，练手后再碰。</div></details>
+<details><summary>📋 面包板</summary><div class="body">带弹性铜夹的塑料板，元件插上即通、不用焊。类比"临时搭电路的无焊实验板"，初学验证零成本。</div></details>
+<details><summary>📋 洞洞板</summary><div class="body">打满孔的环氧板，自己焊元件永久固定。面包板的"焊死版"，做能长期用的小作品。</div></details>
+<details><summary>📋 PCB / 原理图</summary><div class="body">PCB=印刷电路板，铜箔走线替代飞线；原理图=用符号画的电路连接图（就是课本里的电路图），画板前必须先有它。</div></details>
+<details><summary>📋 立创EDA / 嘉立创打样</summary><div class="body">立创EDA=在线免费画原理图/PCB的"画图Word"；嘉立创=把你的PCB文件做成实物的厂家，<b>每月首单免费打样</b>（10×10cm内，只付邮费）。</div></details>
+<details><summary>📋 绿油 / 有铅无铅喷锡 / 2层4层板</summary><div class="body">绿油=板面绿色绝缘漆防短路；喷锡=焊盘表面镀锡层，新手选<b>有铅</b>更好焊（熔点低）；2层板简单电路够用，复杂才要4层。</div></details>
+<details><summary>📟 数字万用表 / 示波器</summary><div class="body">万用表=测电压/电流/电阻/通断的数显仪，排查必备；示波器=把电压随时间画成波形的"慢动作录像"，看信号波形用，新手可先不买。</div></details>
+<details><summary>📟 蜂鸣档 / 二极管档</summary><div class="body">蜂鸣档=通就"滴滴"响，查虚焊查线最快；二极管档=测二极管/LED好坏（正向通反向不通，正是你学的二极管特性）。</div></details>
+<details><summary>🤖 单片机(MCU) / Arduino UNO R3</summary><div class="body">MCU=自带CPU的小芯片，跑程序自动控制外设，让电路"智能"起来；Arduino UNO R3=最易上手的"乐高入门套装"，接线简单资料多，新手首选（认准 R3+CH340 版）。</div></details>
+<details><summary>🤖 STM32F103C8T6（蓝Pill）/ 开发板 / 最小系统</summary><div class="body">蓝Pill=性能更强的32位开发板，便宜，进阶用；开发板=芯片焊好带接口的"带壳成品"开箱即用；最小系统=让芯片能跑的最简电路（电源+晶振+复位），自己画PCB必须会。</div></details>
+<details><summary>🤖 ST-Link / USB-TTL(CH340)</summary><div class="body">ST-Link=给STM32烧程序的"喂程序U盘线"；CH340 USB-TTL=电脑USB转串口，是电脑和芯片间的"翻译官"，没它连不上。</div></details>
+<details><summary>🤖 GPIO / PWM / 定时器 / 中断 / 串口 / HAL库</summary><div class="body">GPIO=可配置输入输出的"可编程开关脚"；PWM=用占空比快速开关等效调电压；定时器=内部"闹钟/秒表"精准计时；中断=有急事打断主程序去处理再回来；串口=单片机"发短信"调试通道；HAL库=厂家现成函数库，调函数即用不用啃寄存器。</div></details>
+<details><summary>🧩 杜邦线 / 限流电阻 / LED / 舵机 / L298N / DS18B20 / 红外对管</summary><div class="body">杜邦线=可插拔彩色软导线；限流电阻=串回路限流防烧 R=(Vcc−Vled)/I；LED=发光二极管(第1章)，不串电阻会烧；舵机=转指定角度的智能马达；L298N=放大弱信号驱动大电机的"放大器"；DS18B20=数字温度传感器；红外对管=遮挡即触发，做避障/循迹。</div></details>
+
+<!-- ============ 采购清单 ============ -->
+<h2>二、采购清单（真实价格 + 可点链接，买前打勾）</h2>
+<table>
+<thead><tr><th style="width:30px"></th><th>物品</th><th>为什么买 / 关键参数</th><th>真实价¥</th><th>购物链接</th><th>等级</th></tr></thead>
+<tbody>
+<tr><td><input type="checkbox"></td><td>936恒温焊台</td><td>60–75W数显恒温（如黄花/白光T12），锡焊必备。<b>别买几十块尖头焊枪</b></td><td>60–150</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=936恒温焊台数显" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>无铅焊锡丝 0.8mm</td><td><b>含松香芯</b>（有铅63/37更好沾锡），一卷细"胶水"</td><td>12–30</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=无铅焊锡丝0.8mm松香芯" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>吸锡器 + 吸锡线</td><td>焊错拆元件的"后悔药"。手动吸锡器+铜编织吸锡线</td><td>10–25</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=吸锡器吸锡线" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>烙铁架 + 海绵</td><td>放烫烙铁的金属架+清洁海绵，别把热烙铁放桌上</td><td>8–22</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=烙铁架清洁海绵" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>数字万用表</td><td>自动量程（优利德UT33D+ / 胜利VC921），查通断量电压必备，别买指针表</td><td>45–65</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=优利德UT33D+数字万用表" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>830孔面包板</td><td>插线就能搭电路不用焊，先它再焊洞洞板</td><td>4–10</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=830孔面包板" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>杜邦线套装</td><td>公对公/母对母/公对母各40根，临时连线改线最方便</td><td>2–5</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=杜邦线公对公母对母公对母" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>5×7cm 洞洞板</td><td>环氧板，买10片（约¥7–9），焊好电路永久固定</td><td>1–4/片</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=5x7cm洞洞板环氧板" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>Arduino UNO R3</td><td>最友好的入门单片机板。<b>认准 R3 + CH340 版</b>，驱动好装</td><td>7–22</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=ArduinoUNO%20R3%20CH340" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>镊子 / 斜口钳 / 剥线钳</td><td>弯头镊子+斜口钳+剥线钳，夹元件剪引脚剥线</td><td>10–30</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=镊子斜口钳剥线钳套装" target="_blank">拼多多搜索</a></td><td class="must">必买</td></tr>
+<tr><td><input type="checkbox"></td><td>嘉立创打样</td><td>立创EDA网页版画板→嘉立创下单助手，<b>每月首单免费</b>（10×10cm内，仅付邮~10元）</td><td>0+邮</td><td><a href="https://www.jlc.com/" target="_blank">嘉立创官网</a></td><td class="must">必走渠道</td></tr>
+<tr><td><input type="checkbox"></td><td>夹式LED放大镜台灯</td><td>看清焊点和细脚元件；可用手机支架+台灯替代，<b>非必买</b></td><td>20–60</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=夹式LED放大镜台灯" target="_blank">拼多多搜索</a></td><td class="opt">可选</td></tr>
+<tr><td><input type="checkbox"></td><td>STM32F103C8T6 蓝Pill</td><td>进阶用ARM小蓝板。<b>认准C8T6</b>，别买成F103RCT6（封装不同）</td><td>8–15</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=STM32F103C8T6最小系统板" target="_blank">拼多多搜索</a></td><td class="opt">中配加</td></tr>
+<tr><td><input type="checkbox"></td><td>ST-Link V2</td><td>给STM32下载程序的烧录器，只玩Arduino可省</td><td>10–20</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=ST-Link%20V2下载器" target="_blank">拼多多搜索</a></td><td class="opt">中配加</td></tr>
+<tr><td><input type="checkbox"></td><td>CH340 USB-TTL</td><td>电脑串口连单片机的转接小板，调试串口打印超好用</td><td>5–12</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=CH340%20USB-TTL模块" target="_blank">拼多多搜索</a></td><td class="opt">中配加</td></tr>
+<tr><td><input type="checkbox"></td><td>二手示波器</td><td>看信号波形查bug，但贵。新手<b>先不买</b>，学到通信时序再入二手（固纬GOS-620 20MHz约300–600）</td><td>300–600</td><td><a href="https://mobile.yangkeduo.com/search_result.html?search_key=二手示波器20MHz" target="_blank">拼多多搜索</a></td><td class="opt">可选</td></tr>
+</tbody>
+</table>
+
+<div class="budget">
+  <div class="b low"><div class="bt">低配（Arduino路线）</div><div class="bp">≈ ¥170–390</div><div class="bd">焊台+锡丝+吸锡+架+万用表+面包板+杜邦线+洞洞板+Arduino+镊子钳（放大镜用替代）。够练熟：锡焊+面包板+Arduino。</div></div>
+  <div class="b mid"><div class="bt">中配（+STM32套件）</div><div class="bp">≈ ¥210–500</div><div class="bd">低配+蓝Pill+ST-Link+CH340+放大镜台灯。覆盖：锡焊+PCB打样+Arduino+STM32进阶。</div></div>
+  <div class="b adv"><div class="bt">进阶（+二手示波器）</div><div class="bp">≈ ¥510–1100</div><div class="bd">中配+二手示波器。学到通信时序/波形排查时再入，不急。</div></div>
+</div>
+<div class="note">💡 下单顺序：① 焊台+锡丝+架+吸锡（先练焊）② 万用表+镊子钳 ③ 面包板+杜邦线+洞洞板+Arduino ④ 立创EDA画板免费打样 ⑤ 想进阶再加STM32套件。耗材（锡丝/杜邦线/洞洞板）可凑单包邮更省。</div>
+
+<!-- ============ 10周路线 ============ -->
+<h2>三、10周学习路线（每周打卡）</h2>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第1–2周 练焊接<span class="pill">洞洞板+直插件</span></div></div></div>
+<div class="row"><b>操作</b><div>买烙铁、锡丝、松香、吸锡器、杜邦线、1kΩ/220Ω电阻、红绿LED、9V电池盒。第一周把电阻两脚插洞洞板，烙铁沾松香再吃锡，焊点喂圆润发亮，焊10个电阻+LED（长脚=正极）。第二周练拆焊：吸锡器对准焊点，烙铁加热同时按吸锡器吸走锡拔元件；再焊"电池→电阻→LED→地"回路点亮。</div></div>
+<div class="row"><b>挂钩</b><div>LED就是《电工学(下)》<b>第1章半导体二极管</b>——正向导通、反向截止，长脚=阳极；限流电阻 R=(Vcc−Vled)/I 是基操。课本学的二极管特性，现在动手焊亮它。</div></div>
+<div class="row"><b>成果</b><div>自己焊亮一盏LED，能熟练拆焊。</div></div>
+<div class="row"><b>易错</b><div>虚焊（表面亮内部没粘）——焊点要呈圆锥吃住两脚；温度别太高烫坏LED；手抖买焊接固定夹。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第3周 画第一块PCB<span class="pill">立创EDA</span></div></div></div>
+<div class="row"><b>操作</b><div>百度"立创EDA"网页版注册→新建工程→放1个LED、1个220Ω电阻、2个排针。连线 VCC→电阻→LED→GND。切"PCB"摆元件走线（单面板，线宽0.3mm）。点"下单PCB"→嘉立创下单助手免费打样。</div></div>
+<div class="row"><b>挂钩</b><div>画板=布"导线"；给板子供电的思路来自<b>第5章直流稳压电源</b>(7805/LM317)，先做简单电池供电版，进阶再画稳压电路。</div></div>
+<div class="row"><b>成果</b><div>几天后收到绿色小板，自己焊元件接电池点亮。</div></div>
+<div class="row"><b>易错</b><div>封装选错（LED脚距不对焊不进）；走线别交叉，单面板尽量不跳线。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第4周 Arduino点灯</div></div></div>
+<div class="row"><b>操作</b><div>装 Arduino IDE（官网免费）。买Arduino UNO+数据线。打开 示例→01.Basics→Blink，选对板子(COM口)，点"上传"。板载13脚LED会闪。</div></div>
+<div class="row"><b>挂钩</b><div>digitalWrite(13,HIGH/LOW) 输出的就是<b>第7章门电路</b>的高低电平(0/1逻辑)；写代码=控制这个电平，和数电真值表一脉相承。</div></div>
+<div class="row"><b>成果</b><div>板载灯闪烁，理解"写程序控制硬件"。</div></div>
+<div class="row"><b>易错</b><div>驱动没装→换数据线/装CH340驱动；COM口选错。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第5周 按键+串口</div></div></div>
+<div class="row"><b>操作</b><div>按键一端接D2、另一端接地，D2再接10kΩ上拉到5V。程序 digitalRead(D2)，按下为LOW。Serial.begin(9600)+Serial.println("按下")，开"串口监视器"看打印。按键会抖——代码里"检测到按下后延时20ms再判一次"消抖。</div></div>
+<div class="row"><b>挂钩</b><div>按键=机械开关；串口打印的数字逻辑对应<b>第7章组合逻辑</b>；上拉电阻保证悬空时是确定高电平（不是课本里的"悬空易干扰"那套）。</div></div>
+<div class="row"><b>成果</b><div>按一下键，电脑打印一行字。</div></div>
+<div class="row"><b>易错</b><div>忘了上拉电阻电平悬空乱跳；不消抖会连发多次。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第6周 定时器/中断</div></div></div>
+<div class="row"><b>操作</b><div>用 millis() 做不阻塞延时（取代delay，灯闪同时还能干别的）。学外部中断 attachInterrupt(0,函数名,RISING)——按键接D2，每按一次中断函数让计数+1，串口打印次数。</div></div>
+<div class="row"><b>挂钩</b><div>定时器/计数器直接对应<b>第8章时序逻辑(触发器/计数器)</b>和<b>第9章555定时器</b>——课本里"数脉冲"现在真在数了；中断=随时响应外部事件。</div></div>
+<div class="row"><b>成果</b><div>按键计数精准不漏按。</div></div>
+<div class="row"><b>易错</b><div>中断函数里别用delay、别做复杂运算。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第7周 PWM调光</div></div></div>
+<div class="row"><b>操作</b><div>analogWrite(9, 0~255) 输出PWM。接LED+电阻，亮度0→255→0看呼吸灯。加舵机(&lt;Servo.h&gt;库)转不同角度；或蜂鸣器调音调。</div></div>
+<div class="row"><b>挂钩</b><div>PWM就是<b>第9章方波/脉冲</b>信号，占空比越大等效电压越高→LED越亮/电机越快，用占空比"假装"调模拟量。</div></div>
+<div class="row"><b>成果</b><div>呼吸灯+舵机转动。</div></div>
+<div class="row"><b>易错</b><div>不是所有脚支持PWM，UNO上带"~"号的才行。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第8周 转STM32（F103C8T6）</div></div></div>
+<div class="row"><b>操作</b><div>买"STM32F103C8T6最小系统板"+"ST-Link下载器"。装STM32CubeMX+Keil(或VS Code+PlatformIO)。CubeMX点几下配置PA0输出/串口/定时器PWM，生成HAL代码。写HAL_GPIO_TogglePin点灯，重做按键/串口/PWM。ST-Link连好点"下载"。</div></div>
+<div class="row"><b>挂钩</b><div>GPIO/定时器/PWM原理同前，只是芯片换成更专业的Cortex-M3，用CubeMX图形配置代替手写寄存器。第7/8章知识直接复用。</div></div>
+<div class="row"><b>成果</b><div>STM32点灯+串口打印。</div></div>
+<div class="row"><b>易错</b><div>BOOT0跳线位置不对下不进去；ST-Link接线(VCC/SWCLK/SWDIO/GND)别接反。</div></div></div>
+
+<div class="week"><div class="top"><input type="checkbox"><div><div class="wtitle">第9–10周 小项目</div></div></div>
+<div class="row"><b>方案A</b><div>温控风扇：DS18B20测温(单总线库)→温度高就analogWrite调大风扇PWM转速，串口显示温度。</div></div>
+<div class="row"><b>方案B</b><div>循迹小车雏形：2个红外传感器接STM32，读到黑线就控制左右轮(PWM调速减速电机)修正方向。</div></div>
+<div class="row"><b>挂钩</b><div>模拟传感器→<b>第3章运放</b>信号调理→ADC采集，对应<b>第11章AD/DA</b>；把数电/模电全串成一个系统，写进暑假作业报告。</div></div>
+<div class="row"><b>易错</b><div>先分模块调通再组装，别一口气焊完才发现某块不工作。</div></div></div>
+
+<!-- ============ 资源 ============ -->
+<h2>四、免费资源（照着用）</h2>
+<div class="res"><ul>
+<li><b>B站·爱上半导体</b>：看"二极管/三极管/焊接"科普，补硬件直觉（对应第1章）。</li>
+<li><b>B站·电子跃迁</b>：Arduino/STM32 实操跟做，按周对应看。</li>
+<li><b>B站·稚晖君</b>：当"爽文"开眼界找方向。</li>
+<li><b>书《Arduino程序设计基础》</b>：第4周翻；《STM32库开发实战指南》(野火)：第8周当字典查。</li>
+<li><b>立创EDA官网</b>：第3周画板教程在"帮助/视频"里，跟着做一遍。</li>
+<li><b>嘉立创下单助手</b>：第3周手机/电脑下单，首单免费打样。</li>
+</ul></div>
+
+<div class="note" style="margin-top:24px">✅ 你已学的模电/数电正好是单片机的理论底座——数电(门电路/触发器/555)直接对应GPIO/定时器，模电(二极管/运放/电源)对应驱动与采集。暑假结束你能独立画板、写STM32、做个小系统，已经远超同班同学。卡住就回看对应周的资源视频，别硬憋。</div>
+
+</div>
+</body>
+</html>

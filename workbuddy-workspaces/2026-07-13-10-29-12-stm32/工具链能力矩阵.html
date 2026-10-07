@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬件工具链能力矩阵（实测 2026-07-15）</title>
+<style>
+  :root{ --bg:#fff; --fg:#1a1a1a; --muted:#666; --line:#e2e2e2; --green:#1a7f37; --greenbg:#e8f5ec; --amber:#9a6700; --amberbg:#fff4e0; --red:#c0392b; --redbg:#fdecea; --blue:#0b66c3; --bluebg:#e8f1fb;}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg);max-width:980px;margin:0 auto;padding:28px;line-height:1.6}
+  h1{font-size:24px;margin:0 0 4px}
+  h2{font-size:18px;margin:28px 0 10px;border-left:4px solid var(--blue);padding-left:10px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:18px}
+  .verdict{border-radius:10px;padding:14px 16px;background:var(--amberbg);border:1px solid #f0d9a8;font-size:15px}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#f7f7f7;font-weight:600}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:var(--greenbg);color:var(--green)}
+  .warn{background:var(--amberbg);color:var(--amber)}
+  .bad{background:var(--redbg);color:var(--red)}
+  .opt{background:#eef0f2;color:#555}
+  code{background:#f3f3f3;padding:1px 6px;border-radius:4px;font-size:12.5px}
+  .box{border-radius:10px;padding:14px 16px;margin:14px 0;border:1px solid var(--line)}
+  .mustdo{background:var(--bluebg);border-color:#bcd9f5}
+  .steps{counter-reset:s;padding-left:0;list-style:none}
+  .steps li{counter-increment:s;position:relative;padding:8px 0 8px 34px;border-bottom:1px dashed var(--line)}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:var(--blue);color:#fff;border-radius:50%;text-align:center;font-size:12px;line-height:22px;font-weight:700}
+  .note{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>硬件工具链能力矩阵</h1>
+<div class="sub">实测时间：2026-07-15 17:25 · 目标板：STM32F103C8T6（蓝 Pill）+ ST-Link V2 + USB-TTL(CH340)</div>
+
+<div class="verdict">
+⚠️ <b>之前的"齐全"是安装检查，不是工作流检查。</b> 真正的嵌入式链路是 <b>写代码 → 编译 → 烧录 → 调试 → 看串口</b>。
+目前 <b>编译链已实锤可用</b>，但 <b>烧录/调试/串口三步因板子没插 + ST-Link 驱动未注册，至今没能端到端验证</b>。下面全是刚才逐条跑出来的真数据。
+</div>
+
+<h2>一、能力矩阵（每条都标了证据）</h2>
+<table>
+<tr><th>能力</th><th>工具 / 路径</th><th>状态</th><th>证据</th></tr>
+
+<tr><td>编译 Cortex-M3 固件</td><td><code>arm-none-eabi-gcc 12.3.rel1</code><br>(CubeIDE 内)</td><td><span class="tag ok">✅ 已验证</span></td><td>实测生成 <code>blink.o</code>(892B) + <code>blink.bin</code>(24B)</td></tr>
+
+<tr><td>生成 .bin/.hex 烧录文件</td><td><code>arm-none-eabi-objcopy</code></td><td><span class="tag ok">✅ 已验证</span></td><td>objcopy 成功转二进制</td></tr>
+
+<tr><td>VS Code C/C++ 智能提示</td><td><code>ms-vscode.cpptools 1.32.2</code></td><td><span class="tag ok">✅ 已装</span></td><td>扩展目录实存在</td></tr>
+
+<tr><td>VS Code 串口监视器</td><td><code>vscode-serial-monitor 0.13.1</code></td><td><span class="tag ok">✅ 已装</span></td><td>扩展目录实存在</td></tr>
+
+<tr><td>Python 读串口</td><td><code>pyserial 3.5</code></td><td><span class="tag ok">✅ 刚装好</span></td><td><code>import serial</code> 通过</td></tr>
+
+<tr><td>SWD 烧录引擎</td><td><code>OpenOCD</code>（CubeIDE 插件）</td><td><span class="tag warn">🟡 在场未测</span></td><td>插件目录存在，但板子没插无法连</td></tr>
+
+<tr><td>SWD 调试服务</td><td><code>ST-LINK_gdbserver.exe</code></td><td><span class="tag warn">🟡 在场未测</span></td><td>二进制存在，未跑通</td></tr>
+
+<tr><<td>图形化配置外设</td><td><code>CubeMX (.ioc)</code> 内置 CubeIDE</td><td><span class="tag warn">🟡 在场未测</span></td><td>CubeIDE 内集成</td></tr>
+
+<tr><td>USB-TTL 串口驱动</td><td>CH340 / <code>CH341SER.SYS</code></td><td><span class="tag warn">🟡 待插设备确认</span></td><td>sys 文件在 System32\drivers，但无设备时驱动商店查不到</td></tr>
+
+<tr><td>ST-Link 驱动</td><td><code>dpinst_amd64.exe</code></td><td><span class="tag bad">🔴 未注册</span></td><td>驱动商店无 STMicro 条目；静默安装被拒（需管理员）</td></tr>
+
+<tr><td>PlatformIO（Arduino 框架路线）</td><td><code>platformio-ide 3.3.4</code> 扩展</td><td><span class="tag bad">🔴 核心未下载</span></td><td>扩展装了，但 <code>.platformio/platforms/ststm32</code> 为空，首编译需联网下载</td></tr>
+
+<tr><td>STM32CubeProgrammer（独立烧录/救砖）</td><td>ST 官方独立工具</td><td><span class="tag opt">⚪ 未装（可选）</span></td><td>非必需，CubeIDE 自带烧录够用；救砖/改 Option Bytes 才需要</td></tr>
+
+<tr><td>硬件连接</td><td>蓝 Pill + ST-Link + USB-TTL</td><td><span class="tag bad">🔴 未接入</span></td><td>设备管理器当前无任何 ST-Link / CH340 / COM 口</td></tr>
+</table>
+
+<h2>二、真正的缺口（之前没说的）</h2>
+<div class="box">
+<ol class="steps">
+<li><b>ST-Link 驱动没注册进系统</b>：CubeIDE 自带安装器，但驱动安装需要管理员权限，沙箱起不来。插上 ST-Link 时若 Windows 没自动装好，得手动以管理员跑 <code>C:\ST\STM32CubeIDE_1.16.1\STM32CubeIDE\drivers\STLinkUSBDriver\dpinst_amd64.exe</code>。</li>
+<li><b>烧录 / 调试 / 串口三步从没端到端跑通过</b>：因为板子没插，OpenOCD 和 gdbserver 连不上芯片，串口监视器没端口可开。</li>
+<li><b>PlatformIO 核心没下载</b>：扩展在，但 ststm32 平台/工具链是空的，首次编译会联网拉取（无 VPN 可能慢或失败）。</li>
+<li><b>STM32CubeProgrammer 独立版没装</b>：可选，但建议装——以后把 boot 引脚搞错锁死芯片时，只有它能救。</li>
+</ol>
+</div>
+
+<h2>三、你必须做的一步（我替不了，物理活）</h2>
+<div class="box mustdo">
+把下面三样插上电脑 USB：
+<ul>
+<li>📌 <b>ST-Link V2</b> → 连蓝 Pill 的 SWD 口（SWCLK、SWDIO、GND、3.3V 四根线别接反）</li>
+<li>📌 <b>USB-TTL（CH340）</b> → 连蓝 Pill 的 PA9(TX)、PA10(RX)、GND（用来收串口打印）</li>
+<li>📌 蓝 Pill 本身供电（ST-Link 的 3.3V 或单独 USB）</li>
+</ul>
+插好后打开<b>设备管理器</b>看：应出现 <code>ST-Link Debug</code> 设备和 <code>COMx (USB-SERIAL CH340)</code>。若 ST-Link 带黄叹号，右键更新驱动指向上面那个 <code>STLinkUSBDriver</code> 目录（管理员）。
+</div>
+
+<h2>四、板子插好后，我立刻跑的验证（不再空谈）</h2>
+<table>
+<tr><th>验证项</th><th>做法</th><th>通过标准</th></tr>
+<tr><td>识别</td><td>设备管理器 + <code>mode</code> 看 COM 口</td><td>ST-Link 设备 + COMx 出现，无叹号</td></tr>
+<tr><td>连芯片</td><td>OpenOCD / CubeIDE 读芯片 ID</td><td>能读到 STM32F103C8T6 的 Chip ID</td></tr>
+<tr><td>烧录</td><td>用 CubeIDE 烧一个闪灯程序</td><td>蓝 Pill 上 LED 开始闪</td></tr>
+<tr><td>调试</td><td>下断点 / 单步 / 看变量</td><td>gdbserver 连上，能停能看</td></tr>
+<tr><td>串口</td><td>程序里 <code>printf</code> → 串口监视器收</td><td>监视器里看到打印内容</td></tr>
+</table>
+
+<h2>五、可选增强（你说一声我就干）</h2>
+<div class="box">
+<ul>
+<li><b>装 STM32CubeProgrammer 独立版</b>：救砖用，免费，我可尝试下载（无 VPN 可能慢）。</li>
+<li><b>给 PlatformIO 预下载 ststm32 平台</b>：让 Arduino 框架路线也能直接编译（需联网）。</li>
+<li><b>写一份"插好板子后点灯全流程"图文</b>：江协第 1 集对应，CubeIDE 建 F103 工程 → 烧录 → 闪灯。</li>
+</ul>
+</div>
+
+<p class="note">说明：编译链（gcc/objcopy）与 pyserial 是刚才真实跑通的；烧录/调试/串口依赖硬件，未插板前无法证明，这是物理限制不是偷懒。ST-Link 驱动需你以管理员身份装一次。</p>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专业软件安装状态</title>
+<style>
+  body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:880px;margin:24px auto;padding:0 16px;color:#1f2937;background:#f7f8fa}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#6b7280;font-size:13px;margin-bottom:18px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  h2{font-size:15px;margin:0 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #f0f0f0}
+  th{color:#6b7280;font-weight:600;font-size:12.5px}
+  .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:700}
+  .t-ok{background:#dcfce7;color:#15803d}
+  .t-run{background:#fef3c7;color:#b45309}
+  .t-you{background:#ffe4e6;color:#be123c}
+  .note{border-left:3px solid #f59e0b;background:#fffbeb;padding:8px 12px;font-size:12.5px;color:#92400e;border-radius:0 8px 8px 0;margin-top:6px}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px}
+  ul{margin:6px 0 0;padding-left:18px;font-size:13px;line-height:1.7}
+</style>
+</head>
+<body>
+<h1>🛠️ 专业软件安装状态</h1>
+<div class="sub">更新于 2026-07-15 15:36 · 你机器无 VPN 故 winget 源不可达，已全部改官网/镜像直连 · CH340/CP210x 已装（主人确认）· ST-Link 等 CubeIDE 后台装完</div>
+
+<div class="card">
+  <h2>✅ 已装（可用）</h2>
+  <table>
+    <tr><th>软件</th><th>路径/说明</th></tr>
+    <tr><td>VS Code</td><td>代码编辑器（C/C++/PlatformIO 主战场）</td></tr>
+    <tr><td>VS Code 插件 C/C++、PlatformIO、Serial Monitor</td><td>已装</td></tr>
+    <tr><td>Git</td><td>版本控制（你早有，已确保最新）</td></tr>
+    <tr><td>Arduino IDE 2.3.4</td><td><code>C:\Users\cxx\AppData\Local\Programs\Arduino IDE\Arduino IDE.exe</code></td></tr>
+    <tr><td>Python 3.12.8（默认 <code>python</code>）</td><td>managed 路径 <code>C:\Users\cxx\.workbuddy\binaries\python\versions\3.12.8</code>，已加入用户 PATH</td></tr>
+    <tr><td>Python 3.13.14 / 3.14.3</td><td>managed，备用</td></tr>
+  </table>
+  <div class="note">系统 Python 安装器在你的环境退出码 102（非管理员 + Defender 实时防护拦截生成 exe）。改用受信的 managed 路径等价可用，<code>python --version</code> 已指向 3.12.8。</div>
+</div>
+
+<div class="card">
+  <h2>⏳ 后台安装中</h2>
+  <table>
+    <tr><th>软件</th><th>说明</th></tr>
+    <tr><td>STM32CubeIDE 1.16.1</td><td>官方免登录直链，断点续传后台跑（ST 限速 ~750KB/s，约 988MB）。装完自带 ST-Link 驱动，无需单独下</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>✅ 驱动 CH340/CP210x 已装好（ST-Link 待 CubeIDE）</h2>
+  <table>
+    <tr><th>驱动</th><th>状态</th></tr>
+    <tr><td>CH340 / CH341（USB-TTL 转串口）</td><td><span class="tag t-ok">已装✅</span> 主人 15:36 确认，双击 bat 装好（UAC 提权 + CH341SER.exe /S）</td></tr>
+    <tr><td>CP210x（Silicon Labs 串口，套件若有该芯片）</td><td><span class="tag t-ok">已装✅</span> 双击 bat 时 pnputil 注入成功</td></tr>
+    <tr><td>ST-Link（烧录蓝Pill 必需）</td><td><span class="tag t-run">待 CubeIDE</span> bat 会自动检测：CubeIDE 装好后跑其自带 <code>dpinst_amd64.exe</code></td></tr>
+  </table>
+  <div class="note">验证：插上 USB-TTL 模块 → 设备管理器"端口(COM/LPT)"出现 <code>USB-SERIAL CH340 (COMx)</code> 即成功。ST-Link 等 CubeIDE 后台装完，再双击一次 bat 即可补上。</div>
+</div>
+
+<div class="card">
+  <h2>📋 剩余收尾</h2>
+  <ul>
+    <li>✅ CH340/CP210x 驱动已装好（主人 15:36 确认）</li>
+    <li>等 CubeIDE 后台装完 → 验证 STM32CubeIDE.exe 存在</li>
+    <li>再双击一次 install_drivers.bat 补 ST-Link（或手动跑 dpinst_amd64.exe）</li>
+    <li>插上套件 ST-Link，设备管理器出现"STM32 STLink"即成功</li>
+    <li>打开 Arduino IDE / CubeIDE 各新建空工程，确认能编译（验证工具链）</li>
+  </ul>
+</div>
+</body>
+</html>

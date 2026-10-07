@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数字温度计 PCB布线图 (30x24)</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,"Microsoft YaHei",sans-serif;background:#f0f0f0;overflow-x:auto}
+.header{background:#1a1a2e;color:#fff;padding:10px 20px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:18px;font-weight:500}
+.header span{font-size:12px;opacity:.7}
+.toolbar{position:fixed;top:70px;right:15px;z-index:100;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.15);padding:8px;display:flex;gap:4px}
+.toolbar button{width:34px;height:34px;border:1px solid #ddd;border-radius:6px;background:#fff;cursor:pointer;font-size:16px;color:#555;transition:.15s}
+.toolbar button:hover{background:#eef;border-color:#55f;color:#55f}
+.toolbar .sep{width:1px;height:28px;background:#eee;margin:0 4px}
+.legend-card{position:fixed;bottom:15px;right:15px;z-index:100;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.15);padding:10px 14px;font-size:11px;max-width:280px}
+.legend-card h3{font-size:12px;margin-bottom:6px;color:#333}
+.legend-row{display:flex;align-items:center;gap:6px;margin:2px 0}
+.legend-swatch{width:18px;height:4px;border-radius:2px;flex-shrink:0}
+.legend-swatch.jumper{height:3px;background:repeating-linear-gradient(90deg,#E74C3C 0,#E74C3C 5px,transparent 5px,transparent 8px)}
+.canvas-wrap{display:flex;justify-content:center;padding:20px}
+canvas{box-shadow:0 4px 20px rgba(0,0,0,.12);border-radius:2px}
+@media print{.toolbar,.legend-card,.header{display:none}body{background:#fff}.canvas-wrap{padding:0}canvas{box-shadow:none}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><h1>数字温度计 PCB布线图 (30x24)</h1><span>AD590 + CP-07x2 + MC1403 | B面走线(蓝/彩) + A面飞线(红虚线)</span></div>
+</div>
+
+<div class="toolbar">
+  <button onclick="zoomIn()" title="放大">+</button>
+  <button onclick="zoomOut()" title="缩小">-</button>
+  <div class="sep"></div>
+  <button onclick="zoomFit()" title="适应">[]</button>
+  <div class="sep"></div>
+  <button onclick="window.print()" title="打印">P</button>
+</div>
+
+<div class="legend-card">
+  <h3>线路颜色 (地铁风格)</h3>
+  <div class="legend-row"><span class="legend-swatch" style="background:#C0392B"></span> +12V 电源</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#2471A3"></span> -12V 电源</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#1E8449"></span> GND 地线</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#D4AC0D"></span> Io (AD590输出)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#6C3483"></span> Node_A (温度信号)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#17A589"></span> U2_IN- (偏置)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#E91E63"></span> M+_OUT</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#7B241C"></span> Node_G4 (反馈节点)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#D35400"></span> W3相关 (调零)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#7D3C98"></span> U3_Vout (2.5V基准)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#148F77"></span> U4_IN-</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#C2185B"></span> M-_OUT</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#641E16"></span> Node_G7 (反馈节点)</div>
+  <div class="legend-row"><span class="legend-swatch" style="background:#A04000"></span> W4相关 (调零)</div>
+  <div class="legend-row"><span class="legend-swatch jumper"></span> A面飞线(红虚线)</div>
+</div>
+
+<div class="canvas-wrap" id="wrap">
+  <canvas id="c"></canvas>
+</div>
+
+<script>
+// ==================== 网格基础 ====================
+const COLS=30, ROWS=24, PAD=50, CS=24;
+const W=COLS*CS+PAD*2, H=ROWS*CS+PAD*2+20;
+const c=document.getElementById('c');
+c.width=W; c.height=H;
+const ctx=c.getContext('2d');
+
+// 格子坐标→像素中心
+function gx(x){return PAD+(x-1)*CS+CS/2}
+function gy(y){return PAD+(y-1)*CS+CS/2}
+function gt(x,y){return{x:gx(x),y:gy(y)}}
+
+// 坐标转像素 (网格中心)
+function P(x,y){return gt(x,y)}
+
+// ==================== 网络颜色表 (地铁风格) ====================
+const NC={
+  P12:'#C0392B',     // +12V - 深红
+  N12:'#2471A3',     // -12V - 深蓝
+  GND:'#1E8449',     // GND - 深绿
+  IO:'#D4AC0D',      // Io (AD590输出) - 暗金
+  NA:'#6C3483',      // Node_A (温度信号) - 紫色
+  U2INM:'#17A589',   // U2_IN- (偏置) - 青色
+  MP:'#E91E63',      // M+_OUT - 粉红
+  G4:'#7B241C',      // Node_G4 (反馈) - 深红棕
+  W3:'#D35400',      // W3调零 - 橙色
+  U3V:'#7D3C98',     // U3_Vout - 深紫
+  U4INM:'#148F77',   // U4_IN- - 青绿
+  MM:'#C2185B',      // M-_OUT - 玫瑰红
+  G7:'#641E16',      // Node_G7 - 深棕
+  W4:'#A04000',      // W4调零 - 暗橙
+};
+
+// ==================== 元件定义 ====================
+// {id,label,type,x,y,w,h,color,textColor}
+const COMPS = [
+  // 上半部 Y≤12
+  {id:'U1',label:'AD590',type:'sensor',x:4,y:3,w:2,h:2,color:'#B4D7E8',tc:'#1a5276',pins:[
+    {pn:1,rn:1,cn:1,net:'+12V',dir:'n'},{pn:2,rn:2,cn:2,net:'Io',dir:'se'},{pn:3,rn:1,cn:2,net:'GND',dir:'s'}
+  ]},
+  {id:'R1',label:'R1',value:'2K',type:'res',x:7,y:5,w:2,h:1,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'Io',dir:'w'},{pn:2,rn:1,cn:2,net:'Node_A',dir:'e'}
+  ]},
+  {id:'C1',label:'C1',value:'0.01u',type:'cap',x:9,y:7,w:1,h:1,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'Node_A',dir:'n'},{pn:2,rn:1,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'U2',label:'U2',value:'CP-07',type:'dip8',x:14,y:4,w:3,h:4,color:'#FFE066',tc:'#5a4a00'},
+  {id:'R2',label:'R2',value:'2.6K',type:'res',x:11,y:5,w:2,h:1,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'GND',dir:'w'},{pn:2,rn:1,cn:2,net:'U2_IN-',dir:'e'}
+  ]},
+  {id:'C2v',label:'C2',value:'0.01u',type:'cap',x:14,y:9,w:1,h:2,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'-12V',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'C3v',label:'C3',value:'0.01u',type:'cap',x:17,y:4,w:1,h:2,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'+12V',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'W3',label:'W3',value:'20K',type:'pot',x:22,y:4,w:2,h:3,color:'#FFB347',tc:'#5a3a00',pins:[
+    {pn:1,rn:1,cn:2,net:'W3_top',dir:'n'},{pn:2,rn:2,cn:2,net:'W3_mid',dir:''},{pn:3,rn:3,cn:2,net:'W3_bot',dir:'s'}
+  ]},
+  {id:'R3',label:'R3',value:'1K',type:'res',x:18,y:8,w:2,h:1,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'M+_OUT',dir:'w'},{pn:2,rn:1,cn:2,net:'Node_G4',dir:'e'}
+  ]},
+  {id:'R4v',label:'R4',value:'1K',type:'res',x:20,y:9,w:1,h:2,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'Node_G4',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'C4v',label:'C4',value:'0.01u',type:'cap',x:21,y:9,w:1,h:2,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'Node_G4',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'W1',label:'W1',value:'10K',type:'pot',x:23,y:8,w:3,h:1,color:'#FFB347',tc:'#5a3a00',pins:[
+    {pn:1,rn:1,cn:1,net:'M+_OUT',dir:'w'},{pn:2,rn:1,cn:3,net:'Node_G4',dir:'e'}
+  ]},
+  // 下半部 Y≥14
+  {id:'U3',label:'U3',value:'MC1403',type:'vref',x:5,y:15,w:2,h:2,color:'#F5D76E',tc:'#5a4500',pins:[
+    {pn:1,rn:1,cn:1,net:'+12V',dir:'n'},{pn:2,rn:2,cn:2,net:'U3_Vout',dir:'s'},{pn:3,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'R5',label:'R5',value:'10K',type:'res',x:8,y:16,w:2,h:1,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'U3_Vout',dir:'w'},{pn:2,rn:1,cn:2,net:'U4_IN-',dir:'e'}
+  ]},
+  {id:'C5',label:'C5',value:'0.01u',type:'cap',x:10,y:18,w:1,h:1,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'U4_IN-',dir:'n'},{pn:2,rn:1,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'U4',label:'U4',value:'CP-07',type:'dip8',x:14,y:15,w:3,h:4,color:'#FFE066',tc:'#5a4a00'},
+  {id:'C6v',label:'C6',value:'0.01u',type:'cap',x:14,y:19,w:1,h:2,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'-12V',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'W4',label:'W4',value:'20K',type:'pot',x:22,y:15,w:2,h:3,color:'#FFB347',tc:'#5a3a00',pins:[
+    {pn:1,rn:1,cn:2,net:'W4_top',dir:'n'},{pn:2,rn:2,cn:2,net:'W4_mid',dir:''},{pn:3,rn:3,cn:2,net:'W4_bot',dir:'s'}
+  ]},
+  {id:'R6',label:'R6',value:'680',type:'res',x:18,y:19,w:2,h:1,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'M-_OUT',dir:'w'},{pn:2,rn:1,cn:2,net:'Node_G7',dir:'e'}
+  ]},
+  {id:'R7v',label:'R7',value:'1K',type:'res',x:20,y:20,w:1,h:2,color:'#90EE90',tc:'#1a5c1a',pins:[
+    {pn:1,rn:1,cn:1,net:'Node_G7',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'C7v',label:'C7',value:'0.01u',type:'cap',x:21,y:20,w:1,h:2,color:'#87CEFA',tc:'#0d3b66',pins:[
+    {pn:1,rn:1,cn:1,net:'Node_G7',dir:'n'},{pn:2,rn:2,cn:1,net:'GND',dir:'s'}
+  ]},
+  {id:'W2',label:'W2',value:'10K',type:'pot',x:23,y:19,w:3,h:1,color:'#FFB347',tc:'#5a3a00',pins:[
+    {pn:1,rn:1,cn:1,net:'M-_OUT',dir:'w'},{pn:2,rn:1,cn:3,net:'Node_G7',dir:'e'}
+  ]},
+];
+
+// 端子
+const TERMS = [
+  {id:'T1',label:'+12V',y:2},
+  {id:'T2',label:'-12V',y:5},
+  {id:'T3',label:'GND',y:8},
+  {id:'T4',label:'M+',y:11},
+  {id:'T5',label:'M-',y:14},
+  {id:'T6',label:'AD+',y:17},
+  {id:'T7',label:'NC',y:20},
+];
+
+// DIP-8: 左列1-4(上→下), 右列8-5(上→下), 缺口朝左(B面)
+// compX,compY = 元件左上角格子坐标(非像素)
+function dip8pinPos(compX,compY,pn){
+  if(pn<=4){return{x:compX, y:compY+pn-1}}
+  else{return{x:compX+2, y:compY+(8-pn)}}
+}
+
+// ==================== 逐个网络走线路径 ====================
+// segments: 每个网络 = [{x1,y1,x2,y2,...}, ...] 多段
+const NETS = {};
+
+// ---- +12V 轨 (深红) ----
+NETS.P12 = [
+  // 主轨 Y=1, X=1→30
+  [{x:1,y:1,x:30,y:1}],
+  // T1(1,2)→轨
+  [{x:1,y:2,x:1,y:1}],
+  // U1-Pin1(4,2)→轨
+  [{x:4,y:2,x:4,y:1}],
+  // U2-Pin1(14,4)→轨
+  [{x:14,y:4,x:14,y:1}],
+  // U2-Pin7(16,5): 16,5→16,3→14,3→14,1
+  [{x:16,y:5,x:16,y:3},{x:16,y:3,x:14,y:3},{x:14,y:3,x:14,y:1}],
+  // C3-pin1(17,4)→轨  (C3竖放X=17,Y=4-5, pin1在(17,4))
+  [{x:17,y:4,x:17,y:1}],
+  // W3-pin1(23,4)→轨  (W3竖放X=22-23,Y=4-6, pin1在(23,4))
+  [{x:23,y:4,x:23,y:1}],
+  // === 下半部 +12V 走板右边缘 ===
+  // 23,1→25,1→25,12 (沿右边缘向下到-12V轨上方)
+  [{x:23,y:1,x:25,y:1},{x:25,y:1,x:25,y:12}],
+  // === Jumper #1: 25,12→25,14 (A面飞线跨-12V轨) ===
+  // (在jumpers里处理)
+  // === 飞线后: 25,14→5,14 横向到U3 ===
+  [{x:25,y:14,x:5,y:14}],
+  // U3-Pin1(5,14)→飞到→轨  (U3 Pin1在(5,14)但在U3体上=14上方)
+  // 5,14在横向线上已连接
+  // U4-Pin1(14,15): 从14,14向下1格
+  [{x:14,y:14,x:14,y:15}],
+  // U4-Pin7(16,16): 从17,14→17,16→16,16
+  [{x:17,y:14,x:17,y:16},{x:17,y:16,x:16,y:16}],
+];
+
+// ---- -12V 轨 (深蓝) ----
+NETS.N12 = [
+  // 主轨 Y=13, X=1→30 (X=25,14被飞线跨过)
+  [{x:1,y:13,x:30,y:13}],
+  // T2(1,5)→轨
+  [{x:1,y:5,x:1,y:13}],
+  // U2-Pin4(14,7)→轨: 14,7→14,9→14,13
+  [{x:14,y:7,x:14,y:13}],
+  // U4-Pin4(14,18)→轨: 14,18→14,13
+  [{x:14,y:18,x:14,y:13}],
+  // C2-pin1(14,9) 在14,7→14,13线上
+  // C6-pin1(14,19) 在14,18→14,13线上
+];
+
+// ---- GND (深绿) ----
+NETS.GND = [
+  // 主轨 Y=24, X=1→30
+  [{x:1,y:24,x:30,y:24}],
+  // T3(1,8)→轨
+  [{x:1,y:8,x:1,y:24}],
+  // U1-Pin3(4,4): 4,4→4,24
+  [{x:4,y:4,x:4,y:24}],
+  // R2-pin1(11,5): 11,5→11,24
+  [{x:11,y:5,x:11,y:24}],
+  // C1-pin2(9,8): 9,7+caph→9,8→9,24
+  [{x:9,y:8,x:9,y:24}],
+  // C2-pin2(14,10): 14,9+cap→14,10→14,24
+  [{x:14,y:10,x:14,y:24}],
+  // C3-pin2(17,5): 17,4+cap→17,5→17,24
+  [{x:17,y:5,x:17,y:24}],
+  // R4-pin2(20,11): 20,9+res→20,11→20,24
+  [{x:20,y:11,x:20,y:24}],
+  // C4-pin2(21,11): 21,9+cap→21,11→21,24
+  [{x:21,y:11,x:21,y:24}],
+  // U3-Pin3(5,16): 5,16→5,24
+  [{x:5,y:16,x:5,y:24}],
+  // C5-pin2(10,19): 10,18+cap→10,19→10,24
+  [{x:10,y:19,x:10,y:24}],
+  // U4-Pin3(14,17): 14,17→14,24  (但14,20已有C6, 共享路径)
+  [{x:14,y:17,x:14,y:24}],
+  // C6-pin2(14,20): 在14,17→14,24路径上
+  // R7-pin2(20,22): 20,20+res→20,22→20,24
+  [{x:20,y:22,x:20,y:24}],
+  // C7-pin2(21,22): 21,20+cap→21,22→21,24
+  [{x:21,y:22,x:21,y:24}],
+];
+
+// ---- Io (AD590输出→R1) 暗金 ----
+NETS.IO = [
+  // U1-Pin2(5,4)→R1-pin1(7,5): 5,4→6,4→6,5→7,5
+  [{x:5,y:4,x:6,y:4},{x:6,y:4,x:6,y:5},{x:6,y:5,x:7,y:5}],
+];
+
+// ---- Node_A (温度信号) 紫色 ----
+NETS.NA = [
+  // R1-pin2(8,y5)→C1-pin1(9,7)→U2-Pin3(14,6)
+  // R1在X=7-8,Y=5. pin2在X=8(右端). 
+  // 8,5→9,5→9,7 (C1-pin1在9,7). 然后9,7→11,7→11,6→14,6
+  [{x:8,y:5,x:9,y:5},{x:9,y:5,x:9,y:7},{x:9,y:7,x:11,y:7},{x:11,y:7,x:11,y:6},{x:11,y:6,x:14,y:6}],
+];
+
+// ---- U2_IN- (偏置) 青色 ----
+NETS.U2INM = [
+  // R2-pin2(12,y5)→U2-Pin2(14,5): 12,5→13,5→14,5
+  [{x:12,y:5,x:14,y:5}],
+];
+
+// ---- W3_top→+12V, W3中→U2-Pin5, W3下→U2-Pin8 (橙色) ----
+NETS.W3 = [
+  // W3-pin1(23,4)→U2-Pin1方向: 23,4→18,4→14,4 (沿Y=4,经过上面)
+  [{x:23,y:4,x:14,y:4}],
+  // W3-pin2(23,5)→U2-Pin5(16,7): 23,5→18,5→18,7→16,7
+  [{x:23,y:5,x:18,y:5},{x:18,y:5,x:18,y:7},{x:18,y:7,x:16,y:7}],
+  // W3-pin3(23,6)→U2-Pin8(16,4): 23,6→18,6→18,4→16,4
+  [{x:23,y:6,x:18,y:6},{x:18,y:6,x:18,y:4},{x:18,y:4,x:16,y:4}],
+];
+
+// ---- M+_OUT (粉红) ----
+// U2-Pin6(16,6)→M+端子(1,11)+反馈分支:
+//  主线: 16,6→27,6→27,11→1,11
+//  反馈: 16,6→17,6→17,8→18,8 (R3-pin1)
+//  W1-pin1: 23,8←从主线27,6向下→27,8→23,8
+NETS.MP = [
+  // 主线: 16,6→27,6→27,11→1,11 (板边)
+  [{x:16,y:6,x:27,y:6},{x:27,y:6,x:27,y:11},{x:27,y:11,x:2,y:11},{x:2,y:11,x:1,y:11}],
+  // 反馈: 16,6→17,6→17,8→18,8 (R3-pin1)
+  [{x:16,y:6,x:17,y:6},{x:17,y:6,x:17,y:8},{x:17,y:8,x:18,y:8}],
+  // W1-pin1(23,8): 27,6→27,8→23,8 (W1横放X=23-25,Y=8, pin1在23,8)
+  [{x:27,y:6,x:27,y:8},{x:27,y:8,x:23,y:8}],
+];
+
+// ---- Node_G4 (深红棕) ----
+// R3-pin2(19,y8)→R4-pin1(20,9)→C4-pin1(21,9)→W1-pin2(25,8)
+// R3横放X=18-19,Y=8, pin2在X=19
+// 19,8→20,8→20,9 (R4-pin1在20,9)
+// →21,8→21,9 (C4-pin1在21,9) 但C4竖放X=21,Y=9-10, pin1在21,9
+// →24,9→24,8→25,8 (W1-pin2在25,8)
+NETS.G4 = [
+  [{x:19,y:8,x:20,y:8},{x:20,y:8,x:20,y:9},{x:20,y:9,x:21,y:9},{x:21,y:9,x:24,y:9},{x:24,y:9,x:24,y:8},{x:24,y:8,x:25,y:8}],
+];
+
+// ---- U3_Vout (深紫) ----
+// U3-Pin2(6,16)→R5-pin1(8,16): 6,16→7,16→8,16
+NETS.U3V = [
+  [{x:6,y:16,x:8,y:16}],
+];
+
+// ---- U4_IN- (青绿) ----
+// R5-pin2(9,y16)→U4-Pin2(14,16)+C5-pin1
+// R5横放X=8-9,Y=16, pin2在X=9
+// 9,16→10,16→10,18 (C5-pin1在10,18)
+// 9,16→12,16→14,16 (U4-Pin2)
+// 从10,16分支: 9,16→10,16直接主干
+NETS.U4INM = [
+  [{x:9,y:16,x:10,y:16},{x:10,y:16,x:10,y:18}],  // 到C5
+  [{x:9,y:16,x:14,y:16}],                           // 到U4-Pin2
+];
+
+// ---- M-_OUT (玫瑰红) ----
+// U4-Pin6(16,17)→M-端子(1,14)+反馈:
+//  主线: 16,17→27,17→27,14→1,14
+//  反馈: 16,17→17,17→17,19→18,19 (R6-pin1)
+//  W2-pin1: 23,19←从主线27,17→27,19→23,19
+NETS.MM = [
+  [{x:16,y:17,x:27,y:17},{x:27,y:17,x:27,y:14},{x:27,y:14,x:2,y:14},{x:2,y:14,x:1,y:14}],
+  [{x:16,y:17,x:17,y:17},{x:17,y:17,x:17,y:19},{x:17,y:19,x:18,y:19}],
+  [{x:27,y:17,x:27,y:19},{x:27,y:19,x:23,y:19}],
+];
+
+// ---- Node_G7 (深棕) ----
+// R6-pin2(19,y19)→R7-pin1(20,20)→C7-pin1(21,20)→W2-pin2(25,19)
+NETS.G7 = [
+  [{x:19,y:19,x:20,y:19},{x:20,y:19,x:20,y:20},{x:20,y:20,x:21,y:20},{x:21,y:20,x:24,y:20},{x:24,y:20,x:24,y:19},{x:24,y:19,x:25,y:19}],
+];
+
+// ---- W4_top→+12V, W4中→U4-Pin5, W4下→U4-Pin8 (暗橙) ----
+NETS.W4 = [
+  // W4-pin1(23,15)→U4-Pin1(14,15): 23,15→14,15
+  [{x:23,y:15,x:14,y:15}],
+  // W4-pin2(23,16)→U4-Pin5(16,18): 23,16→18,16→18,18→16,18
+  [{x:23,y:16,x:18,y:16},{x:18,y:16,x:18,y:18},{x:18,y:18,x:16,y:18}],
+  // W4-pin3(23,17)→U4-Pin8(16,15): 23,17→18,17→18,15→16,15
+  [{x:23,y:17,x:18,y:17},{x:18,y:17,x:18,y:15},{x:18,y:15,x:16,y:15}],
+];
+
+// ---- 飞线 (红色虚线) ----
+const JUMPERS = [
+  // J1: +12V→下半部, 25,12→25,14 跨越-12V轨(Y=13), A面红色虚线
+  {id:'J1',from:{x:25,y:12},to:{x:25,y:14},reason:'+12V跨-12V轨(25,12→25,14)'},
+];
+
+// ==================== 绘制函数 ====================
+
+function drawGrid(){
+  const L=CS*0.5;
+  for(let y=1;y<=ROWS;y++){
+    for(let x=1;x<=COLS;x++){
+      const is5=(x%5===0||y%5===0);
+      ctx.strokeStyle=is5?'#bbb':'#e0e0e0';
+      ctx.lineWidth=is5?0.8:0.4;
+      ctx.strokeRect(PAD+(x-1)*CS,PAD+(y-1)*CS,CS,CS);
+    }
+  }
+  // 坐标数字
+  ctx.fillStyle='#999';ctx.font='9px sans-serif';ctx.textAlign='center';
+  for(let x=1;x<=COLS;x+=5){ctx.fillText(x,gx(x),PAD-8)}
+  ctx.textAlign='right';
+  for(let y=1;y<=ROWS;y++){ctx.fillText(y,PAD-8,gy(y)+3)}
+}
+
+function drawRails(){
+  const rails=[
+    {y:1,c:NC.P12,l:'+12V'},
+    {y:13,c:NC.N12,l:'-12V'},
+    {y:24,c:NC.GND,l:'GND'},
+  ];
+  rails.forEach(r=>{
+    ctx.strokeStyle=r.c;ctx.lineWidth=3;
+    ctx.beginPath();ctx.moveTo(gx(1),gy(r.y));ctx.lineTo(gx(30),gy(r.y));ctx.stroke();
+    ctx.fillStyle=r.c;ctx.font='bold 11px sans-serif';ctx.textAlign='right';
+    ctx.fillText(r.l,gx(0.5),gy(r.y)+4);
+  });
+}
+
+function drawNet(netKey,netData){
+  const color=NC[netKey];
+  if(!color||!netData)return;
+  ctx.strokeStyle=color;
+  ctx.lineWidth=2.5;
+  ctx.lineCap='round';
+  ctx.lineJoin='miter';
+  netData.forEach(segs=>{
+    segs.forEach(seg=>{
+      ctx.beginPath();
+      ctx.moveTo(gx(seg.x),gy(seg.y));
+      // 如果有更多点...
+      const keys=Object.keys(seg);
+      if(seg.x1!==undefined){
+        // multi-segment: {x1,y1,x2,y2}
+        ctx.moveTo(gx(seg.x1),gy(seg.y1));
+        ctx.lineTo(gx(seg.x2),gy(seg.y2));
+        if(seg.x3!==undefined){ctx.lineTo(gx(seg.x3),gy(seg.y3))}
+        if(seg.x4!==undefined){ctx.lineTo(gx(seg.x4),gy(seg.y4))}
+        if(seg.x5!==undefined){ctx.lineTo(gx(seg.x5),gy(seg.y5))}
+        if(seg.x6!==undefined){ctx.lineTo(gx(seg.x6),gy(seg.y6))}
+      } else {
+        // {x,y,x,y}: each pair is a point, first is start, rest are lines
+        // 实际上seg里的结构是{x:...,y:...}不是数组
+        // 我需要重新设计数据结构
+      }
+      ctx.stroke();
+    });
+  });
+}
+
+function drawAllNets(){
+  // 先画底层电源轨
+  drawRails();
+
+  // 然后逐个网络画走线
+  Object.keys(NETS).forEach(k=>{
+    const net=NETS[k];
+    if(!net||!net.length)return;
+    const color=NC[k];
+    if(!color)return;
+    ctx.strokeStyle=color;
+    ctx.lineWidth=2.5;
+    ctx.lineCap='round';
+    ctx.lineJoin='miter';
+    net.forEach(group=>{
+      group.forEach(seg=>{
+        // seg是{x:...,y:...,x:...,y:...} 即每个seg是一段线
+        if(seg.length===undefined){
+          // 对象格式: {x1,y1,x2,y2,x3,y3,...}
+          const pts=[];
+          for(let i=0;;i++){
+            const px=seg['x'+(i+1)], py=seg['y'+(i+1)];
+            if(px===undefined||py===undefined)break;
+            pts.push({x:px,y:py});
+          }
+          if(pts.length<2)return;
+          ctx.beginPath();
+          ctx.moveTo(gx(pts[0].x),gy(pts[0].y));
+          for(let i=1;i<pts.length;i++)ctx.lineTo(gx(pts[i].x),gy(pts[i].y));
+          ctx.stroke();
+        }
+      });
+    });
+  });
+
+  // 飞线 (红色虚线)
+  ctx.strokeStyle='#E74C3C';
+  ctx.lineWidth=3;
+  ctx.setLineDash([6,4]);
+  JUMPERS.forEach(j=>{
+    ctx.beginPath();
+    ctx.moveTo(gx(j.from.x),gy(j.from.y));
+    ctx.lineTo(gx(j.to.x),gy(j.to.y));
+    ctx.stroke();
+    // 标注
+    ctx.setLineDash([]);
+    ctx.fillStyle='#E74C3C';
+    ctx.font='bold 10px sans-serif';
+    ctx.textAlign='center';
+    const mx=gx((j.from.x+j.to.x)/2), my=gy((j.from.y+j.to.y)/2)-6;
+    ctx.fillText(j.id,mx-12,my);
+    ctx.setLineDash([6,4]);
+  });
+  ctx.setLineDash([]);
+}
+
+// 有问题!! NETS数据结构需要调整。每个segment应该直接是{x1,y1,x2,y2,x3,y3,...}格式。
+// 让我换一种更简单的格式：path = [{x,y},{x,y},{x,y},...]
+
+function drawPath(pts,color,width=2.5){
+  if(pts.length<2)return;
+  ctx.strokeStyle=color;
+  ctx.lineWidth=width;
+  ctx.lineCap='round';
+  ctx.lineJoin='miter';
+  ctx.beginPath();
+  ctx.moveTo(gx(pts[0].x),gy(pts[0].y));
+  for(let i=1;i<pts.length;i++)ctx.lineTo(gx(pts[i].x),gy(pts[i].y));
+  ctx.stroke();
+}
+
+// 重新定义所有走线路径 (简化: 每个网络=多条path, 每条path=[{x,y},...])
+function buildPaths(){
+  const paths={};
+
+  // +12V
+  paths.P12=[];
+  // 主轨
+  paths.P12.push([{x:1,y:1},{x:30,y:1}]);
+  // 各分支
+  paths.P12.push([{x:1,y:2},{x:1,y:1}]);          // T1
+  paths.P12.push([{x:4,y:2},{x:4,y:1}]);          // U1-Pin1
+  paths.P12.push([{x:14,y:4},{x:14,y:1}]);         // U2-Pin1
+  paths.P12.push([{x:16,y:5},{x:16,y:3},{x:14,y:3},{x:14,y:1}]); // U2-Pin7(绕)
+  paths.P12.push([{x:17,y:4},{x:17,y:1}]);         // C3-pin1
+  paths.P12.push([{x:23,y:4},{x:23,y:1}]);         // W3-pin1
+  // 右边缘→下半部
+  paths.P12.push([{x:23,y:1},{x:25,y:1},{x:25,y:12}]); // 到飞线起点
+  // 飞线后: 25,14→14,14 (U4-Pin1), 25,14→5,14 (U3)
+  paths.P12.push([{x:25,y:14},{x:14,y:14},{x:14,y:15}]); // 到U4-Pin1
+  paths.P12.push([{x:17,y:14},{x:17,y:16},{x:16,y:16}]); // 到U4-Pin7
+
+  // -12V
+  paths.N12=[];
+  paths.N12.push([{x:1,y:13},{x:30,y:13}]);          // 主轨
+  paths.N12.push([{x:1,y:5},{x:1,y:13}]);             // T2
+  paths.N12.push([{x:14,y:7},{x:14,y:13}]);           // U2-Pin4 (途经C2-pin1)
+  paths.N12.push([{x:14,y:19},{x:14,y:18},{x:14,y:13}]);  // C6-pin1→U4-Pin4→-12V轨
+
+  // GND
+  paths.GND=[];
+  paths.GND.push([{x:1,y:24},{x:30,y:24}]);           // 主轨
+  paths.GND.push([{x:1,y:8},{x:1,y:24}]);             // T3
+  paths.GND.push([{x:4,y:4},{x:4,y:24}]);             // U1-Pin3
+  paths.GND.push([{x:11,y:5},{x:11,y:24}]);           // R2-pin1
+  paths.GND.push([{x:9,y:8},{x:9,y:24}]);             // C1-pin2
+  paths.GND.push([{x:14,y:10},{x:14,y:24}]);          // C2-pin2 (与U4-Pin3/14,17→14,24并行)
+  paths.GND.push([{x:17,y:5},{x:17,y:24}]);           // C3-pin2
+  paths.GND.push([{x:20,y:11},{x:20,y:24}]);          // R4-pin2
+  paths.GND.push([{x:21,y:11},{x:21,y:24}]);          // C4-pin2
+  paths.GND.push([{x:5,y:16},{x:5,y:24}]);            // U3-Pin3
+  paths.GND.push([{x:10,y:19},{x:10,y:24}]);          // C5-pin2
+  paths.GND.push([{x:14,y:17},{x:14,y:24}]);          // U4-Pin3 & C6
+  paths.GND.push([{x:20,y:22},{x:20,y:24}]);          // R7-pin2
+  paths.GND.push([{x:21,y:22},{x:21,y:24}]);          // C7-pin2
+
+  // Io
+  paths.IO=[];
+  paths.IO.push([{x:5,y:4},{x:6,y:4},{x:6,y:5},{x:7,y:5}]); // U1-Pin2→R1-pin1
+
+  // Node_A
+  paths.NA=[];
+  paths.NA.push([{x:8,y:5},{x:9,y:5},{x:9,y:7},{x:11,y:7},{x:11,y:6},{x:14,y:6}]); // R1-pin2→C1→U2-Pin3
+
+  // U2_IN-
+  paths.U2INM=[];
+  paths.U2INM.push([{x:12,y:5},{x:14,y:5}]); // R2-pin2→U2-Pin2
+
+  // W3
+  paths.W3=[];
+  paths.W3.push([{x:23,y:4},{x:14,y:4}]);                                   // W3-pin1→U2-Pin1
+  paths.W3.push([{x:23,y:5},{x:18,y:5},{x:18,y:7},{x:16,y:7}]);            // W3-pin2→U2-Pin5
+  paths.W3.push([{x:23,y:6},{x:18,y:6},{x:18,y:4},{x:16,y:4}]);            // W3-pin3→U2-Pin8
+
+  // M+_OUT
+  paths.MP=[];
+  paths.MP.push([{x:16,y:6},{x:27,y:6},{x:27,y:11},{x:1,y:11}]);            // 主线: U2-out→M+端子
+  paths.MP.push([{x:16,y:6},{x:17,y:6},{x:17,y:8},{x:18,y:8}]);            // 反馈分支→R3
+  paths.MP.push([{x:27,y:6},{x:27,y:8},{x:23,y:8}]);                       // W1-pin1分支
+
+  // Node_G4
+  paths.G4=[];
+  paths.G4.push([{x:19,y:8},{x:20,y:8},{x:20,y:9},{x:21,y:9},{x:24,y:9},{x:24,y:8},{x:25,y:8}]); // R3→R4→C4→W1
+
+  // U3_Vout
+  paths.U3V=[];
+  paths.U3V.push([{x:6,y:16},{x:8,y:16}]); // U3-Pin2→R5-pin1
+
+  // U4_IN-
+  paths.U4INM=[];
+  paths.U4INM.push([{x:9,y:16},{x:10,y:16},{x:10,y:18}]); // R5→C5
+  paths.U4INM.push([{x:9,y:16},{x:14,y:16}]);               // R5→U4-Pin2
+
+  // M-_OUT
+  paths.MM=[];
+  paths.MM.push([{x:16,y:17},{x:27,y:17},{x:27,y:14},{x:1,y:14}]);           // 主线
+  paths.MM.push([{x:16,y:17},{x:17,y:17},{x:17,y:19},{x:18,y:19}]);          // 反馈→R6
+  paths.MM.push([{x:27,y:17},{x:27,y:19},{x:23,y:19}]);                      // W2-pin1
+
+  // Node_G7
+  paths.G7=[];
+  paths.G7.push([{x:19,y:19},{x:20,y:19},{x:20,y:20},{x:21,y:20},{x:24,y:20},{x:24,y:19},{x:25,y:19}]);
+
+  // W4
+  paths.W4=[];
+  paths.W4.push([{x:23,y:15},{x:14,y:15}]);                                   // W4-pin1→U4-Pin1
+  paths.W4.push([{x:23,y:16},{x:18,y:16},{x:18,y:18},{x:16,y:18}]);          // W4-pin2→U4-Pin5
+  paths.W4.push([{x:23,y:17},{x:18,y:17},{x:18,y:15},{x:16,y:15}]);          // W4-pin3→U4-Pin8
+
+  return paths;
+}
+
+function drawAllPaths(paths){
+  // 先画主电源轨
+  drawRails();
+
+  // 画各网络
+  Object.keys(paths).forEach(k=>{
+    const color=NC[k];
+    if(!color)return;
+    paths[k].forEach(pts=>drawPath(pts,color,2.5));
+  });
+
+  // 飞线
+  for(const J of JUMPERS){
+    const p1=P(J.from.x,J.from.y), p2=P(J.to.x,J.to.y);
+    ctx.strokeStyle='#E74C3C';
+    ctx.lineWidth=3;
+    ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(p1.x,p1.y);ctx.lineTo(p2.x,p2.y);ctx.stroke();
+    ctx.setLineDash([]);
+    // 标注
+    const mx=(p1.x+p2.x)/2, my=(p1.y+p2.y)/2;
+    ctx.fillStyle='#E74C3C';ctx.font='bold 11px sans-serif';ctx.textAlign='left';
+    ctx.fillText(J.id,mx+4,my-4);
+  }
+}
+
+function drawComponents(){
+  COMPS.forEach(comp=>{
+    const cx=gx(comp.x)+comp.w*CS/2-CS/2, cy=gy(comp.y)+comp.h*CS/2-CS/2;
+    const wPx=comp.w*CS, hPx=comp.h*CS;
+
+    if(comp.type==='dip8'){
+      // DIP-8矩形 + 缺角标记
+      ctx.fillStyle=comp.color;
+      ctx.fillRect(cx,cy,wPx,hPx);
+      ctx.strokeStyle='#999';ctx.lineWidth=1.5;
+      ctx.strokeRect(cx,cy,wPx,hPx);
+      // 缺口标记(左侧中间缺口)
+      ctx.fillStyle='#fff';
+      ctx.fillRect(cx-2,cy+hPx/2-5,4,10);
+      // 引脚编号
+      ctx.fillStyle='#333';ctx.font='bold 9px sans-serif';
+      for(let p=1;p<=8;p++){
+        const pp=dip8pinPos(comp.x,comp.y,p);
+        const px=gx(pp.x), py=gy(pp.y);
+        if(p<=4){ctx.textAlign='right';ctx.fillText(p,px-3,py+4)}
+        else{ctx.textAlign='left';ctx.fillText(p,px+3,py+4)}
+      }
+      ctx.textAlign='center';
+      ctx.fillStyle=comp.tc;ctx.font='bold 10px sans-serif';
+      ctx.fillText(comp.label,cx+wPx/2,cy+hPx/2-2);
+      ctx.font='9px sans-serif';
+      ctx.fillText(comp.value,cx+wPx/2,cy+hPx/2+10);
+    } else {
+      // 普通元件
+      ctx.fillStyle=comp.color;
+      ctx.fillRect(cx,cy,wPx,hPx);
+      ctx.strokeStyle='#888';ctx.lineWidth=1;
+      ctx.strokeRect(cx,cy,wPx,hPx);
+      ctx.fillStyle=comp.tc;ctx.textAlign='center';
+      ctx.font='bold 10px sans-serif';
+      let ly=cy+hPx/2;
+      if(comp.value){ly-=5;ctx.fillText(comp.value,cx+wPx/2,cy+hPx/2+6)}
+      ctx.fillText(comp.label,cx+wPx/2,ly-2);
+    }
+
+    // 引脚焊盘
+    if(comp.pins){
+      comp.pins.forEach(pin=>{
+        const padX=gx(comp.x+pin.cn-1), padY=gy(comp.y+pin.rn-1);
+        let c='#666';
+        if(pin.net==='+12V')c='#E74C3C';
+        else if(pin.net==='-12V')c='#2471A3';
+        else if(pin.net==='GND')c='#1E8449';
+        ctx.fillStyle=c;
+        ctx.beginPath();ctx.arc(padX,padY,3.5,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#fff';ctx.lineWidth=1;
+        ctx.beginPath();ctx.arc(padX,padY,3.5,0,Math.PI*2);ctx.stroke();
+      });
+    }
+  });
+}
+
+function drawTerminals(){
+  TERMS.forEach(t=>{
+    const x=gx(1), y=gy(t.y);
+    ctx.fillStyle='#ddd';ctx.strokeStyle='#888';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.arc(x,y,8,0,Math.PI*2);ctx.fill();ctx.stroke();
+    ctx.fillStyle='#333';ctx.font='bold 10px sans-serif';ctx.textAlign='left';
+    ctx.fillText(t.label,x+12,y+4);
+    // 引线小突起
+    ctx.fillStyle='#666';ctx.beginPath();ctx.arc(x,y,2,0,Math.PI*2);ctx.fill();
+  });
+}
+
+// 图例嵌入canvas右下角
+function drawLegendOnCanvas(){
+  const lx=W-210, ly=H-310;
+  ctx.fillStyle='rgba(255,255,255,0.92)';
+  ctx.fillRect(lx,ly,200,295);
+  ctx.strokeStyle='#ccc';ctx.lineWidth=1;
+  ctx.strokeRect(lx,ly,200,295);
+  ctx.fillStyle='#333';ctx.font='bold 11px sans-serif';
+  ctx.fillText('线路颜色',lx+8,ly+18);
+
+  const items=[
+    [NC.P12,'+12V 电源'],[NC.N12,'-12V 电源'],[NC.GND,'GND 地线'],
+    [NC.IO,'Io (AD590输出)'],[NC.NA,'Node_A (温度信号)'],[NC.U2INM,'U2 IN- (偏置)'],
+    [NC.MP,'M+_OUT'],[NC.G4,'Node_G4 (反馈)'],[NC.W3,'W3 (调零)'],
+    [NC.U3V,'U3_Vout'],[NC.U4INM,'U4 IN-'],[NC.MM,'M-_OUT'],
+    [NC.G7,'Node_G7 (反馈)'],[NC.W4,'W4 (调零)'],
+  ];
+  items.forEach((it,i)=>{
+    const y=ly+30+i*17;
+    ctx.strokeStyle=it[0];ctx.lineWidth=2.5;ctx.lineCap='round';
+    ctx.beginPath();ctx.moveTo(lx+10,y);ctx.lineTo(lx+40,y);ctx.stroke();
+    ctx.fillStyle='#555';ctx.font='10px sans-serif';ctx.textAlign='left';
+    ctx.fillText(it[1],lx+46,y+4);
+  });
+  // 飞线
+  const fy=ly+30+items.length*17;
+  ctx.strokeStyle='#E74C3C';ctx.lineWidth=2.5;
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();ctx.moveTo(lx+10,fy);ctx.lineTo(lx+40,fy);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillText('A面飞线(红虚线)',lx+46,fy+4);
+
+  // 统计信息
+  ctx.fillStyle='#555';ctx.font='10px sans-serif';
+  const si=items.length+2;
+  ctx.fillText(`走线网络: ${items.length}`,lx+10,ly+30+(si+1)*17);
+  ctx.fillText(`飞线: ${JUMPERS.length}条`,lx+10,ly+30+(si+2)*17);
+  ctx.fillText(`元件: ${COMPS.length}个`,lx+10,ly+30+(si+3)*17);
+}
+
+// 区域标注
+function drawZoneLabels(){
+  ctx.fillStyle='rgba(52,73,94,0.06)';
+  ctx.fillRect(PAD,10,COLS*CS,11.5*CS);
+  ctx.fillStyle='rgba(52,73,94,0.06)';
+  ctx.fillRect(PAD,12.5*CS+10,COLS*CS,11.5*CS-10);
+
+  ctx.fillStyle='rgba(52,73,94,0.12)';ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+  ctx.fillText('温度检测通道 AD590→U2→M+',W/2,CS*6+PAD);
+  ctx.fillText('基准校正通道 MC1403→U4→M-',W/2,CS*19+PAD);
+}
+
+function render(){
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+
+  drawZoneLabels();
+  drawGrid();
+
+  const paths=buildPaths();
+  drawAllPaths(paths);
+  drawComponents();
+  drawTerminals();
+  drawLegendOnCanvas();
+}
+
+render();
+
+// 缩放
+let zoom=1;
+function applyZoom(){
+  const el=document.getElementById('wrap');
+  el.style.transform=`scale(${zoom})`;
+  el.style.transformOrigin='top center';
+}
+function zoomIn(){zoom=Math.min(2.5,zoom+0.1);applyZoom()}
+function zoomOut(){zoom=Math.max(0.3,zoom-0.1);applyZoom()}
+function zoomFit(){zoom=Math.min(1,(window.innerWidth-20)/W);applyZoom()}
+window.onload=()=>{zoomFit()};
+</script>
+</body>
+</html>

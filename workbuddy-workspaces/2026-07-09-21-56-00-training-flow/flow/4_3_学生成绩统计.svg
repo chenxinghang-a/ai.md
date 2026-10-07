@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="646" font-family="'Microsoft YaHei','SimSun',sans-serif">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<line x1="260.0" y1="82" x2="260.0" y2="132" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="190" x2="260.0" y2="240" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="298" x2="260.0" y2="348" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="406" x2="260.0" y2="456" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="514" x2="260.0" y2="564" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<rect x="160.0" y="30" width="200" height="52" rx="26.0" ry="26.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="260.0" y="62.0" font-size="16" fill="#222" text-anchor="middle">开始</text>
+<rect x="100.0" y="132" width="320" height="58" rx="14" ry="14" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="260.0" y="167.0" font-size="16" fill="#222" text-anchor="middle">① 输入10人×5门成绩 scores[][]</text>
+<rect x="100.0" y="240" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="275.0" font-size="16" fill="#222" text-anchor="middle">② 调用 stuAvg() 输出每人平均分</text>
+<rect x="100.0" y="348" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="383.0" font-size="16" fill="#222" text-anchor="middle">③ 调用 courAvg() 输出每课程平均分</text>
+<rect x="100.0" y="456" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="491.0" font-size="16" fill="#222" text-anchor="middle">④ 调用 findMax() 找最高分及位置</text>
+<rect x="160.0" y="564" width="200" height="52" rx="26.0" ry="26.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="260.0" y="596.0" font-size="16" fill="#222" text-anchor="middle">结束</text>
+</svg>

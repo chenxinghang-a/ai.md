@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1076" height="958.0" font-family="'Microsoft YaHei','SimSun',sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#1a56b0"/></marker><marker id="av" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#555"/></marker></defs>
+<text x="200" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">流程图</text>
+<text x="850.0" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">程序代码</text>
+<line x1="200.0" y1="98.0" x2="200.0" y2="151.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="205.0" x2="200.0" y2="255.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="309.0" x2="200.0" y2="359.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="413.0" x2="200.0" y2="463.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="517.0" x2="200.0" y2="567.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="621.0" x2="200.0" y2="671.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="725.0" x2="200.0" y2="775.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="829.0" x2="200.0" y2="882.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<rect x="105.0" y="50.0" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="79.0" font-size="15" fill="#222" text-anchor="middle">开始</text>
+<rect x="50.0" y="151.0" width="300" height="54" rx="12" ry="12" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="200.0" y="183.0" font-size="15" fill="#222" text-anchor="middle">① 输入半径r、圆柱高h</text>
+<rect x="50.0" y="255.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="287.0" font-size="15" fill="#222" text-anchor="middle">② 计算圆周长 ci=2πr</text>
+<rect x="50.0" y="359.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="391.0" font-size="15" fill="#222" text-anchor="middle">③ 计算圆面积 cy=πr²</text>
+<rect x="50.0" y="463.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="495.0" font-size="15" fill="#222" text-anchor="middle">④ 计算球表面积 sp=4πr²</text>
+<rect x="50.0" y="567.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="599.0" font-size="15" fill="#222" text-anchor="middle">⑤ 计算球体积 vsp=4/3πr³</text>
+<rect x="50.0" y="671.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="703.0" font-size="15" fill="#222" text-anchor="middle">⑥ 计算圆柱体积 vcy=cy·h</text>
+<rect x="50.0" y="775.0" width="300" height="54" rx="12" ry="12" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="200.0" y="807.0" font-size="15" fill="#222" text-anchor="middle">⑦ 输出五项结果</text>
+<rect x="105.0" y="882.0" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="911.0" font-size="15" fill="#222" text-anchor="middle">结束</text>
+<rect x="632" y="42" width="436" height="545" fill="#f7f7f7" stroke="#cccccc" stroke-width="1"/>
+<text x="640" y="65.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#include &lt;stdio.h&gt;</text>
+<text x="640" y="88.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#define PI 3.14159</text>
+<text x="640" y="111.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">int main() {</text>
+<text x="640" y="134.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    double r, h, ci, cy, sp, vsp, vcy;</text>
+<text x="640" y="157.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal"> </text>
+<text x="640" y="180.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ① 输入半径r、圆柱高h */</text>
+<text x="640" y="203.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("输入半径r："); scanf("%lf", &amp;r);</text>
+<text x="640" y="226.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("输入圆柱高h："); scanf("%lf", &amp;h);</text>
+<text x="640" y="249.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal"> </text>
+<text x="640" y="272.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ② 圆周长 */     ci = 2 * PI * r;</text>
+<text x="640" y="295.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ③ 圆面积 */      cy = PI * r * r;</text>
+<text x="640" y="318.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ④ 球表面积 */    sp = 4 * PI * r * r;</text>
+<text x="640" y="341.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ⑤ 球体积 */      vsp = 4.0 / 3 * PI * r * r * r;</text>
+<text x="640" y="364.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ⑥ 圆柱体积 */    vcy = cy * h;</text>
+<text x="640" y="387.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal"> </text>
+<text x="640" y="410.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ⑦ 输出五项结果 */</text>
+<text x="640" y="433.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("圆周长=%.2f\n", ci);</text>
+<text x="640" y="456.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("圆面积=%.2f\n", cy);</text>
+<text x="640" y="479.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("球表面积=%.2f\n", sp);</text>
+<text x="640" y="502.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("球体积=%.2f\n", vsp);</text>
+<text x="640" y="525.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("圆柱体积=%.2f\n", vcy);</text>
+<text x="640" y="548.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    return 0;</text>
+<text x="640" y="571.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<line x1="350.0" y1="178.0" x2="634" y2="176.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="282.0" x2="634" y2="268.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="386.0" x2="634" y2="291.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="490.0" x2="634" y2="314.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="594.0" x2="634" y2="337.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="698.0" x2="634" y2="360.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="802.0" x2="634" y2="406.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+</svg>

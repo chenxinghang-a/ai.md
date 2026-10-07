@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1076" height="646.0" font-family="'Microsoft YaHei','SimSun',sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#1a56b0"/></marker><marker id="av" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#555"/></marker></defs>
+<text x="200" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">流程图</text>
+<text x="850.0" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">程序代码</text>
+<line x1="200.0" y1="98.0" x2="200.0" y2="151.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="205.0" x2="200.0" y2="234.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="330.0" x2="200.0" y2="359.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<rect x="204.0" y="333.5" width="24" height="18" fill="#fff"/>
+<text x="216.0" y="346.5" font-size="14" fill="#b00" text-anchor="middle">否</text>
+<line x1="200.0" y1="413.0" x2="200.0" y2="463.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="517.0" x2="200.0" y2="570.0" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<rect x="105.0" y="50.0" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="79.0" font-size="15" fill="#222" text-anchor="middle">开始</text>
+<rect x="50.0" y="151.0" width="300" height="54" rx="12" ry="12" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="200.0" y="183.0" font-size="15" fill="#222" text-anchor="middle">① 输入成绩 score</text>
+<polygon points="200.0,234.0 315.0,282.0 200.0,330.0 85.0,282.0" fill="#e8f0fe" stroke="#1a56b0" stroke-width="2"/>
+<text x="200.0" y="287.0" font-size="15" fill="#16335c" text-anchor="middle">② score&lt;0 或 &gt;100 ?</text>
+<rect x="50.0" y="359.0" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="391.0" font-size="15" fill="#222" text-anchor="middle">③ switch(score/10) 定等级 grade</text>
+<rect x="50.0" y="463.0" width="300" height="54" rx="12" ry="12" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="200.0" y="495.0" font-size="15" fill="#222" text-anchor="middle">④ 输出成绩等级 grade</text>
+<rect x="105.0" y="570.0" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="599.0" font-size="15" fill="#222" text-anchor="middle">结束</text>
+<rect x="632" y="42" width="436" height="499" fill="#f7f7f7" stroke="#cccccc" stroke-width="1"/>
+<text x="640" y="65.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#include &lt;stdio.h&gt;</text>
+<text x="640" y="88.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">int main() {</text>
+<text x="640" y="111.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    int score; char grade;</text>
+<text x="640" y="134.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ① 输入成绩 score */</text>
+<text x="640" y="157.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("请输入百分制成绩："); scanf("%d", &amp;score);</text>
+<text x="640" y="180.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ② 合法性校验 */</text>
+<text x="640" y="203.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    if (score &lt; 0 || score &gt; 100) {</text>
+<text x="640" y="226.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        printf("输入成绩不合法！\n");</text>
+<text x="640" y="249.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        return 0;</text>
+<text x="640" y="272.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    }</text>
+<text x="640" y="295.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ③ switch 定等级 */</text>
+<text x="640" y="318.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    switch (score / 10) {</text>
+<text x="640" y="341.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        case 10: case 9: grade='A'; break;</text>
+<text x="640" y="364.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        case 8:         grade='B'; break;</text>
+<text x="640" y="387.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        case 7:         grade='C'; break;</text>
+<text x="640" y="410.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        case 6:         grade='D'; break;</text>
+<text x="640" y="433.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        default:        grade='E'; break;</text>
+<text x="640" y="456.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    }</text>
+<text x="640" y="479.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ④ 输出等级 */</text>
+<text x="640" y="502.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("成绩等级：%c\n", grade); return 0;</text>
+<text x="640" y="525.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<line x1="350.0" y1="178.0" x2="634" y2="130.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="315.0" y1="282.0" x2="634" y2="176.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="386.0" x2="634" y2="291.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="490.0" x2="634" y2="475.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+</svg>

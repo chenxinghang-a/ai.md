@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1076" height="1115.5" font-family="'Microsoft YaHei','SimSun',sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<defs><marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#1a56b0"/></marker><marker id="av" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M0,0 L9,5 L0,10 z" fill="#555"/></marker></defs>
+<text x="200" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">流程图</text>
+<text x="850.0" y="26" font-size="16" font-weight="bold" fill="#333" text-anchor="middle">程序代码</text>
+<line x1="200.0" y1="98.0" x2="200.0" y2="586.5" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="640.5" x2="200.0" y2="724.5" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="778.5" x2="200.0" y2="828.5" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="882.5" x2="200.0" y2="932.5" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<line x1="200.0" y1="986.5" x2="200.0" y2="1039.5" stroke="#555" stroke-width="2" marker-end="url(#av)"/>
+<rect x="105.0" y="50.0" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="79.0" font-size="15" fill="#222" text-anchor="middle">开始</text>
+<rect x="50.0" y="586.5" width="300" height="54" rx="12" ry="12" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="200.0" y="618.5" font-size="15" fill="#222" text-anchor="middle">① 输入10人×5门成绩 scores[][]</text>
+<rect x="50.0" y="724.5" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="756.5" font-size="15" fill="#222" text-anchor="middle">② 调用 stuAvg() 输出每人平均分</text>
+<rect x="50.0" y="828.5" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="860.5" font-size="15" fill="#222" text-anchor="middle">③ 调用 courAvg() 输出每课程平均分</text>
+<rect x="50.0" y="932.5" width="300" height="54" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="200.0" y="964.5" font-size="15" fill="#222" text-anchor="middle">④ 调用 findMax() 找最高分及位置</text>
+<rect x="105.0" y="1039.5" width="190" height="48" rx="24.0" ry="24.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="200.0" y="1068.5" font-size="15" fill="#222" text-anchor="middle">结束</text>
+<rect x="632" y="42" width="436" height="936" fill="#f7f7f7" stroke="#cccccc" stroke-width="1"/>
+<text x="640" y="65.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#include &lt;stdio.h&gt;</text>
+<text x="640" y="88.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#define STU 10</text>
+<text x="640" y="111.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">#define COUR 5</text>
+<text x="640" y="134.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal"> </text>
+<text x="640" y="157.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">double stuAvg(int s[][COUR], int i) {</text>
+<text x="640" y="180.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    int j; double sum=0;</text>
+<text x="640" y="203.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(j=0;j&lt;COUR;j++) sum+=s[i][j];</text>
+<text x="640" y="226.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    return sum/COUR;</text>
+<text x="640" y="249.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<text x="640" y="272.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">double courAvg(int s[][COUR], int j) {</text>
+<text x="640" y="295.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    int i; double sum=0;</text>
+<text x="640" y="318.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(i=0;i&lt;STU;i++) sum+=s[i][j];</text>
+<text x="640" y="341.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    return sum/STU;</text>
+<text x="640" y="364.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<text x="640" y="387.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">void findMax(int s[][COUR]) {</text>
+<text x="640" y="410.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    int i,j,max=s[0][0],mi=0,mj=0;</text>
+<text x="640" y="433.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(i=0;i&lt;STU;i++)</text>
+<text x="640" y="456.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        for(j=0;j&lt;COUR;j++)</text>
+<text x="640" y="479.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">            if(s[i][j]&gt;max){max=s[i][j];mi=i;mj=j;}</text>
+<text x="640" y="502.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    printf("最高分：%d，学生%d，课程%d\n",max,mi+1,mj+1);</text>
+<text x="640" y="525.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<text x="640" y="548.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal"> </text>
+<text x="640" y="571.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">int main() {</text>
+<text x="640" y="594.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    int scores[STU][COUR], i, j;</text>
+<text x="640" y="617.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ① 输入10人×5门成绩 */</text>
+<text x="640" y="640.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(i=0;i&lt;STU;i++){</text>
+<text x="640" y="663.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        printf("输入第%d位学生5门成绩：",i+1);</text>
+<text x="640" y="686.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        for(j=0;j&lt;COUR;j++)</text>
+<text x="640" y="709.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">            scanf("%d",&amp;scores[i][j]);</text>
+<text x="640" y="732.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    }</text>
+<text x="640" y="755.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ② 输出每人平均分 */</text>
+<text x="640" y="778.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(i=0;i&lt;STU;i++)</text>
+<text x="640" y="801.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        printf("学生%d平均分：%.2f\n",i+1,stuAvg(scores,i));</text>
+<text x="640" y="824.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ③ 输出课程平均分 */</text>
+<text x="640" y="847.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    for(j=0;j&lt;COUR;j++)</text>
+<text x="640" y="870.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">        printf("课程%d平均分：%.2f\n",j+1,courAvg(scores,j));</text>
+<text x="640" y="893.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#888888" font-weight="bold">    /* ④ 查找最高分 */</text>
+<text x="640" y="916.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    findMax(scores);</text>
+<text x="640" y="939.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">    return 0;</text>
+<text x="640" y="962.5" font-family="Consolas,'Microsoft YaHei',monospace" font-size="13" fill="#1a1a1a" font-weight="normal">}</text>
+<line x1="350.0" y1="613.5" x2="634" y2="613.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="751.5" x2="634" y2="751.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="855.5" x2="634" y2="820.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+<line x1="350.0" y1="959.5" x2="634" y2="889.5" stroke="#1a56b0" stroke-width="1.8" marker-end="url(#ar)"/>
+</svg>

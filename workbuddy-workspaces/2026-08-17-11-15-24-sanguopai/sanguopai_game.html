@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>三国牌 · 智能对战沙盒</title>
+<style>
+  :root{
+    --bg:#0b0f1a; --bg2:#111829; --panel:#151d30; --panel2:#1b2439; --line:#26314e;
+    --ink:#e9eefb; --muted:#8391ad; --accent:#5b8cff; --gold:#ffcc55;
+    --win:#3ddc84; --lose:#ff6b6b; --wei:#f0a23b; --shu:#46c46a; --wu:#5b9bff;
+    --glow:0 0 24px rgba(91,140,255,.35);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:radial-gradient(1200px 700px at 20% -10%,#16203a 0%,transparent 60%),
+               radial-gradient(900px 600px at 100% 0%,#131c33 0%,transparent 55%),var(--bg);
+    color:var(--ink);font-size:13.5px;line-height:1.45;
+  }
+  header{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 16px;
+    background:linear-gradient(180deg,rgba(21,29,48,.96),rgba(17,24,41,.9));
+    border-bottom:1px solid var(--line);backdrop-filter:blur(8px);position:sticky;top:0;z-index:9
+  }
+  h1{font-size:16px;margin:0;letter-spacing:.5px}
+  h1 span{color:var(--gold)}
+  .sub{color:var(--muted);font-size:11.5px}
+  .grow{flex:1}
+  button,select{font:inherit;color:var(--ink);background:var(--panel2);border:1px solid var(--line);
+    border-radius:9px;padding:6px 12px;cursor:pointer;transition:.15s}
+  button:hover,select:hover{border-color:#3d4d78;background:#212c46}
+  button.primary{background:linear-gradient(180deg,#5b8cff,#3f6fe0);border-color:#6f9bff;font-weight:600;box-shadow:var(--glow)}
+  button.primary:hover{filter:brightness(1.08)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  select{padding:5px 8px}
+  input[type=range]{vertical-align:middle;accent-color:var(--accent)}
+  .pill{font-size:11px;color:var(--muted);background:var(--panel2);border:1px solid var(--line);
+        border-radius:20px;padding:4px 10px;display:inline-flex;align-items:center;gap:6px}
+
+  .wrap{display:grid;grid-template-columns:296px minmax(460px,1fr) 372px;gap:12px;padding:12px;align-items:start}
+  @media (max-width:1360px){.wrap{grid-template-columns:280px 1fr}.col-r{grid-column:1/-1}}
+  .panel{background:linear-gradient(180deg,var(--panel),#131b2d);border:1px solid var(--line);
+         border-radius:14px;padding:13px;box-shadow:0 8px 26px rgba(0,0,0,.35)}
+  .panel h2{font-size:12.5px;margin:0 0 10px;color:#b9c6e2;display:flex;justify-content:space-between;
+            align-items:center;letter-spacing:.4px;text-transform:uppercase}
+
+  /* 大厅 */
+  .seat{display:grid;grid-template-columns:30px 1fr 96px;gap:8px;align-items:center;
+        padding:8px 9px;border:1px solid var(--line);border-radius:10px;margin-bottom:7px;
+        background:var(--panel2);cursor:pointer;transition:.15s}
+  .seat:hover{border-color:#3d4d78}
+  .seat.sel{border-color:var(--accent);box-shadow:0 0 0 1px rgba(91,140,255,.35)}
+  .seat .sid{font-weight:800;font-size:14px;text-align:center;color:#cfe0ff}
+  .seat .chips{text-align:right;font-variant-numeric:tabular-nums}
+  .seat .chips b{font-size:13.5px}
+  .seat .chips small{display:block;color:var(--muted);font-size:10.5px}
+  .bar{height:6px;background:#0a0f1c;border-radius:4px;overflow:hidden;margin-top:4px}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#3ddc84,#5b8cff);transition:width .5s}
+  .bar.low>i{background:linear-gradient(90deg,#ff6b6b,#ffb36b)}
+  .stat{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .stat .box{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px}
+  .stat .box b{display:block;font-size:15px;font-variant-numeric:tabular-nums}
+  .stat .box span{color:var(--muted);font-size:10.5px}
+
+  /* 牌桌 */
+  .pub{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+  .grp{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px 9px}
+  .grp .lab{font-size:10.5px;color:var(--muted);margin-bottom:4px}
+  .seats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+  .scard{background:linear-gradient(180deg,#172038,#131a2b);border:1px solid var(--line);
+         border-radius:12px;padding:9px;position:relative;transition:.2s}
+  .scard.win{border-color:rgba(61,220,132,.6);box-shadow:0 0 22px rgba(61,220,132,.18)}
+  .scard.dim{opacity:.55}
+  .scard.reveal{animation:pop .35s ease}
+  @keyframes pop{from{transform:translateY(8px) scale(.97);opacity:0}to{transform:none;opacity:1}}
+  .scard .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .scard .who{font-weight:700;font-size:12px}
+  .fb{font-size:10.5px;padding:1px 7px;border-radius:20px;font-weight:600}
+  .fb.wei{background:rgba(240,162,59,.18);color:var(--wei)}
+  .fb.shu{background:rgba(70,196,106,.18);color:var(--shu)}
+  .fb.wu{background:rgba(91,155,255,.18);color:var(--wu)}
+  .scard .hand5{display:flex;gap:3px;margin-bottom:7px;min-height:38px}
+  .scard .meta{font-size:11px;color:var(--muted);display:flex;justify-content:space-between}
+  .scard .net{font-weight:700;font-variant-numeric:tabular-nums}
+  .net.pos{color:var(--win)} .net.neg{color:var(--lose)}
+  .rk{position:absolute;top:-7px;left:-7px;width:22px;height:22px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;
+      background:#22304d;border:1px solid var(--line);animation:pop .3s ease}
+  .rk.r1{background:linear-gradient(180deg,#ffd873,#e9a927);color:#3a2600;border-color:#ffe9a8}
+  .rk.r2{background:#5c6b8a;color:#fff} .rk.r5{background:#2a3550;color:#a9b8d4}
+
+  /* 牌 */
+  .mc{display:flex;gap:3px}
+  .card{width:26px;height:36px;border-radius:5px;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;font-weight:800;
+        background:linear-gradient(180deg,#fbfdff,#dfe7f5);border:1px solid #9fb0cc;
+        box-shadow:0 2px 5px rgba(0,0,0,.35)}
+  .card .r{font-size:11.5px;line-height:1}
+  .card .s{font-size:11px;line-height:1}
+  .card.red{color:#d0342c} .card.blk{color:#1b2436}
+  .card.big{width:40px;height:56px;border-radius:7px}
+  .card.big .r{font-size:17px} .card.big .s{font-size:16px}
+  .card.sel{outline:3px solid var(--accent);outline-offset:1px;transform:translateY(-3px)}
+
+  /* 洞察 */
+  .ins{font-size:11.5px}
+  .qrow{display:grid;grid-template-columns:64px 1fr 46px;gap:7px;align-items:center;margin:3px 0}
+  .qrow .lab{color:#c3d0ea;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .qrow .track{height:12px;background:#0a0f1c;border-radius:6px;overflow:hidden}
+  .qrow .fill{height:100%;background:linear-gradient(90deg,#3f6fe0,#5b8cff)}
+  .qrow.chosen .fill{background:linear-gradient(90deg,#3ddc84,#8ff0b6)}
+  .qrow.greedy .lab::after{content:" ◆";color:var(--gold)}
+  .qrow.chosen .lab::after{content:" ★";color:var(--win)}
+  .qrow .val{text-align:right;font-variant-numeric:tabular-nums;color:#9fb0cc}
+  .badge{display:inline-block;font-size:10.5px;padding:2px 8px;border-radius:20px;margin-top:6px}
+  .badge.dev{background:rgba(255,204,85,.16);color:var(--gold);border:1px solid rgba(255,204,85,.35)}
+  .badge.same{background:rgba(131,145,173,.14);color:var(--muted);border:1px solid var(--line)}
+  table.tr{width:100%;border-collapse:collapse;font-size:11.5px}
+  table.tr th,table.tr td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}
+  table.tr th{color:var(--muted);font-weight:600;font-size:10.5px}
+  .log{max-height:150px;overflow:auto;font-size:11.5px}
+  .log .g{border-bottom:1px dashed var(--line);padding:5px 0}
+  .log .g b{color:var(--gold)}
+  details{margin-top:9px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  details summary{cursor:pointer;color:var(--muted);font-size:11.5px}
+  details .lg{font-size:11.5px;line-height:1.75;margin-top:6px;color:#c3d0ea}
+  code{background:#0a0f1c;padding:1px 5px;border-radius:4px;color:#cdd9f0}
+  .hint{color:var(--muted);font-size:11.5px}
+  .rgame{display:flex;flex-direction:column;gap:6px}
+  .rrow{display:grid;grid-template-columns:50px repeat(5,minmax(0,1fr));gap:6px;align-items:start;
+        background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:7px}
+  .rrow .rl{font-size:11px;color:var(--muted);padding-top:2px}
+  .rrow .p{font-size:10.5px;display:flex;flex-direction:column;gap:3px;min-width:0}
+  .rrow .p .hd{display:flex;gap:4px;align-items:center;white-space:nowrap}
+</style>
+</head>
+<body>
+<header>
+  <h1>三国牌 <span>· 智能对战沙盒</span></h1>
+  <span class="sub">DMC(DouZero 架构) · 随机匹配 · 模型洞察</span>
+  <span class="grow"></span>
+  <button id="loadW">加载模型权重</button>
+  <input type="file" id="wFile" accept=".json" style="display:none" />
+  <span class="pill" id="wState">未加载模型</span>
+  <label class="pill">速度 <input type="range" id="speed" min="140" max="1500" value="620" step="20" /><span id="speedLab">620ms</span></label>
+  <button id="resetPool">重置池</button>
+  <button id="playBtn" class="primary">▶ 开始匹配</button>
+</header>
+
+<div class="wrap">
+  <!-- 左：大厅 -->
+  <div class="panel">
+    <h2>匹配大厅 <span class="pill" id="poolTag">第 0 局</span></h2>
+    <div id="lobby"></div>
+    <div class="stat" style="margin-top:9px">
+      <div class="box"><b id="stGames">0</b><span>总局数</span></div>
+      <div class="box"><b id="stBust">0</b><span id="stBustLab">破产补豆</span></div>
+      <div class="box"><b id="stRich">P0</b><span id="stRichLab">当前首富</span></div>
+    </div>
+    <details>
+      <summary>规则 / 倍率速查</summary>
+      <div class="lg">
+        <b>牌型</b> 单张10 对子20 两对30 三张40 顺子60 同花80 三带二100 四炸400 同花顺1000<br>
+        <b>名次(输家)</b> ②32 ③24 ④12 ⑤4　<b>同阵营暴击</b> 1 2 4 8 <b>12</b>　<b>同牌型杀牌</b> 1 2 4 8 <b>16</b><br>
+        <span id="ruleMode"></span>
+        阵营：魏 出2张+公共3 ｜ 蜀 出5张(无公共) ｜ 吴 出3张+公共2　·　4 轮，牌循环回库
+      </div>
+    </details>
+  </div>
+
+  <!-- 中：牌桌 -->
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div class="panel">
+      <h2>牌桌 <span class="pill" id="roundTag">—</span></h2>
+      <div class="pub" id="pubArea"></div>
+      <div class="seats" id="seats"></div>
+    </div>
+    <div class="panel">
+      <h2>每轮全场出牌 <span class="pill">阵营 / 牌组 全部可见</span></h2>
+      <div id="roundHistory" class="hint">开局后这里按轮列出 5 家的阵营、牌型、名次、净豆（含各自 5 张牌组）。</div>
+    </div>
+    <div class="panel" id="handPanel" style="display:none">
+      <h2>你出牌 <span class="pill" id="handHint">直接点牌，阵营自动定</span></h2>
+      <div class="hint" style="margin-bottom:6px">
+        点 <b>2 张 → 魏</b>（+公共3） ｜ <b>3 张 → 吴</b>（+公共2） ｜ <b>5 张 → 蜀</b>（无公共）—— <b>不用选阵营</b>，手牌已按大小排好。
+      </div>
+      <div class="mc" id="handCards" style="flex-wrap:wrap"></div>
+      <div id="handInfo" class="hint" style="margin:9px 0;line-height:1.8"></div>
+      <button id="playHand" class="primary" disabled>出牌</button>
+    </div>
+    <div class="panel">
+      <h2>本局结算明细 <span class="pill" id="detailWho">点右侧座位查看</span></h2>
+      <div id="detail"><div class="hint">选择一家，看它这一轮为什么输这么多（倍率逐项拆开）。</div></div>
+    </div>
+    <div class="panel">
+      <h2>对局流水</h2>
+      <div class="log" id="log"><div class="hint">每局赢家 / 最大输家滚动记录。</div></div>
+    </div>
+  </div>
+
+  <!-- 右：模型洞察 -->
+  <div class="panel col-r">
+    <h2>模型洞察 <span class="pill" id="insWho">P0</span></h2>
+    <div class="hint" id="insHint">
+      加载训练好的 <code>sanguopai_dmc_weights.json</code>，把某座位策略设为「模型」，
+      这里会显示它给 140 个动作打的分。重点看：<b>它没选最大牌型</b> 的那些回合。
+    </div>
+    <div id="insBody" class="ins"></div>
+  </div>
+</div>
+
+<script>
+/* ============ 常量（与 config.py 一致：欢乐斗地主规则） ============ */
+const TYPE_MULT=[10,20,30,40,60,80,100,400,1000];
+const RANK_MULT=[0,0,32,24,12,4];
+const CRIT_MULT=[1,1,2,4,8,12];
+const KILL_MULT=[1,1,2,4,8,16];
+const KILL_CLASS=[0,0,0,0,1,2,3,4,5];
+const PUBLIC_CARDS=[3,0,2];
+const N_PLAYERS=5, HAND_SIZE=8, N_ROUNDS=4;
+const BASE=4500, CAP=18000000, MIN_WIN=4500000, REBUY=160000, TICKET=0;
+/* ★ 计分方式（与 config.py 的 scoring 一致）：'score' = 纯积分 ±(牌型×暴击×名次×杀牌)，无封顶/不破产 */
+const SCORING='score';
+const INITIAL=100000000, P13_5=Math.pow(13,5);
+const SUITS=["♠","♥","♦","♣"], RANKS="23456789TJQKA";
+const FACTION_NAME=["魏","蜀","吴"];
+const GRADE_NAME=["单张","对子","两对","三张","顺子","同花","三带二","四炸","同花顺"];
+/* DMC 特征维度（与 train_dmc.py 一致；改这里必须重跑 parity 校验）
+   基础 194 + 历史块 512（每轮4 × 每个对手4 × 32）
+   32 = 阵营3 + 他花掉的手牌点数13 + 牌型9 + 名次5 + 收益1 + 破产1  → S=706, IN=751
+   基础 194 = 手牌52+公共52+已见52+轮次4+我豆2+我档2+破产距离1+本局盈亏1+各阵营最强牌型3
+            +对手豆4+对手入场4+对手收款档12+相对对手财富2+对手穷人比例1+存活1+牌库1 */
+const BASE_DIM=194;
+const HIST_ROUNDS=4, HIST_OPPS=4, HIST_PER=32, HIST_DIM=HIST_ROUNDS*HIST_OPPS*HIST_PER;
+const S_DIM=BASE_DIM+HIST_DIM, A_DIM=45, IN_DIM=S_DIM+A_DIM;
+
+/* ============ 牌 / 评估（code = suit*13 + rank） ============ */
+const rankOf=c=>c%13, suitOf=c=>(c/13)|0;
+function cardEl(c,big){
+  const k=rankOf(c), s=suitOf(c);
+  const red=(s===1||s===2)?'red':'blk';
+  return `<div class="card ${red}${big?' big':''}"><span class="r">${RANKS[k]}</span><span class="s">${SUITS[s]}</span></div>`;
+}
+const cardsHTML=(cs,big)=>`<div class="mc">${cs.map(c=>cardEl(c,big)).join('')}</div>`;
+
+function evaluateFiveScore(cards){
+  const ranks=cards.map(rankOf), suits=cards.map(suitOf);
+  const isFlush=new Set(suits).size===1;
+  const cnt={}; for(const r of ranks) cnt[r]=(cnt[r]||0)+1;
+  const cr=Object.entries(cnt).map(([r,n])=>[+r,n]).sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
+  const uniq=[...new Set(ranks)].sort((a,b)=>a-b);
+  let sh=-1;
+  for(let s=uniq.length-5;s>=0;s--){ if(uniq[s+4]-uniq[s]===4){sh=uniq[s+4];break;} }
+  if(sh<0 && uniq.length>=5 && [12,0,1,2,3].every(x=>uniq.includes(x))) sh=3;
+  let grade,tie;
+  if(isFlush&&sh>=0){grade=8;tie=[sh];}
+  else if(cr[0][1]===4){grade=7;tie=[cr[0][0],cr[1][0]];}
+  else if(cr[0][1]===3&&cr[1][1]===2){grade=6;tie=[cr[0][0],cr[1][0]];}
+  else if(isFlush){grade=5;tie=ranks.slice().sort((a,b)=>b-a);}
+  else if(sh>=0){grade=4;tie=[sh];}
+  else if(cr[0][1]===3){grade=3;const t=cr[0][0];tie=[t,...ranks.filter(r=>r!==t).sort((a,b)=>b-a)];}
+  else if(cr[0][1]===2&&cr[1][1]===2){grade=2;tie=[cr[0][0],cr[1][0],cr[2][0]];}
+  else if(cr[0][1]===2){grade=1;const p=cr[0][0];tie=[p,...ranks.filter(r=>r!==p).sort((a,b)=>b-a)];}
+  else {grade=0;tie=ranks.slice().sort((a,b)=>b-a);}
+  let score=grade; const pad=tie.concat([0,0,0,0,0]).slice(0,5);
+  for(const v of pad) score=score*13+v;
+  return {score,grade};
+}
+/* 动作表：魏C(8,2) 蜀C(8,5) 吴C(8,3) → 140 */
+function combos(n,k){const res=[],idx=Array.from({length:k},(_,i)=>i);
+  while(true){res.push(idx.slice());let i=k-1;
+    while(i>=0&&idx[i]===n-k+i)i--; if(i<0)break; idx[i]++;
+    for(let j=i+1;j<k;j++)idx[j]=idx[j-1]+1;} return res;}
+const ACTION_TABLE=[];
+for(const c of combos(8,2))ACTION_TABLE.push({f:0,idx:c});
+const F0=ACTION_TABLE.length;
+for(const c of combos(8,5))ACTION_TABLE.push({f:1,idx:c});
+const F1=ACTION_TABLE.length;
+for(const c of combos(8,3))ACTION_TABLE.push({f:2,idx:c});
+const N_ACTIONS=ACTION_TABLE.length;
+const FSTARTS=[0,F0,F1];
+function actionId(f,idx){const b=FSTARTS[f],e=(f===0?F0:(f===1?F1:N_ACTIONS));
+  for(let a=b;a<e;a++) if(ACTION_TABLE[a].idx.join()===idx.join()) return a;
+  return -1;}
+
+/* ============ DMC 特征（严格对齐 train_dmc.py） ============ */
+function bits52(v,off,codes){for(const c of codes) if(c>=0&&c<52) v[off+c]=1;}
+
+function buildActionFeats(hand,pubWei,pubWu){
+  const feats=new Float32Array(N_ACTIONS*A_DIM);
+  const grades=new Int32Array(N_ACTIONS), scores=new Float64Array(N_ACTIONS);
+  const cardsPer=new Array(N_ACTIONS);
+  for(let a=0;a<N_ACTIONS;a++){
+    const {f,idx}=ACTION_TABLE[a];
+    const sel=idx.map(i=>hand[i]);
+    const pub=f===0?pubWei:(f===2?pubWu:[]);
+    const cards=sel.concat(pub);
+    const {score,grade}=evaluateFiveScore(cards);
+    grades[a]=grade; scores[a]=score; cardsPer[a]=cards;
+    const o=a*A_DIM;
+    feats[o+f]=1;
+    for(const i of idx) feats[o+3+i]=1;
+    for(const c of cards) feats[o+11+rankOf(c)]+=1;      // 点数计数(13)
+    for(const c of cards) feats[o+24+suitOf(c)]+=1;      // 花色计数(4)
+    feats[o+28+grade]=1;
+    feats[o+37+KILL_CLASS[grade]]=1;
+    feats[o+43]=TYPE_MULT[grade]/1000;
+    feats[o+44]=(score%P13_5)/P13_5;
+  }
+  return {feats,grades,scores,cardsPer};
+}
+function buildStateFeats(S,pid,act){
+  const v=new Float32Array(S_DIM);
+  const hand=S.hands[pid].concat(Array(Math.max(0,HAND_SIZE-S.hands[pid].length)).fill(52));
+  bits52(v,0,hand);
+  bits52(v,52,S.public.wei.concat(S.public.wu));
+  bits52(v,104,Array.from(S.seen));
+  v[156+Math.min(S.round,N_ROUNDS-1)]=1;
+  const own=Math.max(0,S.chips[pid]);
+  v[160]=Math.log10(own+1)/9;
+  v[161]=Math.min(own/1e8,2)/2;
+  const E=S.entry[pid];
+  const sc=Math.min(Math.max(Math.max(E,own),MIN_WIN),CAP);   // 每份能赢到的上限（与结算同式）
+  v[162+tierOf(E,own)]=1;                                     // 我的财富档（决定用哪个 head）
+  v[164]=Math.min(own/Math.max(1,sc),3)/3;                    // 破产距离（还能吃几份满额）
+  v[165]=Math.max(-1,Math.min(1,(own-E)/Math.max(1,E)));      // 本局盈亏 / 入场豆
+  for(let f=0;f<3;f++){                                       // 各阵营我拿得出手的最强牌型
+    let best=0;
+    for(let a=0;a<N_ACTIONS;a++) if(ACTION_TABLE[a].f===f && act.scores[a]>best) best=act.scores[a];
+    v[166+f]=best/(P13_5*1001);
+  }
+  const others=[]; for(let p=0;p<N_PLAYERS;p++) if(p!==pid) others.push(p);
+  // 对手豆用对数尺度（线性在低豆时分辨不出；结算只看"档"）
+  others.forEach((q,k)=>v[169+k]=Math.log10(Math.max(0,S.chips[q])+1)/9);
+  others.forEach((q,k)=>v[173+k]=Math.log10(Math.max(0,S.entry[q])+1)/9);
+  others.forEach((q,k)=>v[177+k*3+capTierOf(S.entry[q],S.chips[q])]=1);  // 对手收款档
+  const ocs=others.map(q=>Math.max(0,S.chips[q]));
+  const omax=ocs.length?Math.max(...ocs):0;
+  const omean=ocs.length?ocs.reduce((a,b)=>a+b,0)/ocs.length:0;
+  v[189]=Math.log10((own+1)/(omax+1))/3+0.5;                  // 相对最大对手（居中）
+  v[190]=Math.log10((own+1)/(omean+1))/3+0.5;                 // 相对平均对手
+  v[191]=others.filter(q=>S.chips[q]<=MIN_WIN).length/4;      // 对手里穷人的比例
+  v[192]=S.bankrupt.filter(b=>!b).length/N_PLAYERS;
+  v[193]=Math.min(S.pool.length/30,1);
+  // ---- 历史块：每轮每个对手「出了哪个阵营 + 什么牌型」（"别人出啥"核心信号）----
+  let o=BASE_DIM;
+  const opps=[]; for(let p=0;p<N_PLAYERS;p++) if(p!==pid) opps.push(p);
+  for(let r=0;r<HIST_ROUNDS;r++){
+    const log=S.history[r];
+    for(let k=0;k<opps.length;k++){
+      const base=o+(r*HIST_OPPS+k)*HIST_PER;
+      if(!log) continue;
+      const sub=log.subs.find(x=>x.pid===opps[k]);
+      if(!sub) continue;
+      v[base+sub.f]=1;                                    // 阵营
+      for(const c of (sub.hand||[])) v[base+3+rankOf(c)]+=1; // 他这轮**花掉的手牌**（不含公共牌）
+      v[base+16+sub.grade]=1;                             // 牌型（手牌+公共牌的组合结果）
+      if(sub.rank>=1&&sub.rank<=5) v[base+25+(sub.rank-1)]=1; // 他的名次（相对强弱）
+      const rw=sub.reward||0;
+      if(rw) v[base+30]=Math.sign(rw)*Math.log10(1+Math.abs(rw))/8;  // 他被结算了多少
+      v[base+31]=sub.bust?1:0;                                   // 是否破产停玩
+    }
+  }
+  return v;
+}
+
+/* ============ QNet 前向 ============
+   新版：共享 trunk + **按自己财富档选 head**（档 0 穷 / 1 中 / 2 富，切点在 450万/1800万）
+   —— 穷人输光只亏手里那点、赢一把 4 家收 1800万（112 倍杠杆）该激进；富人输赢对称该保守，
+      一张 head 同时拟合这两种目标只会折衷。旧版单 head（net.0/2/4/6）仍兼容加载。 */
+let W=null;
+/* 头路由：0=高杠杆档(M≤450万，穷人输光只亏手里那点、赢一把 4 家收 1800万 → 该激进)
+          1=对称档(M>450万，输赢各封顶 1800万 → 该保守) */
+function tierOf(entry,cur){return Math.max(entry,cur)<=MIN_WIN?0:1;}
+/* 纯特征：把「每份收款上限」切 3 档（对手当赢家时能从我这收多少） */
+function capTierOf(entry,cur){const m=Math.max(entry,cur);return m<=MIN_WIN?0:(m>=CAP?2:1);}
+function qAll(stateVec, act, tier){
+  if(!W) return null;
+  if(W["trunk.0.weight"]) return qAllHeads(stateVec, act, (tier===undefined||tier===null)?1:tier);
+  return qAllLegacy(stateVec, act);
+}
+function qAllHeads(stateVec, act, tier){
+  const w0=W["trunk.0.weight"], b0=W["trunk.0.bias"];
+  const w2=W["trunk.2.weight"], b2=W["trunk.2.bias"];
+  const w4=W["trunk.4.weight"], b4=W["trunk.4.bias"];
+  const wh=W["heads."+tier+".weight"], bh=W["heads."+tier+".bias"];
+  if(!wh) return null;
+  const H=b0.length, H1=w2.length, H2=w4.length;
+  const base=new Float64Array(H);
+  for(let i=0;i<H;i++){const wi=w0[i];let s=b0[i];
+    for(let j=0;j<S_DIM;j++) s+=wi[j]*stateVec[j]; base[i]=s;}
+  const q=new Float64Array(N_ACTIONS);
+  const h1=new Float64Array(H),h2=new Float64Array(H1),h3=new Float64Array(H2);
+  for(let a=0;a<N_ACTIONS;a++){
+    const o=a*A_DIM;
+    for(let i=0;i<H;i++){const wi=w0[i];let s=base[i];
+      for(let j=0;j<A_DIM;j++) s+=wi[S_DIM+j]*act.feats[o+j];
+      h1[i]=s>0?s:0;}
+    for(let i=0;i<H1;i++){const wi=w2[i];let s=b2[i];
+      for(let j=0;j<H;j++) s+=wi[j]*h1[j]; h2[i]=s>0?s:0;}
+    for(let i=0;i<H2;i++){const wi=w4[i];let s=b4[i];
+      for(let j=0;j<H1;j++) s+=wi[j]*h2[j]; h3[i]=s>0?s:0;}
+    let s=bh[0]; const whi=wh[0];
+    for(let j=0;j<H2;j++) s+=whi[j]*h3[j];
+    q[a]=s;
+  }
+  return q;
+}
+function qAllLegacy(stateVec, act){
+  const w0=W["net.0.weight"], b0=W["net.0.bias"];
+  const w2=W["net.2.weight"], b2=W["net.2.bias"];
+  const w4=W["net.4.weight"], b4=W["net.4.bias"];
+  const w6=W["net.6.weight"], b6=W["net.6.bias"];
+  if(!w0) return null;
+  const H=b0.length, H1=w2.length, H2=w4.length;
+  // 第一层里与状态有关的部分只算一次
+  const base=new Float64Array(H);
+  for(let i=0;i<H;i++){const wi=w0[i];let s=b0[i];
+    for(let j=0;j<S_DIM;j++) s+=wi[j]*stateVec[j]; base[i]=s;}
+  const q=new Float64Array(N_ACTIONS);
+  const h1=new Float64Array(H),h2=new Float64Array(H1),h3=new Float64Array(H2);
+  for(let a=0;a<N_ACTIONS;a++){
+    const o=a*A_DIM;
+    for(let i=0;i<H;i++){const wi=w0[i];let s=base[i];
+      for(let j=0;j<A_DIM;j++) s+=wi[S_DIM+j]*act.feats[o+j];
+      h1[i]=s>0?s:0;}
+    for(let i=0;i<H1;i++){const wi=w2[i];let s=b2[i];
+      for(let j=0;j<H;j++) s+=wi[j]*h1[j]; h2[i]=s>0?s:0;}
+    for(let i=0;i<H2;i++){const wi=w4[i];let s=b4[i];
+      for(let j=0;j<H1;j++) s+=wi[j]*h2[j]; h3[i]=s>0?s:0;}
+    let s=b6[0]; const w6i=w6[0];
+    for(let j=0;j<H2;j++) s+=w6i[j]*h3[j];
+    q[a]=s;
+  }
+  return q;
+}
+
+/* ============ 游戏状态 ============ */
+let meta=null, S=null, running=false, timer=null, speed=620;
+let selSeat=0, awaitingHuman=false, pending=null, selIdx=new Set(), pendingPreview=null;
+let policies=["dmc","greedy","greedy","greedy","random"];
+const POL_LABEL={dmc:"模型",greedy:"贪心",random:"随机",human:"我"};
+const lastInsight={};   // pid -> {q, chosen, greedyAid, act}
+
+// ★ 随机匹配：5 个座位各自独立抽豆（穷富混坐），分布与训练一致（16万~1亿对数均匀）
+const BEAN_LO=160000, BEAN_HI=100000000;
+function randBeans(){
+  const v=Math.exp(Math.log(BEAN_LO)+Math.random()*(Math.log(BEAN_HI)-Math.log(BEAN_LO)));
+  return Math.max(BEAN_LO, Math.round(v/10000)*10000);
+}
+function newMeta(){
+  if(SCORING==='score'){
+    // 积分制：每人累计总分，从 0 起；每局内部各自从 0 分开始（见 startGame）
+    meta={chips:Array(N_PLAYERS).fill(0),peak:Array(N_PLAYERS).fill(0),
+          bust:Array(N_PLAYERS).fill(0),games:0,wins:Array(N_PLAYERS).fill(0)};
+    return;
+  }
+  const chips=[]; let guard=0;                    // 保证豆子各不相同
+  while(chips.length<N_PLAYERS && guard++<500){
+    const v=randBeans();
+    if(!chips.includes(v)) chips.push(v);
+  }
+  while(chips.length<N_PLAYERS) chips.push(randBeans());
+  meta={chips,peak:chips.slice(),bust:Array(N_PLAYERS).fill(0),games:0,
+        wins:Array(N_PLAYERS).fill(0)};
+}
+function startGame(){
+  if(SCORING!=='score'){
+    for(let i=0;i<N_PLAYERS;i++){
+      if(meta.chips[i]<=0){meta.chips[i]=REBUY;meta.bust[i]++;}
+      meta.peak[i]=Math.max(meta.peak[i],meta.chips[i]);
+    }
+  }
+  // 积分制：本局每人从 0 分起（与训练一致）；豆制：带上自己的豆入场
+  const entry = SCORING==='score' ? Array(N_PLAYERS).fill(0) : meta.chips.slice();
+  const deck=[...Array(52).keys()];
+  for(let i=51;i>0;i--){const j=(Math.random()*(i+1))|0;[deck[i],deck[j]]=[deck[j],deck[i]];}
+  const hands=[]; for(let p=0;p<N_PLAYERS;p++) hands.push(deck.slice(p*8,p*8+8));
+  let off=N_PLAYERS*8;
+  const wei=deck.slice(off,off+3); off+=3;
+  const wu=deck.slice(off,off+2); off+=2;
+  S={round:0,hands,public:{wei,wu},pool:deck.slice(off),entry,chips:entry.slice(),
+     bankrupt:Array(N_PLAYERS).fill(false),seen:new Set(),history:[],done:false,detail:{}};
+  for(const c of wei.concat(wu)) S.seen.add(c);
+  meta.games++;
+  renderLobby(); renderPub(); renderSeats(); renderDetail(); renderInsight();
+}
+function seenArr(){return Array.from(S.seen);}
+
+/* 座位决策 */
+function decide(pid){
+  const hand=S.hands[pid].slice();
+  const act=buildActionFeats(hand,S.public.wei,S.public.wu);
+  const pol=policies[pid];
+  const greedyAid=(()=>{let b=0;for(let a=1;a<N_ACTIONS;a++)if(act.scores[a]>act.scores[b])b=a;return b;})();
+  if(pol==="dmc"&&W){
+    const sv=buildStateFeats(S,pid,act);
+    const q=qAll(sv,act,tierOf(S.entry[pid],S.chips[pid]));
+    if(!q){lastInsight[pid]={q:null,chosen:greedyAid,greedyAid,act,round:S.round};return greedyAid;}
+    let best=0; for(let a=1;a<N_ACTIONS;a++) if(q[a]>q[best]) best=a;
+    lastInsight[pid]={q,chosen:best,greedyAid,act,round:S.round};
+    return best;
+  }
+  if(pol==="random") return (Math.random()*N_ACTIONS)|0;
+  lastInsight[pid]={q:null,chosen:greedyAid,greedyAid,act,round:S.round};
+  return greedyAid;   // greedy（未加载模型时 dmc 也退化为贪心）
+}
+
+/* ============ 结算（对齐 game.py，含赢家侧上限） ============ */
+function settle(actions){
+  const active=[]; for(let i=0;i<N_PLAYERS;i++) if(!S.bankrupt[i]) active.push(i);
+  if(active.length<=1){S.done=true;return;}
+  const subs=[];
+  for(const pid of active){
+    const {f,idx}=ACTION_TABLE[actions[pid]];
+    const sel=idx.map(i=>S.hands[pid][i]);
+    const pub=f===0?S.public.wei:(f===2?S.public.wu:[]);
+    const cards=sel.concat(pub);
+    const {score,grade}=evaluateFiveScore(cards);
+    subs.push({score,pid,cards,f,aid:actions[pid],grade,
+               hand:idx.map(i=>S.hands[pid][i])});   // 本轮花掉的手牌（不含公共牌），供读牌用
+  }
+  subs.sort((a,b)=>b.score-a.score);
+  const ranks=Array(N_PLAYERS).fill(0); let cur=1,i=0;
+  while(i<subs.length){let j=i; while(j<subs.length&&subs[j].score===subs[i].score)j++;
+    for(let k=i;k<j;k++)ranks[subs[k].pid]=cur; cur+=j-i; i=j;}
+  const first=subs.filter(s=>ranks[s.pid]===1).map(s=>s.pid);
+  const firstGrade=subs[0].grade, typeMult=TYPE_MULT[firstGrade];
+  // 赢家每份「收款」上限 = clamp(max(入场豆, 当前豆), 450万, 1800万)。
+  // 注意：输家侧**没有**财富档封顶，恒为 CAP=1800万（"管你有多少"）。
+  const winCapOf=(E,C)=>Math.min(Math.max(Math.max(E,C),MIN_WIN),CAP);
+  const capEffW={}; for(const w of first) capEffW[w]=winCapOf(S.entry[w],S.chips[w]);
+  const rewards=Array(N_PLAYERS).fill(0); const detail={};
+  for(const pid of active){
+    if(ranks[pid]===1) continue;
+    const fi=subs.find(s=>s.pid===pid).f;
+    const C=S.chips[pid];   // 输家侧：封顶恒为 CAP(1800万)，实付受当前豆限制
+    let total=0, remaining=C; const terms=[];
+    for(const w of first){
+      const fw=subs.find(s=>s.pid===w).f;
+      const gw=subs.find(s=>s.pid===w).grade;
+      const kcw=KILL_CLASS[gw];
+      const sameType=subs.filter(s=>KILL_CLASS[s.grade]===kcw).length;
+      const sameFaction=(fi===fw)?subs.filter(s=>s.f===fw).length:1;
+      const crit=CRIT_MULT[sameFaction], kill=KILL_MULT[sameType], rankm=RANK_MULT[ranks[pid]];
+      const L=typeMult*crit*rankm*kill*BASE;
+      // ★ 积分制（与 config.scoring="score" 一致）：直接 ±(牌型×暴击×名次×杀牌)，无封顶、不受当前分限制
+      const pay = SCORING==='score' ? Math.floor(L/BASE)
+                                    : Math.min(L,CAP,capEffW[w],remaining);
+      if(pay<=0) break;
+      rewards[w]+=pay;
+      if(SCORING!=='score') remaining-=pay;
+      total+=pay;
+      terms.push({w,typeMult,crit,sameFaction,rankm,rank:ranks[pid],kill,sameType,L,
+                  capEffW:capEffW[w],pay,capped:(SCORING!=='score'&&pay>=CAP)});
+    }
+    rewards[pid]=-total;
+    // 豆制：豆归 0 即破产；积分制不破产（分数可为负，继续打）
+    if(SCORING!=='score' && S.chips[pid]+rewards[pid]<=0) S.bankrupt[pid]=true;
+    detail[pid]={terms,rank:ranks[pid],pay:-total};
+  }
+  // 牌循环
+  const used=[],usedF=new Set();
+  for(const s of subs){const {idx}=ACTION_TABLE[s.aid];
+    for(const k of idx.slice().sort((a,b)=>b-a)) used.push(S.hands[s.pid].splice(k,1)[0]);
+    if(!usedF.has(s.f)){usedF.add(s.f);
+      const pub=s.f===0?S.public.wei:(s.f===2?S.public.wu:[]);
+      for(const c of pub.splice(0)) used.push(c);}}
+  S.pool.push(...used);
+  for(let i=S.pool.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[S.pool[i],S.pool[j]]=[S.pool[j],S.pool[i]];}
+  for(const pid of active){ if(S.bankrupt[pid])continue;
+    while(S.hands[pid].length<HAND_SIZE && S.pool.length) S.hands[pid].push(S.pool.pop());}
+  for(const f of usedF){const pub=f===0?S.public.wei:(f===2?S.public.wu:[]);
+    while(pub.length<PUBLIC_CARDS[f] && S.pool.length) pub.push(S.pool.pop());}
+  for(let pid=0;pid<N_PLAYERS;pid++){ if(S.bankrupt[pid]&&S.hands[pid].length){
+    S.pool.push(...S.hands[pid]); S.hands[pid]=[]; } }
+  for(const s of subs) for(const c of s.cards) S.seen.add(c);
+  for(const pid of active) S.chips[pid]+=rewards[pid];
+  // 把结果挂到每个 submission 上，供"历史块"读对手的名次/收益/破产（训练观测要用）
+  subs.forEach(s=>{ s.rank=ranks[s.pid]; s.reward=rewards[s.pid]; s.bust=S.bankrupt[s.pid]; });
+  const entryLog={round:S.round,subs,ranks,rewards,cards:S.chips.slice()};
+  S.detail=detail;
+  S.history.push(entryLog);
+  S.round++;
+  if(S.round>=N_ROUNDS) S.done=true;
+}
+
+/* ============ 主循环 ============ */
+function doRound(){
+  if(!S||S.done){endGame();return;}
+  const actions={};
+  for(let pid=0;pid<N_PLAYERS;pid++){
+    if(S.bankrupt[pid]) continue;
+    if(policies[pid]==="human"){
+      if(!pending){awaitingHuman=true;renderHand();return;}
+      actions[pid]=pending; pending=null;
+    } else actions[pid]=decide(pid);
+  }
+  settle(actions);
+  for(let i=0;i<N_PLAYERS;i++) meta.peak[i]=Math.max(meta.peak[i],S.chips[i]);
+  renderLobby(); renderSeats(); renderPub(); renderDetail(); renderInsight();
+  if(S.done) endGame();
+}
+function endGame(){
+  if(S){
+    const finalChips=S.chips.slice();
+    // 积分制：本局净分累加进总分（S.chips 是"本局得分"，从 0 起算）
+    if(SCORING==='score'){ for(let i=0;i<N_PLAYERS;i++) meta.chips[i]+=finalChips[i]; }
+    else meta.chips=finalChips;
+    const last=S.history[S.history.length-1];
+    const order=[...Array(N_PLAYERS).keys()].sort((a,b)=>finalChips[b]-finalChips[a]);
+    meta.wins[order[0]]++;
+    logGame(last,order,finalChips);
+  }
+  S=null;
+  renderLobby(); renderDetail(); renderInsight();
+  document.getElementById('roundTag').textContent='局间';
+}
+function tick(){
+  if(!running||awaitingHuman) return;
+  if(!S){startGame();return;}
+  doRound();
+}
+
+/* ============ 渲染 ============ */
+function fmt(n){
+  if(SCORING==='score'){ const r=Math.round(n); return (r>0?'+':'')+r.toLocaleString(); }
+  if(Math.abs(n)>=1e8) return (n/1e8).toFixed(2)+'亿';
+  if(Math.abs(n)>=1e4) return (n/1e4).toFixed(0)+'万'; return Math.round(n).toLocaleString(); }
+function renderLobby(){
+  const el=document.getElementById('lobby'); el.innerHTML='';
+  const score=SCORING==='score';
+  let rich=0; for(let i=1;i<N_PLAYERS;i++) if(meta.chips[i]>meta.chips[rich]) rich=i;
+  const mx = score ? Math.max(1,...meta.chips.map(v=>Math.abs(v))) : INITIAL;
+  for(let i=0;i<N_PLAYERS;i++){
+    const c=meta.chips[i];
+    const pct = score ? Math.max(2,Math.min(100,Math.abs(c)/mx*100))
+                      : Math.max(2,Math.min(100,c/INITIAL*100));
+    const d=document.createElement('div');
+    d.className='seat'+(i===selSeat?' sel':'');
+    d.innerHTML=`<div class="sid">P${i}</div>
+      <div>
+        <select data-seat="${i}">
+          ${["dmc","greedy","random","human"].map(p=>`<option value="${p}"${policies[i]===p?' selected':''}>${POL_LABEL[p]}</option>`).join('')}
+        </select>
+      </div>
+      <div class="chips"><b>${score?fmt(c)+'分':fmt(c)}</b>
+        <small>${score? '冠'+meta.wins[i] : '峰'+fmt(meta.peak[i])+' 破'+meta.bust[i]+' 冠'+meta.wins[i]}</small>
+        <div class="bar${(!score&&c<CAP*2)?' low':''}"><i style="width:${pct}%"></i></div>
+      </div>`;
+    d.onclick=e=>{ if(e.target.tagName==='SELECT')return; selSeat=i; renderLobby(); renderDetail(); renderInsight(); };
+    el.appendChild(d);
+  }
+  el.querySelectorAll('select[data-seat]').forEach(s=>{
+    s.onchange=()=>{ policies[+s.dataset.seat]=s.value; renderLobby(); };
+  });
+  document.getElementById('stGames').textContent=meta.games;
+  if(SCORING==='score'){
+    // 积分制：显示"每局均分变化"（本局累计分 / 局数）而不是破产次数
+    const g=Math.max(1,meta.games);
+    const avg=meta.chips.reduce((a,b)=>a+b,0)/N_PLAYERS/g;
+    document.getElementById('stBust').textContent=(avg>=0?'+':'')+Math.round(avg);
+    document.getElementById('stRich').textContent='P'+rich+' '+(meta.chips[rich]>=0?'+':'')+fmt(meta.chips[rich]);
+  } else {
+    document.getElementById('stBust').textContent=meta.bust.reduce((a,b)=>a+b,0);
+    document.getElementById('stRich').textContent='P'+rich;
+  }
+  document.getElementById('poolTag').textContent='第 '+meta.games+' 局';
+}
+function renderPub(){
+  const el=document.getElementById('pubArea'); if(!S){el.innerHTML='';return;}
+  el.innerHTML=`
+    <div class="grp"><div class="lab">魏 公共牌 (3)</div>${cardsHTML(S.public.wei)}</div>
+    <div class="grp"><div class="lab">吴 公共牌 (2)</div>${cardsHTML(S.public.wu)}</div>
+    <div class="grp"><div class="lab">牌库剩余</div><b>${S.pool.length}</b> 张</div>
+    <div class="grp"><div class="lab">轮次</div><b>${Math.min(S.round+1,N_ROUNDS)} / ${N_ROUNDS}</b></div>`;
+  document.getElementById('roundTag').textContent='第 '+Math.min(S.round+1,N_ROUNDS)+' / '+N_ROUNDS+' 轮';
+}
+function renderRoundHistory(){
+  const el=document.getElementById('roundHistory');
+  if(!S||!S.history.length){
+    el.innerHTML='<div class="hint">开局后这里按轮列出 5 家的阵营、牌型、名次、净豆（含各自 5 张牌组）。</div>';return;}
+  let html='<div class="rgame">';
+  S.history.forEach((h,ri)=>{
+    html+=`<div class="rrow"><div class="rl">第${ri+1}轮</div>`;
+    for(let pid=0;pid<N_PLAYERS;pid++){
+      const sub=h.subs.find(s=>s.pid===pid);
+      if(!sub){ html+=`<div class="p"><span class="hint">P${pid} 已停</span></div>`; continue; }
+      const net=h.rewards[pid];
+      html+=`<div class="p">
+        <span class="hd"><span class="fb ${['wei','shu','wu'][sub.f]}">${FACTION_NAME[sub.f]}</span>P${pid}</span>
+        ${cardsHTML(sub.cards)}
+        <span>${GRADE_NAME[sub.grade]} <b class="rank r${Math.min(h.ranks[pid],5)}">${h.ranks[pid]}</b>
+        <span class="net ${net>=0?'pos':'neg'}">${net>=0?'+':''}${fmt(net)}</span></span>
+      </div>`;
+    }
+    html+='</div>';
+  });
+  el.innerHTML=html+'</div>';
+}
+
+function renderSeats(){
+  renderRoundHistory();
+  const el=document.getElementById('seats'); el.innerHTML='';
+  if(!S) return;
+  const last=S.history.length?S.history[S.history.length-1]:null;
+  for(let pid=0;pid<N_PLAYERS;pid++){
+    const sub=last?last.subs.find(s=>s.pid===pid):null;
+    const bk=S.bankrupt[pid];
+    const d=document.createElement('div');
+    d.className='scard'+(sub&&last.ranks[pid]===1?' win':'')+(bk?' dim':'')+' reveal';
+    const rkBtn=sub?`<div class="rk r${Math.min(last.ranks[pid],5)}">${last.ranks[pid]}</div>`:'';
+    const net=sub?last.rewards[pid]:0;
+    d.innerHTML=`${rkBtn}
+      <div class="top"><span class="who">P${pid} · ${POL_LABEL[policies[pid]]}</span>
+        ${sub?`<span class="fb ${['wei','shu','wu'][sub.f]}">${FACTION_NAME[sub.f]}</span>`:''}</div>
+      <div class="hand5">${sub?cardsHTML(sub.cards):'<span class="hint">等待出牌</span>'}</div>
+      <div class="meta"><span>${sub?GRADE_NAME[sub.grade]:'—'}</span>
+        <span class="net ${net>=0?'pos':'neg'}">${sub?((net>=0?'+':'')+fmt(net)):'—'}</span></div>
+      <div class="meta" style="margin-top:3px"><span>豆 ${fmt(S.chips[pid])}</span>
+        <span>${bk?'已破产':''}</span></div>`;
+    d.onclick=()=>{selSeat=pid;renderLobby();renderDetail();renderInsight();};
+    el.appendChild(d);
+  }
+}
+function renderDetail(){
+  document.getElementById('detailWho').textContent='P'+selSeat;
+  const el=document.getElementById('detail');
+  if(!S){el.innerHTML='<div class="hint">等待开局…</div>';return;}
+  const det=S.detail&&S.detail[selSeat];
+  if(!det||!det.terms||!det.terms.length){
+    el.innerHTML=`<div class="hint">P${selSeat} 这一轮是赢家（或未参与），没有支付明细。</div>`;return;
+  }
+  let rows='';
+  for(const t of det.terms){
+    rows+=`<tr>
+      <td>→P${t.w}</td>
+      <td>${t.typeMult}</td><td>${t.crit}<small class="hint">(${t.sameFaction}人)</small></td>
+      <td>${t.rankm}<small class="hint">(${t.rank}名)</small></td>
+      <td>${t.kill}<small class="hint">(${t.sameType}人)</small></td>
+      <td>${fmt(t.L)}</td>
+      <td>${fmt(t.capEffW)}</td>
+      <td class="net neg">${fmt(t.pay)}${t.capped?' 封顶':''}</td></tr>`;
+  }
+  el.innerHTML=`<table class="tr">
+    <thead><tr><th>付给</th><th>牌型</th><th>暴击</th><th>名次</th><th>杀牌</th><th>L=乘积×4500</th><th>赢家收款上限</th><th>实付</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <div class="hint" style="margin-top:7px">P${selSeat} 本轮名次 <b>${det.rank}</b>，合计 <span class="net neg">${fmt(det.pay)}</span>。
+    ${det.terms.some(t=>t.capped)?'有 <b>封顶</b>：说明计算值超过 1800万，被截断。':''}</div>`;
+}
+function renderInsight(){
+  document.getElementById('insWho').textContent='P'+selSeat;
+  const body=document.getElementById('insBody');
+  const ins=lastInsight[selSeat];
+  if(!W){body.innerHTML='<div class="hint">未加载模型权重，此座位按策略走（贪心/随机）。</div>';return;}
+  if(!ins||!ins.q){body.innerHTML='<div class="hint">该座位不是「模型」策略，或尚未决策。</div>';return;}
+  const q=ins.q, act=ins.act;
+  const order=[...Array(N_ACTIONS).keys()].sort((a,b)=>q[b]-q[a]).slice(0,10);
+  const lo=Math.min(...order.map(a=>q[a])), hi=q[order[0]];
+  let rows='';
+  for(const a of order){
+    const {f,grade}=(()=>({f:ACTION_TABLE[a].f,grade:act.grades[a]}))();
+    const cls=(a===ins.chosen?' chosen':'')+(a===ins.greedyAid?' greedy':'');
+    const w=hi>lo?Math.max(4,(q[a]-lo)/(hi-lo)*100):100;
+    rows+=`<div class="qrow ${cls}">
+      <div class="lab">${FACTION_NAME[f]}·${GRADE_NAME[grade]}</div>
+      <div class="track"><div class="fill" style="width:${w}%"></div></div>
+      <div class="val">${q[a].toFixed(2)}</div></div>`;
+  }
+  const diff=ins.chosen!==ins.greedyAid;
+  const gc=GRADE_NAME[act.grades[ins.greedyAid]], cc=GRADE_NAME[act.grades[ins.chosen]];
+  /* ★ 豆量決定策略：同一手牌、同一公共牌，只改自己的豆 → 看模型换成哪档 head、打什么 */
+  let wc='';
+  try{
+    if(SCORING==='score') throw new Error('skip');   // 积分制没有"豆量"概念，跳过此对比面板
+    const act2=buildActionFeats(S.hands[selSeat].slice(),S.public.wei,S.public.wu);
+    const bk={e:S.entry[selSeat],c:S.chips[selSeat]};
+    const picks=[];
+    for(const L of [['穷 '+fmt(REBUY),REBUY],['对称 1亿',100000000]]){
+      S.entry[selSeat]=L[1]; S.chips[selSeat]=L[1];
+      const t=tierOf(L[1],L[1]);
+      const q2=qAll(buildStateFeats(S,selSeat,act2),act2,t);
+      if(!q2) break;
+      let b=0; for(let a=1;a<N_ACTIONS;a++) if(q2[a]>q2[b]) b=a;
+      picks.push({lab:L[0],tier:t,aid:b,f:ACTION_TABLE[b].f,grade:act2.grades[b]});
+    }
+    S.entry[selSeat]=bk.e; S.chips[selSeat]=bk.c;
+    if(picks.length===2){
+      const differ=picks[0].aid!==picks[1].aid;
+      wc=`<div class="hint" style="margin-top:10px"><b>豆量決定策略</b> —— 同一手牌只改自己的豆：
+        </div>`+picks.map(p=>`<div class="qrow"><div class="lab">${p.lab}·head${p.tier}</div>
+          <div class="track"><div class="fill" style="width:100%"></div></div>
+          <div class="val">${FACTION_NAME[p.f]}·${GRADE_NAME[p.grade]}</div></div>`).join('')+
+        `<div class="badge ${differ?'dev':'same'}">${differ
+          ? '两种财富下模型改了打法：<b>穷人高杠杆该激进、富人对称该保守</b> ✓'
+          : '当前权重下两者一致（未训练充分时会这样）'}</div>`;
+    }
+  }catch(e){ wc=''; }
+  body.innerHTML=`
+    <div class="hint">该座位本轮 Q 值 Top10（越高＝模型估计最终落袋越多）。★=模型所选 ◆=最大牌型</div>
+    <div style="margin:7px 0">${rows}</div>
+    <div class="badge ${diff?'dev':'same'}">${diff
+      ? `模型没选最大牌型：弃 <b>${gc}</b> → 选 <b>${cc}</b>（Q ${q[ins.chosen].toFixed(2)} vs ${q[ins.greedyAid].toFixed(2)}）`
+      : `与最大牌型一致（${cc}，Q ${q[ins.chosen].toFixed(2)}）`}</div>${wc}`;
+}
+function logGame(last,order,finalChips){
+  const el=document.getElementById('log');
+  const win=last.subs.find(s=>last.ranks[s.pid]===1);
+  const lose=[...last.subs].sort((a,b)=>last.rewards[a.pid]-last.rewards[b.pid])[0];
+  const d=document.createElement('div'); d.className='g';
+  d.innerHTML=`第 ${meta.games} 局 · 首富 <b>P${order[0]}</b>（${fmt(finalChips[order[0]])}）`+
+    (win?` · 末轮赢家 <b>P${win.pid}</b> ${FACTION_NAME[win.f]}${GRADE_NAME[win.grade]}`:'')+
+    (lose?` · 最大输家 P${lose.pid} ${fmt(last.rewards[lose.pid])}`:'');
+  el.prepend(d);
+}
+
+/* ============ 手动出牌（点 2/3/5 张，阵营自动定，不选阵营） ============ */
+function factionOfCount(n){ return n===2?0 : (n===3?2 : (n===5?1 : -1)); }  // 2→魏 3→吴 5→蜀
+
+function renderHand(){
+  const p=document.getElementById('handPanel');
+  const me=policies.indexOf('human');
+  if(!awaitingHuman||!S||me<0){p.style.display='none';return;}
+  p.style.display='block';
+  const el=document.getElementById('handCards'); el.innerHTML='';
+  // 手牌按「大小」排：点数大→小，同点按花色
+  const ordered=S.hands[me].map((c,i)=>({c,i}))
+    .sort((a,b)=>rankOf(b.c)-rankOf(a.c)||suitOf(a.c)-suitOf(b.c));
+  for(const {c,i} of ordered){
+    const k=rankOf(c),s=suitOf(c);
+    const d=document.createElement('div');
+    d.className='card big '+((s===1||s===2)?'red':'blk')+(selIdx.has(i)?' sel':'');
+    d.innerHTML=`<span class="r">${RANKS[k]}</span><span class="s">${SUITS[s]}</span>`;
+    d.onclick=()=>{
+      if(selIdx.has(i)) selIdx.delete(i);
+      else { if(selIdx.size>=5) return; selIdx.add(i); }   // 最多 5 张
+      renderHand();
+    };
+    el.appendChild(d);
+  }
+  const n=selIdx.size, f=factionOfCount(n);
+  const info=document.getElementById('handInfo');
+  if(f<0){
+    document.getElementById('handHint').textContent=`P${me} · 已选 ${n} 张`;
+    info.innerHTML=`点 <b>2 张</b>（魏）／<b>3 张</b>（吴）／<b>5 张</b>（蜀）——张数不对出不了牌。`;
+    document.getElementById('playHand').disabled=true; pendingPreview=null; return;
+  }
+  const idx=[...selIdx].sort((a,b)=>a-b);
+  const sel=idx.map(i=>S.hands[me][i]);
+  const pub=f===0?S.public.wei:(f===2?S.public.wu:[]);
+  const cards=sel.concat(pub);
+  const {grade}=evaluateFiveScore(cards);
+  const aid=actionId(f,idx);
+  let h=`→ <span class="fb ${['wei','shu','wu'][f]}">${FACTION_NAME[f]}</span>　牌型 <b>${GRADE_NAME[grade]}</b>（倍率 ×${TYPE_MULT[grade]}）`;
+  h+=`<br>成牌 ${cardsHTML(cards)}`;
+  if(W){
+    const act=buildActionFeats(S.hands[me].slice(),S.public.wei,S.public.wu);
+    const q=qAll(buildStateFeats(S,me,act),act,tierOf(S.entry[me],S.chips[me]));
+    let best=0; for(let a=1;a<N_ACTIONS;a++) if(q[a]>q[best]) best=a;
+    h+=`<br>模型评分 Q=<b>${q[aid].toFixed(2)}</b>`;
+    if(best!==aid) h+=` ｜ 它的首选 <b>${FACTION_NAME[ACTION_TABLE[best].f]}·${GRADE_NAME[act.grades[best]]}</b>（Q=${q[best].toFixed(2)}）`;
+    else h+=` ｜ <span style="color:var(--win)">与模型首选一致 ✓</span>`;
+  } else {
+    h+=`<br><span class="hint">（加载模型权重后，这里会显示模型对该动作的 Q 评分与它的首选）</span>`;
+  }
+  info.innerHTML=h;
+  document.getElementById('handHint').textContent=`P${me} · ${FACTION_NAME[f]} · ${GRADE_NAME[grade]}`;
+  document.getElementById('playHand').disabled=false;
+  pendingPreview={f,idx,id:aid};
+}
+document.getElementById('playHand').onclick=()=>{
+  if(!pendingPreview) return;
+  pending=pendingPreview.id; pendingPreview=null;
+  awaitingHuman=false; selIdx.clear();
+  document.getElementById('handPanel').style.display='none';
+  doRound();
+};
+
+/* ============ 控制 ============ */
+function setRunning(v){
+  running=v;
+  document.getElementById('playBtn').textContent=v?'⏸ 暂停':'▶ 开始匹配';
+  if(v&&!timer) timer=setInterval(tick,speed);
+}
+document.getElementById('playBtn').onclick=()=>setRunning(!running);
+document.getElementById('resetPool').onclick=()=>{
+  newMeta(); S=null; awaitingHuman=false; pending=null;
+  for(const k in lastInsight) delete lastInsight[k];
+  renderLobby(); renderPub(); renderSeats(); renderDetail(); renderInsight();
+  document.getElementById('log').innerHTML='<div class="hint">匹配池已重置。</div>';
+};
+document.getElementById('speed').oninput=e=>{
+  speed=+e.target.value; document.getElementById('speedLab').textContent=speed+'ms';
+  if(timer){clearInterval(timer);timer=null; if(running)timer=setInterval(tick,speed);}
+};
+document.getElementById('loadW').onclick=()=>document.getElementById('wFile').click();
+document.getElementById('wFile').onchange=e=>{
+  const f=e.target.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{ try{
+      const w=JSON.parse(r.result);
+      const l0=w["trunk.0.weight"]||w["net.0.weight"];
+      const dim=l0?l0[0].length:0;
+      if(dim!==IN_DIM){ alert('权重维度不匹配：该文件输入 '+dim+' 维，当前需要 '+IN_DIM+' 维。\n请用同一版 train_dmc.py 重新训练（特征编码已升级）。'); return; }
+      W=w;
+      const nh=Object.keys(W).filter(k=>k.indexOf('heads.')===0).length/2;
+      document.getElementById('wState').textContent='模型已加载 ✓（'+(nh?nh+' 档 head':'单 head')+'，输入 '+dim+' 维）';
+      lastInsight&&Object.keys(lastInsight).forEach(k=>delete lastInsight[k]);
+      renderInsight();
+    }catch(err){ alert('权重解析失败：'+err); } };
+  r.readAsText(f);
+};
+
+/* ============ 启动 ============ */
+/* 计分模式相关文案 */
+document.getElementById('ruleMode').innerHTML = (SCORING==='score')
+  ? '<code>每份 <b>±(牌型 × 暴击 × 名次 × 杀牌)</b></code>（每个输家对每个第一名各付一份）—— <b>无封顶、不破产</b>，打得好坏直接体现在分数上<br>'
+  : '<code>输家单份支付 = min(牌型×暴击×名次×杀牌×4500, <b>1800万</b>, 赢家收款上限, 输家当前豆)</code><br><b>输</b>封顶恒 1800万；<b>赢</b>每份收款上限 = clamp(max(入场豆,当前豆), 450万, 1800万)<br>';
+if(SCORING==='score'){
+  document.getElementById('stBustLab').textContent='每局均分';
+  document.getElementById('stRichLab').textContent='当前榜首';
+}
+newMeta(); renderLobby();
+</script>
+</body>
+</html>

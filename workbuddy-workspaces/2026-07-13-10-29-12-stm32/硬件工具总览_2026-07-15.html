@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬件自学工具总览（2026-07-15 实测）</title>
+<style>
+  :root{--bg:#fff;--fg:#1a1a1a;--muted:#666;--line:#e2e2e2;--green:#1a7f37;--greenbg:#e8f5ec;--amber:#9a6700;--amberbg:#fff4e0;--red:#c0392b;--redbg:#fdecea;--blue:#0b66c3;--bluebg:#e8f1fb;--purple:#6a3ea1;--purplebg:#f1e9f9}
+  *{box-sizing:border-box}
+  body{font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--fg);max-width:1000px;margin:0 auto;padding:28px;line-height:1.6}
+  h1{font-size:24px;margin:0 0 4px}
+  h2{font-size:18px;margin:26px 0 10px;border-left:4px solid var(--blue);padding-left:10px}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .tag{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:var(--greenbg);color:var(--green)} .warn{background:var(--amberbg);color:var(--amber)}
+  .bad{background:var(--redbg);color:var(--red)} .opt{background:#eef0f2;color:#555}
+  .todo{background:var(--bluebg);color:var(--blue)}
+  table{width:100%;border-collapse:collapse;margin:10px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#f7f7f7;font-weight:600}
+  code{background:#f3f3f3;padding:1px 6px;border-radius:4px;font-size:12.5px}
+  .box{border-radius:10px;padding:14px 16px;margin:14px 0;border:1px solid var(--line)}
+  .mustdo{background:var(--bluebg);border-color:#bcd9f5}
+  .steps{counter-reset:s;padding-left:0;list-style:none;margin:0}
+  .steps li{counter-increment:s;position:relative;padding:7px 0 7px 34px;border-bottom:1px dashed var(--line)}
+  .steps li:before{content:counter(s);position:absolute;left:0;top:7px;width:22px;height:22px;background:var(--blue);color:#fff;border-radius:50%;text-align:center;font-size:12px;line-height:22px;font-weight:700}
+  .note{font-size:13px;color:var(--muted)}
+  img{max-width:100%;border:1px solid var(--line);border-radius:8px;margin:8px 0}
+  .kv{font-size:13px;color:var(--muted)}
+</style>
+</head>
+<body>
+<h1>硬件自学工具总览</h1>
+<div class="sub">实测 2026-07-15 17:48 · 目标：STM32F103C8T6 蓝 Pill + 焊接/PCB + 电路分析/模拟</div>
+
+<div class="box mustdo">
+<b>本轮结论：</b>编译链、电路分析栈已<b>真实验证可用</b>；LTspice 已下好待你双击安装；PlatformIO 的 ststm32 平台已预下载（补上轮缺口）；CubeProgrammer 因 ST 需登录会话改为手动装；烧录/调试/串口三步仍等<b>插板</b>才能端到端验证。
+</div>
+
+<h2>一、能力矩阵（全量，含本轮新增）</h2>
+<table>
+<tr><th>类别</th><th>工具</th><th>状态</th><th>证据 / 说明</th></tr>
+
+<tr><td rowspan="3">MCU 编译</td><td><code>arm-none-eabi-gcc 12.3</code></td><td><span class="tag ok">✅ 已验证</span></td><td>实测生成 Cortex-M3 的 blink.o + blink.bin</td></tr>
+<tr><td><code>objcopy</code> 生成 .bin</td><td><span class="tag ok">✅ 已验证</span></td><td>转二进制成功</td></tr>
+<tr><td>PlatformIO <code>ststm32</code> 平台</td><td><span class="tag ok">✅ 已预下载</span></td><td>ststm32@19.7.0 + toolchain-gccarmnoneeabi@1.70201.0 已装（上轮"核心空"已补）</td></tr>
+
+<tr><td rowspan="2">MCU 烧录/调试</td><td>OpenOCD + ST-LINK_gdbserver</td><td><span class="tag warn">🟡 在场未测</span></td><td>工具在 CubeIDE 内，板子没插连不上</td></tr>
+<tr><td>STM32CubeProgrammer（独立救砖）</td><td><span class="tag todo">🔵 需手动</span></td><td>ST 安装包要走 my.st.com 登录，直链 404，见第六节</td></tr>
+
+<tr><td rowspan="2">串口</td><td>VS Code Serial Monitor 插件</td><td><span class="tag ok">✅ 已装</span></td><td>vscode-serial-monitor 0.13.1</td></tr>
+<tr><td>Python <code>pyserial</code></td><td><span class="tag ok">✅ 已装</span></td><td>pyserial 3.5，<code>import serial</code> 通过</td></tr>
+
+<tr><td rowspan="3">电路分析</td><td><b>lcapy</b>（符号/数值电路分析）</td><td><span class="tag ok">✅ 已验证</span></td><td>节点电压/运放增益/传递函数全跑通（见下图）</td></tr>
+<tr><td>numpy / scipy / matplotlib</td><td><span class="tag ok">✅ 已装</span></td><td>数值计算与绘图底座</td></tr>
+<tr><td>demo 脚本 <code>circuit_demo.py</code></td><td><span class="tag ok">✅ 已验证</span></td><td>同目录可复跑</td></tr>
+
+<tr><td rowspan="3">电路模拟</td><td><b>LTspice</b>（SPICE 仿真标准）</td><td><span class="tag todo">🔵 已下待装</span></td><td>60MB 已下到 <code>Downloads/LTspice64.exe</code>，双击即装（沙箱拦了执行）</td></tr>
+<tr><td>在线：Tinkercad Circuits</td><td><span class="tag opt">⚪ 免装</span></td><td>浏览器里仿真 Arduino + 基础模拟电路，零安装</td></tr>
+<tr><td>在线：Wokwi / 立创EDA 仿真</td><td><span class="tag opt">⚪ 免装</span></td><td>Wokwi 跑 Arduino 代码；立创EDA 网页版带 SPICE 仿真</td></tr>
+
+<tr><td>驱动</td><td>ST-Link 驱动</td><td><span class="tag bad">🔴 未注册</span></td><td>驱动商店无 STMicro 条目；需管理员跑 dpinst_amd64.exe（插板后 Windows 可能自动装）</td></tr>
+
+<tr><td>硬件</td><td>蓝 Pill + ST-Link + USB-TTL</td><td><span class="tag bad">🔴 未接入</span></td><td>设备管理器当前无任何 ST-Link / COM</td></tr>
+</table>
+
+<h2>二、电路分析栈实测（lcapy，已验证）</h2>
+<div class="box">
+<code>circuit_demo.py</code> 实测输出：
+<ul>
+<li>节点电压：V2 = 150/31 = <b>4.84 V</b>，V3 = 120/31 = <b>3.87 V</b>（手算吻合）</li>
+<li>反相运放增益：R1=1k, Rf=10k → <b>Vo/Vi = -10</b>（放大 10 倍反相）</li>
+<li>RC 低通传递函数：<b>H(s) = 1000/(s+1000)</b>（R=1k, C=1µF → 截止 159 Hz）</li>
+</ul>
+</div>
+<img src="rc_bode.png" alt="RC低通伯德图">
+<p class="kv">图：RC 低通伯德图（幅频 + 相频），由 lcapy 取 H(s) + numpy 计算绘制。可直接复用于你的模电/电路分析作业。</p>
+
+<h2>三、电路模拟怎么用</h2>
+<div class="box">
+<ul>
+<li><b>LTspice（推荐，装好后）</b>：画原理图 → 放置 <code>.tran</code>/<code>.ac</code> 指令 → 跑瞬态/交流扫描。最适合运放、电源、滤波器、开关电源仿真——你之前洞洞板的运放电路先在这仿真再焊，省料。</li>
+<li><b>Tinkercad Circuits（现在就能用）</b>：浏览器打开，拖 Arduino + 电阻电容 LED，写代码直接仿真，适合数电/单片机入门。</li>
+<li><b>Wokwi</b>：在线写 Arduino/ESP 代码并仿真外设，不用买板子先验证逻辑。</li>
+<li><b>立创EDA 仿真</b>：画完原理图顺手跑 SPICE，和你的 PCB 流程一体。</li>
+</ul>
+</div>
+
+<h2>四、你还要点一下的（我替不了的物理/权限活）</h2>
+<div class="box mustdo">
+<ol class="steps">
+<li><b>装 LTspice</b>：双击 <code>C:\Users\cxx\Downloads\LTspice64.exe</code>（已下好，无需管理员，装到用户目录）。</li>
+<li><b>ST-Link 驱动</b>：插上 ST-Link 后若设备管理器带黄叹号，右键更新驱动 → 指向 <code>C:\ST\STM32CubeIDE_1.16.1\STM32CubeIDE\drivers\STLinkUSBDriver</code>（或管理员跑其中 <code>dpinst_amd64.exe</code>）。</li>
+<li><b>插板</b>：ST-Link 连蓝 Pill 的 SWD（SWCLK/SWDIO/GND/3.3V），USB-TTL(CH340) 连 PA9/PA10/GND。设备管理器应出现 ST-Link 设备 + COMx。</li>
+</ol>
+</div>
+
+<h2>五、插好板子后我立刻跑的验证</h2>
+<table>
+<tr><th>项</th><th>做法</th><th>通过标准</th></tr>
+<tr><td>识别</td><td>设备管理器 + <code>mode</code> 看 COM</td><td>ST-Link 设备 + COMx，无叹号</td></tr>
+<tr><td>连芯片</td><td>OpenOCD/CubeIDE 读 Chip ID</td><td>读到 STM32F103C8T6</td></tr>
+<tr><td>烧录</td><td>CubeIDE 烧闪灯程序</td><td>蓝 Pill LED 闪</td></tr>
+<tr><td>调试</td><td>断点/单步/看变量</td><td>gdbserver 连上能停能看</td></tr>
+<tr><td>串口</td><td>程序 printf → 串口监视器收</td><td>监视器看到打印</td></tr>
+</table>
+
+<h2>六、STM32CubeProgrammer 手动装（救砖用，可选）</h2>
+<div class="box">
+<ol class="steps">
+<li>打开 <code>https://www.st.com/en/development-tools/stm32cubeprog.html</code></li>
+<li>点 "Get latest"（会跳 my.st.com，需免费账号登录/注册）</li>
+<li>下载 <code>en.stm32cubeprog_xxx_x86_64.exe</code>（约 50MB）</li>
+<li>双击安装（默认路径即可）</li>
+</ol>
+<p class="note">说明：日常烧录 CubeIDE 自带功能已够；只有把 boot 引脚搞错锁死芯片时，才必须用 CubeProgrammer 做 mass erase 救回。非必需，先放着。</p>
+</div>
+
+<h2>七、可选增强（说一声就干）</h2>
+<div class="box">
+<ul>
+<li><b>Proteus</b>（付费，MCU+电路联合仿真，国内单片机课常用）：你装，我给工程模板。</li>
+<li><b>Multisim</b>（NI，教学向电路仿真，付费）：你要的话给安装指引。</li>
+<li>给 lcapy 写一套<b>电路分析作业模板</b>（ nodal / 戴维南 / 交流稳态 / 二端口），直接套你的课本题。</li>
+</ul>
+</div>
+
+<p class="note">本页与《工具链能力矩阵.html》配合使用：那页讲"MCU 工作流到哪一步"，本页讲"电路分析/模拟 + 本轮补齐项"。所有"已验证"均附带实测输出或产物（rc_bode.png / blink.bin）。</p>
+</body>
+</html>

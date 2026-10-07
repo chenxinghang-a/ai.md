@@ -1,0 +1,2 @@
+﻿GameViewer Virtual Display Adapter
+NVIDIA GeForce RTX 5060 Laptop GPU

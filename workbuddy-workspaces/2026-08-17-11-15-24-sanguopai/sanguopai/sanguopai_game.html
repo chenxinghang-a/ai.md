@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三国牌 · 验证游戏（强化学习成果）</title>
+<style>
+  :root{ --bg:#f5f7fa; --card:#ffffff; --ink:#1f2933; --sub:#647084; --line:#e2e8f0;
+         --wei:#2563eb; --shu:#16a34a; --wu:#dc2626; --accent:#7c3aed; --warn:#d97706; }
+  *{box-sizing:border-box} body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+     background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+  header{padding:14px 20px;background:linear-gradient(90deg,#7c3aed,#2563eb);color:#fff}
+  header h1{margin:0;font-size:18px} header p{margin:4px 0 0;opacity:.9;font-size:12px}
+  .wrap{max-width:1180px;margin:0 auto;padding:16px 20px 60px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .panel h2{margin:0 0 12px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:999px;background:#eef2ff;color:#4338ca}
+  button{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:7px 12px;font-size:13px;transition:.15s}
+  button:hover{background:#f1f5f9} button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button.primary:hover{background:#6d28d9} button:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .seats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+  .seat{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fbfcfe;position:relative}
+  .seat.you{border-color:var(--accent);box-shadow:0 0 0 2px #ede9fe}
+  .seat .name{font-weight:600;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+  .seat .chips{font-variant-numeric:tabular-nums;color:var(--sub);font-size:12px}
+  .seat.bust{opacity:.5;background:#fef2f2;border-color:#fecaca}
+  .badge{font-size:10px;padding:1px 6px;border-radius:6px}
+  .b-weishen{background:#dbeafe;color:#1e40af}.b-shu{background:#dcfce7;color:#166534}.b-wu{background:#fee2e2;color:#991b1b}
+  .b-bust{background:#fecaca;color:#991b1b}.b-win{background:#fef9c3;color:#854d0e}
+  .cards{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+  .card{width:34px;height:46px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;font-weight:700;font-size:14px;user-select:none}
+  .card.sel{outline:3px solid var(--accent);transform:translateY(-3px)}
+  .card .s{font-size:11px;font-weight:500;line-height:1}
+  .card.r{color:#dc2626}.card.b{color:#1e293b}
+  .pub{display:flex;gap:14px;margin-top:6px}
+  .pub .grp{font-size:12px;color:var(--sub)}
+  .log{max-height:200px;overflow:auto;font-size:12px;font-family:ui-monospace,Menlo,Consolas,monospace;background:#0f172a;color:#e2e8f0;padding:10px;border-radius:8px}
+  .log div{padding:1px 0}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  th,td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+  th{background:#f1f5f9}
+  .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .bar{height:18px;background:#ede9fe;border-radius:4px;position:relative;min-width:60px}
+  .bar > span{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:4px}
+  .flip{font-weight:700}
+  .flip.yes{color:#16a34a}.flip.no{color:#dc2626}
+  .muted{color:var(--sub);font-size:12px}
+  input[type=range]{width:100%}
+  .status{font-size:12px;color:var(--sub);margin-top:6px}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px}
+  .cc-scroll{max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:8px;margin-top:6px}
+  .cc-table{width:100%;border-collapse:collapse;font-size:12px}
+  .cc-table th,.cc-table td{border:1px solid var(--line);padding:4px 6px;text-align:center}
+  .cc-table th{background:#f1f5f9;position:sticky;top:0}
+  .cc-top{background:#ede9fe;font-weight:700}
+  .cc-bad{color:#dc2626;font-weight:700}
+  .cc-good{color:#16a34a;font-weight:700}
+  .cc-warn{color:#d97706;font-weight:600}
+  .cc-reco{font-size:14px;padding:8px 10px;border-radius:8px;background:#f5f3ff;border:1px solid #ddd6fe;margin-top:6px}
+  .cc-danger{font-size:14px;padding:8px 10px;border-radius:8px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;margin-top:6px;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <h1>三国牌 · 验证游戏</h1>
+  <p>复刻规则（52牌 / 5人 / 4轮 / 牌循环 / cap_eff 封顶保护）+ 加载强化学习训练权重做推理。重点验证：<b>豆子数是否改变了出牌策略</b>。</p>
+</header>
+<div class="wrap">
+
+  <div class="panel">
+    <h2>对局面板 <span class="tag" id="statusTag">未开始</span></h2>
+    <div class="row">
+      <button class="primary" id="btnNew">新开一局（你=0号，初始1亿豆）</button>
+      <label>对手策略：
+        <select id="oppPolicy"><option value="greedy">贪心（牌型分最高）</option><option value="random">随机</option><option value="trained" id="optTrained">训练网络</option></select>
+      </label>
+      <label><input type="checkbox" id="chkTrainedYou"> 你本人也用训练网络（自动出牌）</label>
+      <span class="muted">门票6万/局；豆&lt;门票→破产补16万续打</span>
+    </div>
+
+    <div class="seats" id="seats" style="margin-top:12px"></div>
+
+    <div class="pub" id="pub" style="margin-top:10px"></div>
+
+    <div id="youAction" style="margin-top:12px;display:none">
+      <div class="muted">你的手牌（点选要提交的牌，再选阵营）：</div>
+      <div class="row" style="margin-top:6px">
+        <div class="cards" id="yourCards"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button data-f="0">魏（交2张+公共3）</button>
+        <button data-f="1">蜀（交5张，无公共）</button>
+        <button data-f="2">吴（交3张+公共2）</button>
+        <button class="primary" id="btnSubmit" disabled>提交本轮</button>
+        <span id="actionHint" class="muted"></span>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <button id="btnStep" disabled>结算本轮 ▶</button>
+      <button id="btnAuto" disabled>自动打完本局</button>
+      <span class="status" id="gameStatus"></span>
+    </div>
+    <div class="log" id="log" style="margin-top:10px"></div>
+  </div>
+
+  <div class="panel">
+    <h2>豆子改变策略 · 演示面板 <span class="tag">纯网络，无手搓</span></h2>
+    <div class="muted">固定同一手牌与公共牌，仅改变「你的豆数」，看训练网络的动作概率分布是否随豆改变。这直接验证强化学习是否自己摸索出"豆子影响打法"。</div>
+    <div class="demo-grid" style="margin-top:10px">
+      <div>
+        <div class="muted">低豆（破产补豆档）：<input type="number" id="lowBean" value="160000" step="10000" style="width:120px"> 豆</div>
+        <div id="lowDist" style="margin-top:8px"></div>
+      </div>
+      <div>
+        <div class="muted">高豆（富豪档）：<input type="number" id="highBean" value="100000000" step="1000000" style="width:140px"> 豆</div>
+        <div id="highDist" style="margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button id="btnDemo">刷新演示（用上方固定手牌）</button>
+      <button id="btnRandDemo">随机一手牌测翻转率</button>
+      <span id="demoFlip" class="flip"></span>
+      <span class="muted" id="flipStat"></span>
+    </div>
+
+    <div style="margin-top:14px">
+      <div class="muted">固定演示手牌（可改）：你的手牌 <input id="demoHand" size="40" value="0,13,1,14,2,15,3,16"> ｜ 魏公共 <input id="demoWei" size="14" value="26,27,28"> ｜ 吴公共 <input id="demoWu" size="10" value="39,40"></div>
+    </div>
+    <div class="status" id="netStatus">模型权重：未加载（请用下方载入或确保 sanguopai_weights.json 在同目录）</div>
+  </div>
+
+  <div class="panel">
+    <h2>算牌模式 · 读牌 / EV 推理 <span class="tag">蒙特卡洛</span></h2>
+    <div class="muted">复用 <code>public_seen</code>（公共牌 + 历史上所有出过的牌）推断对手隐藏手牌，蒙特卡洛采样估计每个候选动作的「我赢概率」与「期望净收益 EV」，选 EV 最大。对面大概率更大→标红「别上」（对应老板打牌智慧：人家大就打小 / 我大就直接上）。</div>
+    <div class="row" style="margin-top:10px">
+      <label>采样次数 n_sim：<input type="number" id="ccSim" value="300" step="50" style="width:90px"></label>
+      <button class="primary" id="btnCC">算一算（基于当前你的手牌）</button>
+      <button id="btnCCApply" disabled>用算牌结果替你出牌</button>
+      <span id="ccStatus" class="status"></span>
+    </div>
+    <div id="ccSummary" style="margin-top:10px"></div>
+    <div id="ccTable" style="margin-top:8px"></div>
+    <div class="muted" style="margin-top:8px">表格：按 EV 降序列出候选动作。<span style="color:#dc2626">红=别上（对面大概率更大）</span> ／ <span style="color:#16a34a">绿=可上（我大概率大）</span> ／ 黄=谨慎。点击「用算牌结果替你出牌」可让游戏按算牌结论走一步，验证读牌避险是否真避险。</div>
+  </div>
+
+  <div class="panel">
+    <h2>权重载入</h2>
+    <div class="row">
+      <button id="btnLoadFetch">从同目录加载 sanguopai_weights.json</button>
+      <input type="file" id="fileWeights" accept=".json">
+      <span class="muted">游戏用浏览器 fetch 同目录 json；离线双击打开时用文件选择器载入。</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ============ 规则常量（与 Python 仿真一致） ============ */
+const TYPE_MULT=[10,20,30,40,60,80,100,400,1000];
+const RANK_MULT=[0,0,32,24,12,4];
+const CRIT_MULT=[1,1,2,4,8,16];
+const KILL_MULT=[1,1,2,4,8,16];
+const KILL_CLASS=[0,0,0,0,1,2,3,4,5];
+const PUBLIC_CARDS=[3,0,2];
+const N_PLAYERS=5, HAND_SIZE=8, N_ROUNDS=4;
+const BASE=4500, CAP=18000000, MIN_WIN=4500000, REBUY=160000, TICKET=60000, INITIAL=100000000;
+const SUITS=["♠","♥","♦","♣"], RANKS="23456789TJQKA";
+const GN=["单张","对子","两对","三张","顺子","同花","三带二","四炸","同花顺"];
+const FNAME=["魏","蜀","吴"];
+
+function codeToCard(c){ if(c>=52) return {rank:-1,suit:-1,empty:true}; return {rank:c%13,suit:Math.floor(c/13)}; }
+function cardText(c){ const k=codeToCard(c); if(k.empty) return "·"; return RANKS[k.rank]+SUITS[k.suit]; }
+function isRed(c){ const k=codeToCard(c); return k.empty?false:(k.suit===1||k.suit===3); }
+
+function combinations(n,k){const res=[];const idx=Array.from({length:k},(_,i)=>i);
+  while(true){res.push(idx.slice());let i=k-1;while(i>=0&&idx[i]===n-k+i)i--;if(i<0)break;idx[i]++;for(let j=i+1;j<k;j++)idx[j]=idx[j-1]+1;}return res;}
+const ACTION_TABLE=[];for(const c of combinations(8,2))ACTION_TABLE.push({f:0,idx:c});
+const F0=ACTION_TABLE.length;for(const c of combinations(8,5))ACTION_TABLE.push({f:1,idx:c});
+const F1=ACTION_TABLE.length;for(const c of combinations(8,3))ACTION_TABLE.push({f:2,idx:c});
+const FACTION_STARTS=[0,F0,F1];
+function actionId(f,idxArr){ for(let a=0;a<ACTION_TABLE.length;a++){ if(ACTION_TABLE[a].f===f && ACTION_TABLE[a].idx.join()===idxArr.join()) return a; } return -1; }
+
+function evaluateFiveScore(cards){
+  const ranks=cards.map(c=>codeToCard(c).rank);const suits=cards.map(c=>codeToCard(c).suit);
+  const isFlush=new Set(suits).size===1 && !suits.includes(-1);
+  const cnt={};for(const r of ranks)cnt[r]=(cnt[r]||0)+1;
+  const countRank=Object.entries(cnt).map(([r,n])=>[+r,n]).sort((a,b)=>b[1]-a[1]||b[0]-a[0]);
+  const uniq=[...new Set(ranks)].sort((a,b)=>a-b);let sh=-1;
+  for(let s=uniq.length-5;s>=0;s--){if(uniq[s+4]-uniq[s]===4){sh=uniq[s+4];break;}}
+  if(sh<0&&new Set(uniq).size>=5&&[12,0,1,2,3].every(x=>uniq.includes(x)))sh=3;
+  let grade,tie;
+  if(isFlush&&sh>=0){grade=8;tie=[sh];}
+  else if(countRank[0][1]===4){grade=7;tie=[countRank[0][0],countRank[1][0]];}
+  else if(countRank[0][1]===3&&countRank[1][1]===2){grade=6;tie=[countRank[0][0],countRank[1][0]];}
+  else if(isFlush){grade=5;tie=ranks.slice().sort((a,b)=>b-a);}
+  else if(sh>=0){grade=4;tie=[sh];}
+  else if(countRank[0][1]===3){grade=3;const t=countRank[0][0];tie=[t,...ranks.filter(r=>r!==t).sort((a,b)=>b-a)];}
+  else if(countRank[0][1]===2&&countRank[1][1]===2){grade=2;tie=[countRank[0][0],countRank[1][0],countRank[2][0]];}
+  else if(countRank[0][1]===2){grade=1;const p=countRank[0][0];tie=[p,...ranks.filter(r=>r!==p).sort((a,b)=>b-a)];}
+  else {grade=0;tie=ranks.slice().sort((a,b)=>b-a);}
+  let score=grade;const padded=tie.concat([0,0,0,0,0]).slice(0,5);for(const v of padded)score=score*13+v;
+  return {score,grade};
+}
+
+/* ============ 游戏（完整牌循环，复刻 game.py） ============ */
+function shuffle(a,rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+class Game{
+  constructor(seed){ this.rng=mulberry32(seed>>>0); this.round=0; this.done=false;
+    this.chips=Array(N_PLAYERS).fill(INITIAL); this.entry=Array(N_PLAYERS).fill(INITIAL);
+    this.bankrupt=Array(N_PLAYERS).fill(false); this.seen=new Set(); this.history=[];
+    this.deck=shuffle(Array.from({length:52},(_,i)=>i),this.rng);
+    this.hands=[]; for(let p=0;p<N_PLAYERS;p++)this.hands.push(this.deck.slice(p*8,p*8+8));
+    let off=N_PLAYERS*8;
+    this.public=[ this.deck.slice(off,off+3), [], this.deck.slice(off+3,off+5) ];
+    this.pool=this.deck.slice(off+5);
+    for(const c of this.public[0].concat(this.public[2])) this.seen.add(c);
+  }
+  seenVec(){ const v=Array(52).fill(0); for(const c of this.seen) v[c]=1; return v; }
+  obsFor(pid){ const hand=this.hands[pid].slice(); while(hand.length<HAND_SIZE) hand.push(52);
+    const own=this.chips[pid]; const beanLog=Math.log10(own+1)/9; const beanNorm=Math.min(own/1e8,2);
+    return hand.concat(this.public[0],this.public[2],[this.round],this.seenVec(),[beanLog,beanNorm]); }
+  step(actions){
+    if(this.done) return;
+    const active=[]; for(let i=0;i<N_PLAYERS;i++) if(!this.bankrupt[i]) active.push(i);
+    if(active.length<=1){ this.done=true; return; }
+    const subs=[];
+    for(const pid of active){ let aid=actions[pid]; if(aid==null) aid=0;
+      const {f,idx}=ACTION_TABLE[aid]; const sel=idx.map(i=>this.hands[pid][i]);
+      const pub=f===0?this.public[0]:(f===2?this.public[2]:[]); const cards=sel.concat(pub);
+      const {score,grade}=evaluateFiveScore(cards); subs.push({score,pid,cards,f,aid,grade}); }
+    subs.sort((a,b)=>b.score-a.score);
+    const ranks=Array(N_PLAYERS).fill(0); let cur=1,i=0;
+    while(i<subs.length){ let j=i; while(j<subs.length&&subs[j].score===subs[i].score)j++;
+      for(let k=i;k<j;k++)ranks[subs[k].pid]=cur; cur+=j-i; i=j; }
+    const firstPids=subs.filter(s=>ranks[s.pid]===1).map(s=>s.pid);
+    const firstGrade=subs[0].grade; const typeMult=TYPE_MULT[firstGrade];
+    const rewards=Array(N_PLAYERS).fill(0);
+    // 赢家侧 cap_eff：与输家对称——赢家收款也按自己财富档封顶（修复"低豆赢家赢的和高豆一样"的 bug）
+    const capEffW={}; for(const w of firstPids){ const Ew=this.entry[w], Cw=this.chips[w]; let ce;
+      if(Ew>=CAP)ce=CAP; else if(Ew<MIN_WIN)ce=MIN_WIN; else ce=Math.min(Math.max(Ew,Cw),CAP); capEffW[w]=ce; }
+    for(const loser of subs){ const pid=loser.pid; if(ranks[pid]===1) continue;
+      const C=this.chips[pid], E=this.entry[pid]; let capEff;
+      if(E>=CAP)capEff=CAP; else if(E<MIN_WIN)capEff=MIN_WIN; else capEff=Math.min(Math.max(E,C),CAP);
+      let total=0, remaining=C; const fi=loser.f;
+      for(const w of firstPids){ const fw=subs.find(s=>s.pid===w).f; const gw=subs.find(s=>s.pid===w).grade;
+        const kcw=KILL_CLASS[gw]; const sameType=subs.filter(s=>KILL_CLASS[s.grade]===kcw).length;
+        const sameFaction=(fi===fw)?subs.filter(s=>s.f===fw).length:1;
+        const L=typeMult*CRIT_MULT[sameFaction]*RANK_MULT[ranks[pid]]*KILL_MULT[sameType]*BASE;
+        let pay=Math.min(L,capEff,capEffW[w],remaining); if(pay<=0) break;
+        rewards[w]+=pay; remaining-=pay; total+=pay; }
+      rewards[pid]=-total; if(this.chips[pid]+rewards[pid]<=0) this.bankrupt[pid]=true; }
+    // 牌循环
+    const used=[]; const usedF=new Set();
+    for(const s of subs){ const {f,idx}=ACTION_TABLE[s.aid];
+      for(const k of idx.slice().sort((a,b)=>b-a)) used.push(this.hands[s.pid].splice(k,1)[0]);
+      if(!usedF.has(f)){ used.push(...this.public[f]); usedF.add(f); this.public[f]=[]; } }
+    this.pool.push(...used); shuffle(this.pool,this.rng);
+    for(const pid of active){ if(this.bankrupt[pid]) continue;
+      while(this.hands[pid].length<HAND_SIZE && this.pool.length) this.hands[pid].push(this.pool.pop()); }
+    for(const f of usedF){ while(this.public[f].length<PUBLIC_CARDS[f] && this.pool.length) this.public[f].push(this.pool.pop()); }
+    for(let pid=0;pid<N_PLAYERS;pid++){ if(this.bankrupt[pid] && this.hands[pid].length){ this.pool.push(...this.hands[pid]); this.hands[pid]=[]; } }
+    shuffle(this.pool,this.rng);
+    for(const s of subs) for(const c of s.cards) this.seen.add(c);
+    for(const pid of active) this.chips[pid]+=rewards[pid];
+    this.history.push({round:this.round,subs:subs.map(s=>({pid:s.pid,f:s.f,cards:s.cards,score:s.score,rank:ranks[s.pid],reward:rewards[s.pid],grade:s.grade,bust:this.bankrupt[s.pid]})),chips:this.chips.slice(),bankrupt:this.bankrupt.slice()});
+    this.round++; if(this.round>=N_ROUNDS) this.done=true;
+  }
+}
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+/* ============ 训练网络（JS 推理，加载 weights JSON） ============ */
+let NET=null;
+function loadNet(json){
+  const w={}; for(const k in json) w[k]=json[k];
+  NET={
+    embed:w['card_embed.weight'],
+    w0:w['fc.0.weight'], b0:w['fc.0.bias'],
+    w2:w['fc.2.weight'], b2:w['fc.2.bias'],
+    pw:w['policy_head.weight'], pb:w['policy_head.bias']
+  };
+  return NET;
+}
+function matvec(W,b,x){ const n=W.length, m=W[0].length, y=new Array(n).fill(0);
+  for(let i=0;i<n;i++){ let s=b[i]; const Wi=W[i]; for(let j=0;j<m;j++) s+=Wi[j]*x[j]; y[i]=s; } return y; }
+function relu(x){ return x.map(v=>v>0?v:0); }
+function netLogits(obs){ // obs: 68
+  const cards=obs.slice(0,14).map(v=>Math.round(v));
+  const seen=obs.slice(14,66); const beans=obs.slice(66,68);
+  const emb=[]; for(const c of cards){ const row=NET.embed[c]||NET.embed[0]; for(const v of row) emb.push(v); }
+  const x=emb.concat(seen,beans);
+  let h=relu(matvec(NET.w0,NET.b0,x));
+  h=relu(matvec(NET.w2,NET.b2,h));
+  return matvec(NET.pw,NET.pb,h);
+}
+function netAction(obs){ const lg=netLogits(obs); let best=0; for(let i=1;i<lg.length;i++) if(lg[i]>lg[best]) best=i; return best; }
+function softmax(a){ const m=Math.max(...a); const e=a.map(v=>Math.exp(v-m)); const s=e.reduce((x,y)=>x+y,0); return e.map(v=>v/s); }
+function netDist(obs){ return softmax(netLogits(obs)); }
+
+/* ============ 对手策略 ============ */
+function greedyAction(g,pid){ let best=0,bs=-1;
+  for(let a=0;a<ACTION_TABLE.length;a++){ const {f,idx}=ACTION_TABLE[a]; const sel=idx.map(i=>g.hands[pid][i]);
+    const pub=f===0?g.public[0]:(f===2?g.public[2]:[]); const sc=evaluateFiveScore(sel.concat(pub)).score; if(sc>bs){bs=sc;best=a;} } return best; }
+function randomAction(){ return Math.floor(Math.random()*ACTION_TABLE.length); }
+
+/* ============ UI 状态 ============ */
+let G=null, selected=[], selFaction=null;
+const $ = id=>document.getElementById(id);
+function renderSeats(){
+  const seats=$('seats'); seats.innerHTML='';
+  for(let p=0;p<N_PLAYERS;p++){
+    const div=document.createElement('div'); div.className='seat'+(p===0?' you':'')+(G.bankrupt[p]?' bust':'');
+    const chips=G.chips[p]; const you=p===0?'（你）':'';
+    let badge=''; if(G.bankrupt[p]) badge='<span class="badge b-bust">破产停玩</span>';
+    div.innerHTML=`<div class="name"><span>玩家${p}${you}</span>${badge}</div>
+      <div class="chips">${fmt(chips)}豆</div><div class="cards" id="seatCards${p}"></div>`;
+    seats.appendChild(div);
+    const cc=div.querySelector(`#seatCards${p}`);
+    const hand=G.hands[p];
+    if(hand.length===0 && G.bankrupt[p]){ cc.innerHTML='<span class="muted">已停玩</span>'; }
+    else { for(const c of hand){ const el=document.createElement('div'); el.className='card '+(isRed(c)?'r':'b'); el.innerHTML=`${RANKS[codeToCard(c).rank]}<span class="s">${SUITS[codeToCard(c).suit]}</span>`; cc.appendChild(el); } }
+  }
+  const pub=$('pub');
+  pub.innerHTML=`<div class="grp">魏公共：${G.public[0].map(c=>cardText(c)).join(' ')}</div>
+                 <div class="grp">吴公共：${G.public[2].map(c=>cardText(c)).join(' ')}</div>
+                 <div class="grp">轮次：${G.round+1}/4</div>`;
+}
+function fmt(n){ if(n>=1e8) return (n/1e8).toFixed(2)+'亿'; if(n>=1e4) return (n/1e4).toFixed(1)+'万'; return ''+n; }
+function logLine(t){ const l=$('log'); const d=document.createElement('div'); d.textContent=t; l.appendChild(d); l.scrollTop=l.scrollHeight; }
+
+function newGame(){
+  G=new Game((Math.random()*1e9)|0);
+  selected=[]; selFaction=null;
+  $('log').innerHTML=''; $('statusTag').textContent='进行中';
+  $('youAction').style.display = $('chkTrainedYou').checked ? 'none' : 'block';
+  $('btnStep').disabled = G.done; $('btnAuto').disabled = G.done;
+  renderSeats(); logLine('新一局开始（5人，各1亿豆）。门票6万已在入口扣除。');
+  if($('chkTrainedYou').checked && NET) autoYouOnce();
+}
+function autoYouOnce(){
+  if(!G||G.done||G.bankrupt[0]||!NET) return;
+  const a=netAction(G.obsFor(0)); applyAction(0,a);
+}
+function renderYourCards(){
+  const box=$('yourCards'); box.innerHTML='';
+  G.hands[0].forEach((c,i)=>{ const el=document.createElement('div'); el.className='card '+(isRed(c)?'r':'b')+(selected.includes(i)?' sel':'');
+    el.innerHTML=`${RANKS[codeToCard(c).rank]}<span class="s">${SUITS[codeToCard(c).suit]}</span>`;
+    el.onclick=()=>{ const k=selected.indexOf(i); if(k>=0)selected.splice(k,1); else selected.push(i); updateSubmit(); renderYourCards(); };
+    box.appendChild(el); });
+}
+function updateSubmit(){
+  const ok = selFaction!=null && selected.length=== (selFaction===0?2:(selFaction===2?3:5));
+  $('btnSubmit').disabled=!ok;
+  if(!ok){ $('actionHint').textContent = selFaction==null?'先选阵营':`需选${selFaction===0?2:(selFaction===2?3:5)}张`; return; }
+  const need=selFaction===0?2:(selFaction===2?3:5);
+  const a=actionId(selFaction,selected.slice().sort((x,y)=>x-y));
+  $('actionHint').textContent='动作#'+a;
+}
+document.querySelectorAll('#youAction button[data-f]').forEach(b=>{ b.onclick=()=>{ selFaction=+b.dataset.f; selected=[]; updateSubmit(); renderYourCards();
+  document.querySelectorAll('#youAction button[data-f]').forEach(x=>x.style.background=''); b.style.background='#ede9fe'; }; });
+$('btnSubmit').onclick=()=>{ if($('btnSubmit').disabled) return; const a=actionId(selFaction,selected.slice().sort((x,y)=>x-y)); applyAction(0,a); };
+function applyAction(pid,a){
+  const acts={}; const oppPol=$('oppPolicy').value;
+  for(let p=0;p<N_PLAYERS;p++){
+    if(p===pid){ acts[p]=a; }
+    else if(!G.bankrupt[p]){ acts[p]= oppPol==='greedy'?greedyAction(G,p): oppPol==='trained'? (NET?netAction(G.obsFor(p)):greedyAction(G,p)) : randomAction(); }
+  }
+  const before=G.chips.slice();
+  G.step(acts);
+  // 日志
+  const last=G.history[G.history.length-1];
+  let txt=`第${last.round+1}轮：`;
+  for(const s of last.subs){ txt+=` 玩家${s.pid}(${FNAME[s.f]}) ${GN[s.grade]} ${s.reward>=0?'+':''}${fmt(s.reward)}`; }
+  logLine(txt);
+  if(G.done){ $('statusTag').textContent='本局结束'; $('btnStep').disabled=true; $('btnAuto').disabled=true;
+    logLine('本局结束。末豆：'+G.chips.map((c,p)=>`P${p}:${fmt(c)}`).join('  ')); }
+  renderSeats();
+}
+$('btnNew').onclick=newGame;
+$('btnStep').onclick=()=>{ if(G&&!G.done) applyAction(0, userActionOrAuto()); };
+function userActionOrAuto(){ if($('chkTrainedYou').checked && NET) return netAction(G.obsFor(0));
+  if(selFaction==null) return 0; return actionId(selFaction,selected.slice().sort((x,y)=>x-y)); }
+$('btnAuto').onclick=()=>{ if(!G) return; let guard=0; while(!G.done && guard++<10){ const pid=0; const a = ($('chkTrainedYou').checked&&NET)?netAction(G.obsFor(0)):userActionOrAuto();
+  // 自动模式下若未手动选，则用贪心代替你本人
+  let acts={}; const oppPol=$('oppPolicy').value;
+  for(let p=0;p<N_PLAYERS;p++){ if(p===0){ acts[p]= (selFaction!=null&&!($('chkTrainedYou').checked))?actionId(selFaction,selected.slice().sort((x,y)=>x-y)):(NET&&$('chkTrainedYou').checked?a:greedyAction(G,0)); }
+    else if(!G.bankrupt[p]){ acts[p]= oppPol==='greedy'?greedyAction(G,p): oppPol==='trained'?(NET?netAction(G.obsFor(p)):greedyAction(G,p)):randomAction(); } }
+  G.step(acts); const last=G.history[G.history.length-1];
+  let txt=`第${last.round+1}轮：`; for(const s of last.subs){ txt+=` 玩家${s.pid}(${FNAME[s.f]}) ${GN[s.grade]} ${s.reward>=0?'+':''}${fmt(s.reward)}`; } logLine(txt);
+  }
+  $('statusTag').textContent='本局结束'; $('btnStep').disabled=true; $('btnAuto').disabled=true;
+  logLine('本局结束。末豆：'+G.chips.map((c,p)=>`P${p}:${fmt(c)}`).join('  ')); renderSeats();
+};
+$('chkTrainedYou').onchange=()=>{ if(G){ $('youAction').style.display=$('chkTrainedYou').checked?'none':'block'; if($('chkTrainedYou').checked&&NET) autoYouOnce(); } };
+
+/* ============ 豆子改变策略 演示 ============ */
+function demoObs(hand,wei,wu,bean){
+  const seen=Array(52).fill(0); for(const c of hand.concat(wei,wu)) if(c<52) seen[c]=1;
+  const beanLog=Math.log10(bean+1)/9, beanNorm=Math.min(bean/1e8,2);
+  return hand.concat(wei,wu,[0],seen,[beanLog,beanNorm]);
+}
+function renderDist(elId,d){
+  const el=$(elId); el.innerHTML='';
+  const top=[]; for(let i=0;i<d.p.length;i++) top.push([i,d.p[i]]); top.sort((a,b)=>b[1]-a[1]);
+  for(let k=0;k<6;k++){ const [a,p]=top[k]; const {f,idx}=ACTION_TABLE[a];
+    const line=document.createElement('div'); line.style.display='flex'; line.style.alignItems='center'; line.style.gap='6px'; line.style.margin='3px 0';
+    line.innerHTML=`<span style="width:150px" class="muted">${FNAME[f]} 手牌[${idx.join(',')}]</span><div class="bar" style="flex:1"><span style="width:${(p*100).toFixed(1)}%"></span></div><span style="width:54px;text-align:right">${(p*100).toFixed(1)}%</span>`;
+    el.appendChild(line); }
+}
+function refreshDemo(){
+  if(!NET){ $('netStatus').textContent='模型权重：未加载，无法演示'; return; }
+  const hand=$('demoHand').value.split(',').map(Number);
+  const wei=$('demoWei').value.split(',').map(Number);
+  const wu=$('demoWu').value.split(',').map(Number);
+  const low=+$('lowBean').value, high=+$('highBean').value;
+  const dL=netDist(demoObs(hand,wei,wu,low)), dH=netDist(demoObs(hand,wei,wu,high));
+  renderDist('lowDist',{p:dL}); renderDist('highDist',{p:dH});
+  const aL=netAction(demoObs(hand,wei,wu,low)), aH=netAction(demoObs(hand,wei,wu,high));
+  const flip=$('demoFlip');
+  if(aL!==aH){ flip.className='flip yes'; flip.textContent=`✅ 豆子改变了策略（低豆→高豆：动作#${aL} → #${aH}）`; }
+  else { flip.className='flip no'; flip.textContent='❌ 同一手牌下豆数未改变 top1 动作'; }
+}
+$('btnDemo').onclick=refreshDemo;
+$('btnRandDemo').onclick=()=>{
+  if(!NET){ $('netStatus').textContent='模型权重：未加载'; return; }
+  let flips=0, N=400, exLow=null, exHigh=null, exFlip=false;
+  for(let t=0;t<N;t++){
+    const deck=shuffle(Array.from({length:52},(_,i)=>i),Math.random);
+    const hand=deck.slice(0,8); const rem=deck.slice(8);
+    const wei=rem.slice(0,3), wu=rem.slice(3,5);
+    const low=160000, high=100000000;
+    const aL=netAction(demoObs(hand,wei,wu,low)), aH=netAction(demoObs(hand,wei,wu,high));
+    if(aL!==aH){ flips++; if(!exFlip && Math.max(...netDist(demoObs(hand,wei,wu,low)))<0.6){ exFlip=true; exLow=hand.slice(); exHigh=wu?wei.slice():wei; } }
+  }
+  $('flipStat').textContent=`随机 ${N} 手牌：top1 随豆切换占比 ${(flips/N*100).toFixed(1)}%`;
+};
+
+/* ============ 算牌模式 · 蒙特卡洛 EV 推理（移植自 Python CardCounter） ============ */
+let ccResult=null;
+function capEffCC(E,C){ if(E>=CAP) return CAP; if(E<MIN_WIN) return MIN_WIN; return Math.min(Math.max(E,C),CAP); }
+
+// 结算（纯函数，与 game.py / card_counter.py 一致：输赢对称 cap_eff）
+function resolveSettleCC(subs, n, entryChips, chips){
+  const rewards=new Array(n).fill(0);
+  const sorted=subs.slice().sort((a,b)=>b.score-a.score);
+  const ranks=new Array(n).fill(0);
+  let cur=1,i=0;
+  while(i<sorted.length){ let j=i; while(j<sorted.length && sorted[j].score===sorted[i].score) j++;
+    for(let k=i;k<j;k++) ranks[sorted[k].pid]=cur; cur+=j-i; i=j; }
+  const firstPids=sorted.filter(s=>ranks[s.pid]===1).map(s=>s.pid);
+  if(firstPids.length===0) return rewards;
+  const gradeOf=s=>Math.floor(s.score/(13**5));
+  const firstGrade=gradeOf(sorted[0]);
+  const typeMult=TYPE_MULT[firstGrade];
+  const capEffW={};
+  for(const w of firstPids) capEffW[w]=capEffCC(entryChips[w],chips[w]);
+  for(let p=0;p<n;p++){
+    if(ranks[p]===0||ranks[p]===1) continue;
+    const factionI=sorted.find(s=>s.pid===p).f;
+    const capEff=capEffCC(entryChips[p],chips[p]);
+    let total=0, remaining=chips[p];
+    for(const w of firstPids){
+      const sw=sorted.find(s=>s.pid===w);
+      const kcw=KILL_CLASS[gradeOf(sw)];
+      const sameType=sorted.filter(s=>KILL_CLASS[gradeOf(s)]===kcw).length;
+      const sameFaction=(factionI===sw.f)?sorted.filter(s=>s.f===sw.f).length:1;
+      const L=typeMult*CRIT_MULT[sameFaction]*RANK_MULT[ranks[p]]*KILL_MULT[sameType]*BASE;
+      let pay=Math.min(L,capEff,capEffW[w],remaining);
+      if(pay<=0) break;
+      rewards[w]+=pay; remaining-=pay; total+=pay;
+    }
+    rewards[p]=-total;
+  }
+  return rewards;
+}
+
+// 对手贪心最优牌型（魏配3公共 / 吴配2公共 / 蜀用5手牌）
+function opponentBestCC(handCodes, pubWei, pubWu){
+  let bestScore=-1, best=null;
+  for(const a of ACTION_TABLE){
+    const sel=a.idx.map(i=>handCodes[i]);
+    const pub=a.f===0?pubWei:(a.f===2?pubWu:[]);
+    const s=evaluateFiveScore(sel.concat(pub)).score;
+    if(s>bestScore){ bestScore=s; best={score:s,f:a.f,cards:sel.concat(pub)}; }
+  }
+  return best;
+}
+
+function cardCountAnalyze(nSim){
+  if(!G||G.done||G.bankrupt[0]){ $('ccStatus').textContent='当前无可用决策（局已结束或你已破产）'; return null; }
+  const myHand=G.hands[0].filter(c=>c<52);
+  const pubWei=G.public[0], pubWu=G.public[2];
+  // 对手隐藏手牌的宇宙 = 52 - 我的手牌 - 当前公共牌（牌循环：历史出过的牌会回库重补，
+  // 不能用 G.seen 去减，否则末轮 pool<32 会越界）。当前公共牌是"读牌"信号，已在对手最优里体现。
+  const pubAll=new Set(pubWei.concat(pubWu));
+  const pool=[]; for(let c=0;c<52;c++){ if(!pubAll.has(c) && !myHand.includes(c)) pool.push(c); }
+  const myCands=ACTION_TABLE.map(a=>{
+    const sel=a.idx.map(i=>myHand[i]);
+    const pub=a.f===0?pubWei:(a.f===2?pubWu:[]);
+    const cards=sel.concat(pub);
+    const {score,grade}=evaluateFiveScore(cards);
+    return {score,grade,f:a.f,cards:cards.slice()};
+  });
+  const ev=new Array(140).fill(0), win=new Array(140).fill(0);
+  const oppAlive=[]; for(let p=1;p<N_PLAYERS;p++) if(!G.bankrupt[p]) oppAlive.push(p);
+  const nOpp=oppAlive.length;
+  const myChips=G.chips[0], myEntry=(G.entry?G.entry[0]:G.chips[0]);
+  for(let s=0;s<nSim;s++){
+    shuffle(pool,Math.random);
+    const oppHands=[]; for(let k=0;k<nOpp;k++) oppHands.push(pool.slice(k*8,(k+1)*8));
+    const oppSubs=[];
+    oppHands.forEach((hc,k)=>{ const b=opponentBestCC(hc,pubWei,pubWu); oppSubs.push({score:b.score,pid:oppAlive[k],f:b.f,cards:b.cards}); });
+    const entry=new Array(5).fill(0), chips=new Array(5).fill(0);
+    entry[0]=myEntry; chips[0]=myChips;
+    for(const p of oppAlive){ entry[p]=CAP; chips[p]=CAP; } // 对手保守按高豆(付最多)
+    for(let a=0;a<140;a++){
+      const subs=[{score:myCands[a].score,pid:0,f:myCands[a].f,cards:myCands[a].cards}].concat(oppSubs);
+      const net=resolveSettleCC(subs,5,entry,chips)[0];
+      ev[a]+=net; if(net>0) win[a]++;
+    }
+  }
+  for(let a=0;a<140;a++){ ev[a]/=nSim; win[a]/=nSim; }
+  return {ev,win,myCands,myHand,pubWei,pubWu,nOpp,poolLen:pool.length,nSim};
+}
+
+function moneyShort(v){
+  if(Math.abs(v)>=1e8) return (v/1e8).toFixed(2)+'亿';
+  if(Math.abs(v)>=1e4) return (v/1e4).toFixed(0)+'万';
+  return Math.round(v)+'';
+}
+function fmtCards(cards){ return cards.map(c=>cardText(c)).join(' '); }
+
+function renderCC(r){
+  ccResult=r;
+  const order=[]; for(let a=0;a<140;a++) order.push(a);
+  order.sort((a,b)=>r.ev[b]-r.ev[a]);
+  const bestA=order[0], bestW=r.win[bestA], bestEV=r.ev[bestA];
+  const bestInfo=ACTION_TABLE[bestA];
+  let html='';
+  if(bestEV<0){
+    html+=`<div class="cc-danger">⚠️ 全局最优动作 EV 仍为负（${moneyShort(bestEV)}）：此局大概率打不过，建议打最小牌型（散牌/对子）少输为赢。对面大概率有更大牌。</div>`;
+  } else {
+    html+=`<div class="cc-reco">✅ 推荐：${FNAME[bestInfo.f]} 选 [${bestInfo.idx.join(',')}] ＝ ${fmtCards(r.myCands[bestA].cards)}（${GN[r.myCands[bestA].grade]}）｜胜率 ${(bestW*100).toFixed(1)}%｜EV ${bestEV>=0?'+':''}${moneyShort(bestEV)}</div>`;
+  }
+  $('ccSummary').innerHTML=html + `<div class="muted">我的手牌：${fmtCards(r.myHand)} ｜ 魏公共：${fmtCards(r.pubWei)} ｜ 吴公共：${fmtCards(r.pubWu)} ｜ 对手存活：${r.nOpp} 人 ｜ 剩余牌池：${r.poolLen} 张 ｜ ${r.nSim} 次蒙特卡洛</div>`;
+
+  let tab=`<div class="cc-scroll"><table class="cc-table"><thead><tr><th>#</th><th>阵营</th><th>牌型</th><th>出牌</th><th>胜率</th><th>EV</th><th>建议</th></tr></thead><tbody>`;
+  const show=order.slice(0,10);
+  for(const a of show){
+    const info=ACTION_TABLE[a], w=r.win[a], e=r.ev[a], isTop=(a===bestA);
+    let sug,cls; if(w<0.4&&e<0){sug='别上';cls='cc-bad';} else if(w>0.5){sug='可上';cls='cc-good';} else {sug='谨慎';cls='cc-warn';}
+    tab+=`<tr class="${isTop?'cc-top':''}"><td>${a}</td><td>${FNAME[info.f]}</td><td>${GN[r.myCands[a].grade]}</td><td>${fmtCards(r.myCands[a].cards)}</td><td>${(w*100).toFixed(1)}%</td><td>${e>=0?'+':''}${moneyShort(e)}</td><td class="${cls}">${sug}</td></tr>`;
+  }
+  tab+=`<tr><td colspan="7" style="background:#fafafa;color:#647084">↓ 最不推荐（若强行上大牌会怎样）</td></tr>`;
+  for(const a of order.slice(-5).reverse()){
+    const info=ACTION_TABLE[a], w=r.win[a], e=r.ev[a];
+    let sug,cls; if(w<0.4&&e<0){sug='别上';cls='cc-bad';} else if(w>0.5){sug='可上';cls='cc-good';} else {sug='谨慎';cls='cc-warn';}
+    tab+=`<tr><td>${a}</td><td>${FNAME[info.f]}</td><td>${GN[r.myCands[a].grade]}</td><td>${fmtCards(r.myCands[a].cards)}</td><td>${(w*100).toFixed(1)}%</td><td>${e>=0?'+':''}${moneyShort(e)}</td><td class="${cls}">${sug}</td></tr>`;
+  }
+  tab+=`</tbody></table></div>`;
+  $('ccTable').innerHTML=tab;
+  $('btnCCApply').disabled=false;
+}
+
+$('btnCC').onclick=()=>{
+  const nSim=Math.max(10,Math.min(2000,+$('ccSim').value||300));
+  $('ccStatus').textContent='蒙特卡洛计算中…';
+  setTimeout(()=>{
+    const t0=performance.now();
+    const r=cardCountAnalyze(nSim);
+    if(r){ renderCC(r); $('ccStatus').textContent=`完成（${nSim} 次采样，耗时 ${((performance.now()-t0)/1000).toFixed(1)}s）`; }
+  },20);
+};
+$('btnCCApply').onclick=()=>{
+  if(!ccResult) return;
+  const best=order_best(ccResult.ev);
+  if(G&&!G.done&&!G.bankrupt[0]) applyAction(0,best);
+};
+function order_best(ev){ let b=0; for(let a=1;a<ev.length;a++) if(ev[a]>ev[b]) b=a; return b; }
+
+/* ============ 权重载入 ============ */
+function applyWeights(json){ loadNet(json); $('netStatus').textContent='模型权重：已加载 ✅（'+Object.keys(json).length+' 个张量）'; $('optTrained').disabled=false; $('btnDemo').disabled=false; refreshDemo(); }
+$('btnLoadFetch').onclick=()=>{ fetch('sanguopai_weights.json').then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); }).then(applyWeights).catch(e=>{ $('netStatus').textContent='fetch 失败（离线双击打开时请用文件选择器载入）：'+e.message; }); };
+$('fileWeights').onchange=e=>{ const f=e.target.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ applyWeights(JSON.parse(rd.result)); }catch(err){ $('netStatus').textContent='解析失败：'+err.message; } }; rd.readAsText(f); };
+// 尝试自动加载
+window.addEventListener('load',()=>{ $('btnLoadFetch').click(); });
+
+/* 初始演示占位 */
+$('btnDemo').disabled=!$('btnDemo').disabled?false:false;
+</script>
+</body>
+</html>

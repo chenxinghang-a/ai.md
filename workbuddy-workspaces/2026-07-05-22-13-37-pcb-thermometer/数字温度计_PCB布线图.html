@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数字温度计 PCB布线图 (30×24)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, "Microsoft YaHei", sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            overflow-x: auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header .subtitle {
+            font-size: 13px;
+            opacity: 0.85;
+            margin-top: 2px;
+        }
+
+        /* 工具栏 */
+        .toolbar {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 1000;
+            padding: 10px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .toolbar button {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+        }
+
+        .toolbar button:hover {
+            background: #e8f4fd;
+            border-color: #2980b9;
+            color: #2980b9;
+        }
+
+        .toolbar .sep {
+            width: 1px;
+            height: 28px;
+            background: #ddd;
+            margin: 0 4px;
+        }
+
+        .toolbar .zoom-level {
+            font-size: 12px;
+            color: #666;
+            min-width: 44px;
+            text-align: center;
+        }
+
+        /* 主画布容器 */
+        .canvas-container {
+            display: inline-block;
+            transform-origin: top left;
+            transition: transform 0.25s ease;
+            margin: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            border-radius: 4px;
+            overflow: hidden;
+            background: white;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* 图例面板 */
+        .legend-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255,255,255,0.96);
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 14px 18px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            font-size: 12px;
+            z-index: 999;
+            min-width: 200px;
+        }
+
+        .legend-title {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 6px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 5px 0;
+        }
+
+        .legend-color-box {
+            width: 22px;
+            height: 16px;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .legend-line {
+            width: 32px;
+            height: 0;
+            flex-shrink: 0;
+        }
+
+        @media print {
+            body { background: white; }
+            .toolbar, .legend-panel { display: none !important; }
+            .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .canvas-container { transform: none !important; box-shadow: none; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div>
+        <h1>数字温度计 PCB布线图</h1>
+        <div class="subtitle">30列 × 24行 | 双面PCB | 电子线路装调实训 | 2026-07-05</div>
+    </div>
+</div>
+
+<!-- 工具栏 -->
+<div class="toolbar" id="toolbar">
+    <button onclick="adjustZoom(-0.1)" title="缩小">−</button>
+    <span class="zoom-level" id="zoomLevel">100%</span>
+    <button onclick="adjustZoom(0.1)" title="放大">+</button>
+    <div class="sep"></div>
+    <button onclick="resetZoom()" title="适应窗口">⊡</button>
+    <button onclick="window.print()" title="打印">🖨</button>
+</div>
+
+<!-- Canvas 容器 -->
+<div class="canvas-container" id="canvasContainer">
+    <canvas id="pcbCanvas"></canvas>
+</div>
+
+<!-- 图例面板 -->
+<div class="legend-panel" id="legendPanel">
+    <div class="legend-title">图 例</div>
+    <div class="legend-item"><span class="legend-line" style="border-top:3px solid #E74C3C;"></span> +12V 电源轨</div>
+    <div class="legend-item"><span class="legend-line" style="border-top:3px solid #3498DB;"></span> −12V 电源轨</div>
+    <div class="legend-item"><span class="legend-line" style="border-top:3px solid #333333;"></span> GND 地轨</div>
+    <div class="legend-item"><span class="legend-line" style="border-top:2.5px solid #2980B9;"></span> B面走线 (主)</div>
+    <div class="legend-item"><span class="legend-line" style="border-top:3px dashed #E74C3C;"></span> A面飞线</div>
+    <hr style="margin:8px 0;border:none;border-top:1px solid #eee;">
+    <div class="legend-item"><span class="legend-color-box" style="background:#FFE066;"></span> 运放 DIP-8 (U)</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#B4D7E8;"></span> 传感器 AD590</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#F5D76E;"></span> 基准源 MC1403</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#90EE90;"></span> 电阻 (R)</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#87CEFA;"></span> 电容 (C)</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#FFB347;"></span> 电位器 (W)</div>
+    <div class="legend-item"><span class="legend-color-box" style="background:#DDDDDD;"></span> 端子 (T)</div>
+</div>
+
+<script>
+// ==================== PCB 数据（从 pcb_data.py 提取） ====================
+const pcbData = {
+    grid: { cols: 30, rows: 24 },
+
+    terminals: [
+        { id:"T1", name:"+12V", x:1, y:2, type:"power_in" },
+        { id:"T2", name:"-12V", x:1, y:5, type:"power_in" },
+        { id:"T3", name:"GND",  x:1, y:8, type:"ground" },
+        { id:"T4", name:"M+",   x:1, y:11,type:"signal_out" },
+        { id:"T5", name:"M-",   x:1, y:14,type:"signal_out" },
+        { id:"T6", name:"AD590+",x:1, y:17,type:"power_out" },
+        { id:"T7", name:"NC/备用",x:1,y:20,type:"unused" }
+    ],
+
+    components: [
+        // 上半部：温度检测通道
+        {
+            id:"U1", name:"AD590", type:"sensor", package:"TO-52",
+            pins:3, x:4, y:3, width:2, height:2,
+            pin_positions:{ 1:{x:4,y:2,net:"+12V"}, 2:{x:5,y:4,net:"Io"}, 3:{x:4,y:4,net:"GND"} }
+        },
+        {
+            id:"R1", name:"R1", type:"resistor", value:"2KΩ",
+            package:"AXIAL-0.4", x:7, y:5, width:2, height:1, orientation:"horizontal",
+            pin1:{x:7,y:5,net:"Io"}, pin2:{x:9,y:5,net:"Node_A"}
+        },
+        {
+            id:"C1", name:"C1", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:9, y:7, width:1, height:1,
+            pin1:{x:9,y:7,net:"Node_A"}, pin2:{x:9,y:8,net:"GND"}
+        },
+        {
+            id:"U2", name:"CP-07\n(U2)", type:"opamp", package:"DIP-8",
+            pins:8, x:14, y:4, width:3, height:4, orientation:"horizontal",
+            pin_positions:{
+                1:{x:14,y:4,net:"+12V"}, 2:{x:14,y:5,net:"U2_IN-"},
+                3:{x:14,y:6,net:"Node_A"}, 4:{x:14,y:7,net:"-12V"},
+                5:{x:16,y:7,net:"W3_Wiper"}, 6:{x:16,y:6,net:"M+_OUT"},
+                7:{x:16,y:5,net:"+12V"}, 8:{x:16,y:4,net:"W3_Bottom"}
+            }
+        },
+        {
+            id:"R2", name:"R2", type:"resistor", value:"2.6KΩ",
+            package:"AXIAL-0.4", x:11, y:5, width:2, height:1, orientation:"horizontal",
+            pin1:{x:11,y:5,net:"GND"}, pin2:{x:13,y:5,net:"U2_IN-"}
+        },
+        {
+            id:"W3", name:"W3", type:"potentiometer", value:"20KΩ",
+            package:"VERTICAL-POT", x:23, y:4, width:2, height:3, orientation:"vertical",
+            pin1:{x:24,y:4,net:"+12V"}, pin2:{x:24,y:5.5,net:"W3_Wiper"}, pin3:{x:24,y:7,net:"W3_Bottom"}
+        },
+        {
+            id:"R3", name:"R3", type:"resistor", value:"1KΩ",
+            package:"AXIAL-0.4", x:19, y:8, width:2, height:1, orientation:"horizontal",
+            pin1:{x:19,y:8,net:"M+_OUT"}, pin2:{x:21,y:8,net:"Node_G4"}
+        },
+        {
+            id:"R4", name:"R4", type:"resistor", value:"1KΩ",
+            package:"AXIAL-0.4", x:21, y:9, width:1, height:2, orientation:"vertical",
+            pin1:{x:21,y:9,net:"Node_G4"}, pin2:{x:21,y:11,net:"GND"}
+        },
+        {
+            id:"C4", name:"C4", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:22, y:9, width:1, height:2, orientation:"vertical",
+            pin1:{x:22,y:9,net:"Node_G4"}, pin2:{x:22,y:11,net:"GND"}
+        },
+        {
+            id:"W1", name:"W1", type:"potentiometer", value:"10KΩ",
+            package:"HORIZONTAL-POT", x:25, y:8, width:3, height:1, orientation:"horizontal",
+            pin1:{x:25,y:8,net:"M+_OUT"}, pin2:{x:27,y:8,net:"Node_G4"}
+        },
+        {
+            id:"C2", name:"C2", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:14, y:10, width:1, height:2, orientation:"vertical",
+            pin1:{x:14,y:10,net:"-12V"}, pin2:{x:14,y:12,net:"GND"}
+        },
+        {
+            id:"C3", name:"C3", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:17, y:4, width:1, height:2, orientation:"vertical",
+            pin1:{x:17,y:4,net:"+12V"}, pin2:{x:17,y:6,net:"GND"}
+        },
+        // 下半部：基准校正通道
+        {
+            id:"U3", name:"MC1403\n(U3)", type:"voltage_reference", package:"SIP-3",
+            pins:3, x:5, y:15, width:2, height:2,
+            pin_positions:{ 1:{x:5,y:14,net:"+12V"}, 2:{x:6,y:16,net:"U3_Vout"}, 3:{x:5,y:16,net:"GND"} }
+        },
+        {
+            id:"R5", name:"R5", type:"resistor", value:"10KΩ",
+            package:"AXIAL-0.4", x:8, y:16, width:2, height:1, orientation:"horizontal",
+            pin1:{x:8,y:16,net:"U3_Vout"}, pin2:{x:10,y:16,net:"U4_IN-"}
+        },
+        {
+            id:"C5", name:"C5", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:10, y:18, width:1, height:1,
+            pin1:{x:10,y:18,net:"U4_IN-"}, pin2:{x:10,y:19,net:"GND"}
+        },
+        {
+            id:"U4", name:"CP-07\n(U4)", type:"opamp", package:"DIP-8",
+            pins:8, x:14, y:15, width:3, height:4, orientation:"horizontal",
+            pin_positions:{
+                1:{x:14,y:15,net:"+12V"}, 2:{x:14,y:16,net:"U4_IN-"},
+                3:{x:14,y:17,net:"GND"}, 4:{x:14,y:18,net:"-12V"},
+                5:{x:16,y:18,net:"W4_Wiper"}, 6:{x:16,y:17,net:"M-_OUT"},
+                7:{x:16,y:16,net:"+12V"}, 8:{x:16,y:15,net:"W4_Bottom"}
+            }
+        },
+        {
+            id:"W4", name:"W4", type:"potentiometer", value:"20KΩ",
+            package:"VERTICAL-POT", x:23, y:15, width:2, height:3, orientation:"vertical",
+            pin1:{x:24,y:15,net:"+12V"}, pin2:{x:24,y:16.5,net:"W4_Wiper"}, pin3:{x:24,y:18,net:"W4_Bottom"}
+        },
+        {
+            id:"R6", name:"R6", type:"resistor", value:"680Ω",
+            package:"AXIAL-0.4", x:19, y:19, width:2, height:1, orientation:"horizontal",
+            pin1:{x:19,y:19,net:"M-_OUT"}, pin2:{x:21,y:19,net:"Node_G7"}
+        },
+        {
+            id:"R7", name:"R7", type:"resistor", value:"1KΩ",
+            package:"AXIAL-0.4", x:21, y:20, width:1, height:2, orientation:"vertical",
+            pin1:{x:21,y:20,net:"Node_G7"}, pin2:{x:21,y:22,net:"GND"}
+        },
+        {
+            id:"C7", name:"C7", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:22, y:20, width:1, height:2, orientation:"vertical",
+            pin1:{x:22,y:20,net:"Node_G7"}, pin2:{x:22,y:22,net:"GND"}
+        },
+        {
+            id:"W2", name:"W2", type:"potentiometer", value:"10KΩ",
+            package:"HORIZONTAL-POT", x:25, y:19, width:3, height:1, orientation:"horizontal",
+            pin1:{x:25,y:19,net:"M-_OUT"}, pin2:{x:27,y:19,net:"Node_G7"}
+        },
+        {
+            id:"C6", name:"C6", type:"capacitor", value:"0.01μF",
+            package:"RAD-0.2", x:14, y:20, width:1, height:2, orientation:"vertical",
+            pin1:{x:14,y:20,net:"-12V"}, pin2:{x:14,y:22,net:"GND"}
+        }
+    ],
+
+    power_rails: [
+        { net:"+12V", layer:"B", color:"#E74C3C", path:[{x:1,y:1},{x:30,y:1}] },
+        { net:"-12V", layer:"B", color:"#3498DB", path:[{x:1,y:13},{x:30,y:13}] },
+        { net:"GND",  layer:"B", color:"#333333", path:[{x:1,y:24},{x:30,y:24}] }
+    ],
+
+    traces: [
+        // +12V 分配
+        {id:"TR_001",net:"+12V",layer:"B",from:{x:1,y:2},to:{x:1,y:1},via_points:[],desc:"T1→+12V Rail"},
+        {id:"TR_002",net:"+12V",layer:"B",from:{x:4,y:1},to:{x:4,y:2},via_points:[],desc:"+12V→U1-pin1"},
+        {id:"TR_003",net:"+12V",layer:"B",from:{x:14,y:1},to:{x:14,y:4},via_points:[],desc:"+12V→U2-pin1"},
+        {id:"TR_004",net:"+12V",layer:"B",from:{x:16,y:1},to:{x:16,y:5},via_points:[{x:16,y:3}],desc:"+12V→U2-pin7"},
+        {id:"TR_005",net:"+12V",layer:"B",from:{x:24,y:1},to:{x:24,y:4},via_points:[],desc:"+12V→W3上端"},
+        {id:"TR_006",net:"+12V",layer:"B",from:{x:5,y:1},to:{x:5,y:14},via_points:[{x:5,y:8}],desc:"+12V→U3-pin1"},
+        {id:"TR_007",net:"+12V",layer:"B",from:{x:14,y:1},to:{x:14,y:15},via_points:[{x:12,y:1},{x:12,y:15},{x:14,y:15}],desc:"+12V→U4-pin1"},
+        {id:"TR_008",net:"+12V",layer:"B",from:{x:16,y:1},to:{x:16,y:16},via_points:[{x:18,y:1},{x:18,y:16},{x:16,y:16}],desc:"+12V→U4-pin7"},
+        {id:"TR_009",net:"+12V",layer:"B",from:{x:24,y:1},to:{x:24,y:15},via_points:[],desc:"+12V→W4上端"},
+        {id:"TR_010",net:"+12V_AD590_EXT",layer:"B",from:{x:1,y:17},to:{x:4,y:2},via_points:[{x:1,y:2},{x:4,y:2}],desc:"T6→外部AD590供电"},
+        // -12V
+        {id:"TR_011",net:"-12V",layer:"B",from:{x:1,y:5},to:{x:1,y:13},via_points:[],desc:"T2→-12V Rail"},
+        {id:"TR_012",net:"-12V",layer:"B",from:{x:14,y:13},to:{x:14,y:7},via_points:[],desc:"-12V→U2-pin4"},
+        {id:"TR_013",net:"-12V",layer:"B",from:{x:14,y:13},to:{x:14,y:18},via_points:[],desc:"-12V→U4-pin4"},
+        // GND
+        {id:"TR_014",net:"GND",layer:"B",from:{x:1,y:8},to:{x:1,y:24},via_points:[],desc:"T3→GND Rail"},
+        {id:"TR_015",net:"GND",layer:"B",from:{x:4,y:24},to:{x:4,y:4},via_points:[{x:3,y:4}],desc:"GND→U1-pin3"},
+        {id:"TR_016",net:"GND",layer:"B",from:{x:11,y:24},to:{x:11,y:5},via_points:[],desc:"GND→R2"},
+        {id:"TR_017",net:"GND",layer:"B",from:{x:9,y:24},to:{x:9,y:8},via_points:[],desc:"GND→C1"},
+        {id:"TR_018",net:"GND",layer:"B",from:{x:14,y:24},to:{x:14,y:12},via_points:[],desc:"GND→C2"},
+        {id:"TR_019",net:"GND",layer:"B",from:{x:17,y:24},to:{x:17,y:6},via_points:[],desc:"GND→C3"},
+        {id:"TR_020",net:"GND",layer:"B",from:{x:21,y:24},to:{x:21,y:11},via_points:[],desc:"GND→R4"},
+        {id:"TR_021",net:"GND",layer:"B",from:{x:22,y:24},to:{x:22,y:11},via_points:[],desc:"GND→C4"},
+        {id:"TR_022",net:"GND",layer:"B",from:{x:5,y:24},to:{x:5,y:16},via_points:[],desc:"GND→U3-pin3"},
+        {id:"TR_023",net:"GND",layer:"B",from:{x:10,y:24},to:{x:10,y:19},via_points:[],desc:"GND→C5"},
+        {id:"TR_024",net:"GND",layer:"B",from:{x:14,y:24},to:{x:14,y:17},via_points:[],desc:"GND→U4-pin3"},
+        {id:"TR_025",net:"GND",layer:"B",from:{x:14,y:24},to:{x:14,y:22},via_points:[],desc:"GND→C6"},
+        {id:"TR_026",net:"GND",layer:"B",from:{x:21,y:24},to:{x:21,y:22},via_points:[],desc:"GND→R7"},
+        {id:"TR_027",net:"GND",layer:"B",from:{x:22,y:24},to:{x:22,y:22},via_points:[],desc:"GND→C7"},
+        // 温度通道信号
+        {id:"TR_028",net:"Io",layer:"B",from:{x:5,y:4},to:{x:7,y:5},via_points:[{x:6,y:4.5}],desc:"U1-Io→R1"},
+        {id:"TR_029",net:"Node_A",layer:"B",from:{x:9,y:5},to:{x:9,y:7},via_points:[],desc:"Node_A→C1"},
+        {id:"TR_030",net:"Node_A",layer:"B",from:{x:9,y:5},to:{x:14,y:6},via_points:[{x:11,y:5},{x:11,y:6},{x:14,y:6}],desc:"Node_A→U2-IN+"},
+        {id:"TR_031",net:"U2_IN-",layer:"B",from:{x:13,y:5},to:{x:14,y:5},via_points:[],desc:"R2→U2-IN-"},
+        {id:"TR_032",net:"W3_Wiper",layer:"B",from:{x:24,y:5.5},to:{x:16,y:7},via_points:[{x:20,y:5.5},{x:20,y:7},{x:16,y:7}],desc:"W3-Wiper→U2-pin5"},
+        {id:"TR_033",net:"W3_Bottom",layer:"B",from:{x:24,y:7},to:{x:16,y:4},via_points:[{x:20,y:7},{x:20,y:4},{x:16,y:4}],desc:"W3-Bot→U2-pin8"},
+        {id:"TR_034",net:"M+_OUT",layer:"B",from:{x:16,y:6},to:{x:1,y:11},via_points:[{x:28,y:6},{x:28,y:11},{x:1,y:11}],desc:"U2-OUT→M+(T4)"},
+        {id:"TR_035",net:"M+_OUT",layer:"B",from:{x:16,y:6},to:{x:19,y:8},via_points:[{x:17,y:6},{x:17,y:8},{x:19,y:8}],desc:"U2-OUT→R3"},
+        {id:"TR_036",net:"Node_G4",layer:"B",from:{x:21,y:8},to:{x:21,y:9},via_points:[],desc:"Node_G4→R4"},
+        {id:"TR_037",net:"Node_G4",layer:"B",from:{x:21,y:9},to:{x:22,y:9},via_points:[],desc:"Node_G4→C4"},
+        {id:"TR_038",net:"Node_G4",layer:"B",from:{x:21,y:9},to:{x:27,y:8},via_points:[{x:24,y:9},{x:24,y:8},{x:27,y:8}],desc:"Node_G4→W1-Wiper"},
+        {id:"TR_039",net:"M+_OUT",layer:"B",from:{x:25,y:8},to:{x:26,y:6},via_points:[{x:26,y:8},{x:26,y:6}],desc:"W1→M+_OUT线"},
+        // 基准通道信号
+        {id:"TR_040",net:"U3_Vout",layer:"B",from:{x:6,y:16},to:{x:8,y:16},via_points:[],desc:"MC1403-Vout→R5"},
+        {id:"TR_041",net:"U4_IN-",layer:"B",from:{x:10,y:16},to:{x:10,y:18},via_points:[],desc:"R5→C5"},
+        {id:"TR_042",net:"U4_IN-",layer:"B",from:{x:10,y:16},to:{x:14,y:16},via_points:[{x:12,y:16},{x:14,y:16}],desc:"R5→U4-IN-"},
+        {id:"TR_043",net:"W4_Wiper",layer:"B",from:{x:24,y:16.5},to:{x:16,y:18},via_points:[{x:20,y:16.5},{x:20,y:18},{x:16,y:18}],desc:"W4-Wiper→U4-pin5"},
+        {id:"TR_044",net:"W4_Bottom",layer:"B",from:{x:24,y:18},to:{x:16,y:15},via_points:[{x:20,y:18},{x:20,y:15},{x:16,y:15}],desc:"W4-Bot→U4-pin8"},
+        {id:"TR_045",net:"M-_OUT",layer:"B",from:{x:16,y:17},to:{x:1,y:14},via_points:[{x:28,y:17},{x:28,y:14},{x:1,y:14}],desc:"U4-OUT→M-(T5)"},
+        {id:"TR_046",net:"M-_OUT",layer:"B",from:{x:16,y:17},to:{x:19,y:19},via_points:[{x:17,y:17},{x:17,y:19},{x:19,y:19}],desc:"U4-OUT→R6"},
+        {id:"TR_047",net:"Node_G7",layer:"B",from:{x:21,y:19},to:{x:21,y:20},via_points:[],desc:"Node_G7→R7"},
+        {id:"TR_048",net:"Node_G7",layer:"B",from:{x:21,y:20},to:{x:22,y:20},via_points:[],desc:"Node_G7→C7"},
+        {id:"TR_049",net:"Node_G7",layer:"B",from:{x:21,y:20},to:{x:27,y:19},via_points:[{x:24,y:20},{x:24,y:19},{x:27,y:19}],desc:"Node_G7→W2-Wiper"},
+        {id:"TR_050",net:"M-_OUT",layer:"B",from:{x:25,y:19},to:{x:26,y:17},via_points:[{x:26,y:19},{x:26,y:17}],desc:"W2→M-_OUT线"}
+    ],
+
+    jumpers: [
+        { id:"JMP_001", net:"RESERVED", layer:"A", from:{x:0,y:0}, to:{x:0,y:0}, active:false }
+    ]
+};
+
+// ==================== 绘制常量 ====================
+const COLS = pcbData.grid.cols;       // 30
+const ROWS = pcbData.grid.rows;       // 24
+const CELL_SIZE = 24;                 // 每格像素
+const PADDING = 40;                   // 边距
+
+// ==================== 坐标转换函数 ====================
+function gridToCanvas(gx, gy) {
+    return {
+        x: gx * CELL_SIZE + PADDING + CELL_SIZE / 2,
+        y: gy * CELL_SIZE + PADDING + CELL_SIZE / 2
+    };
+}
+
+function gridToCanvasTopLeft(gx, gy) {
+    return {
+        x: gx * CELL_SIZE + PADDING,
+        y: gy * CELL_SIZE + PADDING
+    };
+}
+
+// ==================== 获取元件颜色配置 ====================
+function getComponentStyle(type) {
+    const styles = {
+        opamp:           { fill: '#FFE066', stroke: '#CC9900', textColor: '#333' },
+        sensor:          { fill: '#B4D7E8', stroke: '#6BA3BD', textColor: '#333' },
+        voltage_reference:{ fill: '#F5D76E', stroke: '#C9A83C', textColor: '#333' },
+        resistor:        { fill: '#90EE90', stroke: '#3DA33D', textColor: '#333' },
+        capacitor:       { fill: '#87CEFA', stroke: '#4682B4', textColor: '#333' },
+        potentiometer:   { fill: '#FFB347', stroke: '#CC7A00', textColor: '#333' }
+    };
+    return styles[type] || { fill: '#EEE', stroke: '#AAA', textColor: '#333' };
+}
+
+function getPinColor(net) {
+    if (!net) return '#666666';
+    const n = String(net).toUpperCase();
+    if (n.includes('12V') || n === '+12V') return '#E74C3C';
+    if (n === '-12V' || n.includes('-12')) return '#3498DB';
+    if (n === 'GND') return '#333333';
+    return '#666666';
+}
+
+// ==================== 初始化 Canvas ====================
+const canvas = document.getElementById('pcbCanvas');
+const ctx = canvas.getContext('2d');
+const W = COLS * CELL_SIZE + 2 * PADDING;
+const H = ROWS * CELL_SIZE + 2 * PADDING;
+canvas.width = W;
+canvas.height = H;
+
+let currentZoom = 1;
+
+// ==================== 绘制函数 ====================
+
+/** 1. 网格系统 */
+function drawGrid() {
+    for (let gx = 0; gx <= COLS; gx++) {
+        for (let gy = 0; gy <= ROWS; gy++) {
+            const tl = gridToCanvasTopLeft(gx, gy);
+            const isMajorX = (gx % 5 === 0);
+            const isMajorY = (gy % 5 === 0);
+            const isMajor = isMajorX || isMajorY;
+            ctx.strokeStyle = isMajor ? '#BBBBBB' : '#DDDDDD';
+            ctx.lineWidth = isMajor ? 1 : 0.5;
+            ctx.strokeRect(tl.x, tl.y, CELL_SIZE, CELL_SIZE);
+        }
+    }
+    // 坐标标注
+    ctx.font = '9px Arial';
+    ctx.fillStyle = '#999';
+    ctx.textAlign = 'center';
+    for (let gx = 1; gx <= COLS; gx++) {
+        if (gx % 5 === 0) {
+            const pos = gridToCanvas(gx, 0);
+            ctx.fillText(String(gx), pos.x, PADDING - 8);
+        }
+    }
+    ctx.textAlign = 'right';
+    for (let gy = 1; gy <= ROWS; gy++) {
+        if (gy % 5 === 0) {
+            const pos = gridToCanvas(0, gy);
+            ctx.fillText(String(gy), PADDING - 6, pos.y + 3);
+        }
+    }
+}
+
+/** 2. 区域分隔标注 */
+function drawZoneLabels() {
+    ctx.save();
+    ctx.font = 'bold 13px Arial';
+    ctx.fillStyle = 'rgba(52,73,94,0.08)';
+    ctx.textAlign = 'center';
+
+    // 上半部区域背景文字
+    ctx.font = 'bold 40px Arial';
+    ctx.fillText('温度检测通道', W / 2, ROWS * 0.25 * CELL_SIZE + PADDING);
+
+    // 下半部区域背景文字
+    ctx.fillText('基准校正通道', W / 2, ROWS * 0.72 * CELL_SIZE + PADDING);
+
+    // Y=13 分隔线标注
+    ctx.restore();
+    ctx.strokeStyle = 'rgba(52,152,219,0.3)';
+    ctx.lineWidth = 0.5;
+    ctx.setLineDash([4, 4]);
+    const midY = gridToCanvas(0, 12.5).y;
+    ctx.beginPath();
+    ctx.moveTo(PADDING, midY);
+    ctx.lineTo(W - PADDING, midY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+}
+
+/** 3. 电源轨 */
+function drawPowerRails() {
+    pcbData.power_rails.forEach(rail => {
+        const p0 = gridToCanvas(rail.path[0].x, rail.path[0].y);
+        const p1 = gridToCanvas(rail.path[1].x, rail.path[1].y);
+        ctx.strokeStyle = rail.color;
+        ctx.lineWidth = 3;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(p0.x, p0.y);
+        ctx.lineTo(p1.x, p1.y);
+        ctx.stroke();
+
+        // 左侧标注
+        ctx.save();
+        ctx.font = 'bold 11px Arial';
+        ctx.fillStyle = rail.color;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        let label = rail.net;
+        if (label === '+12V') label = '+12V';
+        else if (label === '-12V') label = '−12V';
+        else if (label === 'GND') label = '⏚ GND';
+        ctx.fillText(label, PADDING - 6, p0.y);
+        ctx.restore();
+    });
+}
+
+/** 4. B面走线 */
+function drawTraces() {
+    ctx.lineCap = 'square';
+    ctx.lineJoin = 'miter';
+    ctx.strokeStyle = '#2980B9';
+    ctx.lineWidth = 2.5;
+
+    pcbData.traces.forEach(trace => {
+        ctx.beginPath();
+        const start = gridToCanvas(trace.from.x, trace.from.y);
+        ctx.moveTo(start.x, start.y);
+        if (trace.via_points && trace.via_points.length > 0) {
+            trace.via_points.forEach(vp => {
+                const pt = gridToCanvas(vp.x, vp.y);
+                ctx.lineTo(pt.x, pt.y);
+            });
+        }
+        const end = gridToCanvas(trace.to.x, trace.to.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.stroke();
+    });
+}
+
+/** 5. A面飞线 */
+function drawJumpers() {
+    ctx.strokeStyle = '#E74C3C';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([6, 3]);
+    ctx.lineCap = 'round';
+
+    pcbData.jumpers.forEach(jmp => {
+        if (jmp.active && jmp.from.x !== 0) {
+            ctx.beginPath();
+            const s = gridToCanvas(jmp.from.x, jmp.from.y);
+            const e = gridToCanvas(jmp.to.x, jmp.to.y);
+            ctx.moveTo(s.x, s.y);
+            ctx.lineTo(e.x, e.y);
+            ctx.stroke();
+        }
+    });
+    ctx.setLineDash([]);
+}
+
+/** 6. 元件绘制 */
+function drawComponents() {
+    pcbData.components.forEach(comp => {
+        const style = getComponentStyle(comp.type);
+        const tl = gridToCanvasTopLeft(comp.x, comp.y);
+        const wPx = comp.width * CELL_SIZE;
+        const hPx = comp.height * CELL_SIZE;
+        const cx = tl.x + wPx / 2;
+        const cy = tl.y + hPx / 2;
+
+        ctx.save();
+
+        if (comp.type === 'opamp') {
+            // DIP-8 大矩形
+            ctx.fillStyle = style.fill;
+            ctx.strokeStyle = style.stroke;
+            ctx.lineWidth = 1.5;
+            roundRect(ctx, tl.x, tl.y, wPx, hPx, 3);
+            ctx.fill();
+            ctx.stroke();
+            // 缺口标记（顶部居中）
+            ctx.fillStyle = '#FFF';
+            ctx.beginPath();
+            ctx.arc(cx, tl.y + 5, 4, 0, Math.PI * 2);
+            ctx.fill();
+            // 内部名称
+            ctx.fillStyle = style.textColor;
+            ctx.font = 'bold 11px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const lines = comp.name.split('\n');
+            lines.forEach((line, i) => {
+                ctx.fillText(line, cx, cy - 4 + i * 14);
+            });
+            // 引脚编号
+            ctx.font = '9px Arial';
+            ctx.fillStyle = '#666';
+            const pins = comp.pin_positions;
+            // 左侧 1-4 (从上到下)
+            [1,2,3,4].forEach((pn, idx) => {
+                if (pins[pn]) {
+                    const pp = gridToCanvas(pins[pn].x, pins[pn].y);
+                    ctx.textAlign = 'right';
+                    ctx.fillText(String(pn), tl.x - 3, pp.y + 3);
+                }
+            });
+            // 右侧 8-7-6-5 (从上到下)
+            [8,7,6,5].forEach((pn, idx) => {
+                if (pins[pn]) {
+                    const pp = gridToCanvas(pins[pn].x, pins[pn].y);
+                    ctx.textAlign = 'left';
+                    ctx.fillText(String(pn), tl.x + wPx + 3, pp.y + 3);
+                }
+            });
+
+        } else if (comp.type === 'sensor') {
+            // AD590 椭圆/圆形
+            ctx.fillStyle = style.fill;
+            ctx.strokeStyle = style.stroke;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, wPx / 2 - 1, hPx / 2 - 1, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = style.textColor;
+            ctx.font = 'bold 10px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(comp.name, cx, cy);
+
+        } else if (comp.type === 'voltage_reference') {
+            // MC1403 方块
+            ctx.fillStyle = style.fill;
+            ctx.strokeStyle = style.stroke;
+            ctx.lineWidth = 1.5;
+            roundRect(ctx, tl.x, tl.y, wPx, hPx, 3);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = style.textColor;
+            ctx.font = 'bold 9px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const vlines = comp.name.split('\n');
+            vlines.forEach((l, i) => {
+                ctx.fillText(l, cx, cy - 5 + i * 12);
+            });
+
+        } else {
+            // 通用：电阻、电容、电位器 — 矩形
+            ctx.fillStyle = style.fill;
+            ctx.strokeStyle = style.stroke;
+            ctx.lineWidth = 1.2;
+            roundRect(ctx, tl.x, tl.y, wPx, hPx, 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = style.textColor;
+            // 根据大小调整字体
+            const fontSize = (wPx >= CELL_SIZE * 2 && hPx >= CELL_SIZE) ? 10 : 8;
+            ctx.font = `bold ${fontSize}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(comp.name, cx, cy - (comp.value ? 5 : 0));
+            if (comp.value) {
+                ctx.font = `${fontSize - 1}px Arial`;
+                ctx.fillText(comp.value, cx, cy + (fontSize - 1) + 2);
+            }
+        }
+
+        ctx.restore();
+    });
+}
+
+/** 7. 端子绘制 */
+function drawTerminals() {
+    pcbData.terminals.forEach(term => {
+        const pos = gridToCanvas(term.x, term.y);
+        ctx.save();
+        ctx.fillStyle = '#DDD';
+        ctx.strokeStyle = '#888';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        // 名称
+        ctx.fillStyle = '#333';
+        ctx.font = 'bold 9px Arial';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+        const shortName = term.name.length > 6 ? term.name.substring(0, 6) : term.name;
+        ctx.fillText(shortName, pos.x + 12, pos.y);
+        ctx.restore();
+    });
+}
+
+/** 8. 引脚焊盘点 */
+function drawPins() {
+    pcbData.components.forEach(comp => {
+        if (comp.pin_positions) {
+            Object.entries(comp.pin_positions).forEach(([pinNum, pInfo]) => {
+                const pos = gridToCanvas(pInfo.x, pInfo.y);
+                const color = getPinColor(pInfo.net);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = '#FFF';
+                ctx.lineWidth = 0.8;
+                ctx.stroke();
+            });
+        }
+        // 两引脚元件 (pin1/pin2)
+        if (comp.pin1) {
+            const p = gridToCanvas(comp.pin1.x, comp.pin1.y);
+            const c = getPinColor(comp.pin1.net);
+            ctx.fillStyle = c;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#FFF'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        if (comp.pin2) {
+            const p = gridToCanvas(comp.pin2.x, comp.pin2.y);
+            const c = getPinColor(comp.pin2.net);
+            ctx.fillStyle = c;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#FFF'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+        // 电位器三引脚
+        if (comp.pin3) {
+            const p = gridToCanvas(comp.pin3.x, comp.pin3.y);
+            const c = getPinColor(comp.pin3.net);
+            ctx.fillStyle = c;
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#FFF'; ctx.lineWidth = 0.8; ctx.stroke();
+        }
+    });
+}
+
+/** 圆角矩形辅助函数 */
+function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + w - r, y);
+    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+    ctx.lineTo(x + w, y + h - r);
+    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    ctx.lineTo(x + r, y + h);
+    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+    ctx.closePath();
+}
+
+/** 9. 标题与统计信息 */
+function drawTitleAndStats() {
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.85)';
+    ctx.fillRect(W - 180, H - 95, 175, 88);
+    ctx.strokeStyle = '#CCC';
+    ctx.lineWidth = 0.5;
+    ctx.strokeRect(W - 180, H - 95, 175, 88);
+
+    ctx.font = 'bold 11px Arial';
+    ctx.fillStyle = '#2c3e50';
+    ctx.textAlign = 'left';
+    ctx.fillText('设计信息', W - 172, H - 78);
+
+    ctx.font = '9px Arial';
+    ctx.fillStyle = '#555';
+    const stats = [
+        '网格: 30 × 24 | 双面 PCB',
+        '元件: 27 个',
+        'B面走线: 50 条',
+        '电源轨: 3 条 (+12V / −12V / GND)',
+        '飞线: 0 条 (预留 1)',
+        '版本: v1.0 | 2026-07-05'
+    ];
+    stats.forEach((s, i) => {
+        ctx.fillText(s, W - 172, H - 63 + i * 12);
+    });
+    ctx.restore();
+}
+
+// ==================== 主绘制流程 ====================
+function render() {
+    ctx.clearRect(0, 0, W, H);
+    // 白色底
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, W, H);
+
+    // 按层级顺序绘制
+    drawGrid();          // 1. 网格
+    drawZoneLabels();    // 2. 区域标注
+    drawPowerRails();    // 3. 电源轨
+    drawTraces();        // 4. B面走线
+    drawJumpers();       // 5. A面飞线
+    drawComponents();    // 6. 元件
+    drawTerminals();     // 7. 端子
+    drawPins();          // 8. 引脚焊盘
+    drawTitleAndStats(); // 9. 标题统计
+}
+
+// ==================== 缩放控制 ====================
+function adjustZoom(delta) {
+    currentZoom = Math.max(0.25, Math.min(4, currentZoom + delta));
+    applyZoom();
+}
+function resetZoom() {
+    currentZoom = 1;
+    applyZoom();
+}
+function applyZoom() {
+    const container = document.getElementById('canvasContainer');
+    container.style.transform = `scale(${currentZoom})`;
+    document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+}
+
+// ==================== 启动渲染 ====================
+render();
+
+// 初始适应屏幕
+(function fitInitial() {
+    const availW = window.innerWidth - 60;
+    const availH = window.innerHeight - 120;
+    const scaleW = availW / W;
+    const scaleH = availH / H;
+    currentZoom = Math.min(scaleW, scaleH, 1);
+    if (currentZoom < 0.5) currentZoom = 0.5;
+    applyZoom();
+})();
+</script>
+
+</body>
+</html>

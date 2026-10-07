@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安卓平板对比 · 全网 1000-3000元（仅全新，含参数/各版本价/评价/自评分）</title>
+<style>
+  :root{
+    --bg:#f5f6f8; --card:#fff; --ink:#1f2733; --sub:#6b7686;
+    --line:#e6e9ef; --brand:#ff4646; --ok:#16a34a; --warn:#d97706;
+    --chip:#eef2ff; --chipink:#3b5bdb;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif;
+    background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55}
+  header{background:linear-gradient(120deg,#2563eb,#7c3aed);color:#fff;padding:24px 28px 20px}
+  header h1{margin:0 0 6px;font-size:21px}
+  header p{margin:2px 0;opacity:.95;font-size:13px}
+  .wrap{max-width:1360px;margin:0 auto;padding:18px}
+  .note{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;padding:10px 14px;border-radius:10px;font-size:12.5px;margin:14px 0}
+  .stats{display:flex;gap:12px;flex-wrap:wrap;margin:10px 0}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 16px;text-align:center;min-width:110px}
+  .stat b{display:block;font-size:20px;color:var(--chipink)}
+  .stat span{font-size:11.5px;color:var(--sub)}
+  .tools{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0 14px}
+  .tools select,.tools input{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff;font-size:13px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(400px,1fr));gap:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;box-shadow:0 1px 3px rgba(20,30,50,.04);position:relative}
+  .chead{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+  .chead h3{margin:0;font-size:16px}
+  .brandtag{display:inline-block;font-size:11px;color:var(--chipink);background:var(--chip);padding:2px 8px;border-radius:20px;margin-bottom:6px}
+  .score{font-size:13px;font-weight:700;color:#fff;background:linear-gradient(120deg,#16a34a,#22c55e);padding:4px 10px;border-radius:20px;white-space:nowrap}
+  .score.s90{background:linear-gradient(120deg,#16a34a,#22c55e)}
+  .score.s80{background:linear-gradient(120deg,#ca8a04,#eab308)}
+  .score.s70{background:linear-gradient(120deg,#9a3412,#ea580c)}
+  .spec{margin:9px 0 4px;font-size:12.5px;color:var(--sub)}
+  .spec b{color:var(--ink)}
+  .pvars{margin:8px 0 0;border-top:1px dashed var(--line);padding-top:8px}
+  .pvar{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dotted #eef0f4;font-size:12.5px}
+  .pvar .cfg{color:var(--sub)}
+  .pvar .price{font-weight:700;color:var(--brand)}
+  .pvar .price small{color:var(--sub);font-weight:400;margin-left:4px}
+  .pvar.over{opacity:.55}
+  .rev{font-size:12px;color:#475467;background:#f8fafc;border:1px solid #eef2f7;border-radius:8px;padding:8px 10px;margin-top:8px}
+  .rev b{color:#334155}
+  .src{font-size:11px;color:#9aa4b2;margin-top:7px}
+  .pill{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:20px;margin:2px 4px 2px 0;border:1px solid var(--line);color:var(--sub)}
+  footer{max-width:1360px;margin:0 auto;padding:10px 18px 40px;color:#9aa4b2;font-size:12px}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;margin:4px 0 0;font-size:12px;color:var(--sub)}
+  .honor-badge{position:absolute;top:12px;right:14px}
+</style>
+</head>
+<body>
+<header>
+  <h1>安卓平板全网对比报告（1000–3000元）</h1>
+  <p>渠道：全网（京东国补 / 拼多多百亿补贴 / 品牌官网 / 天猫旗舰店）｜ 区间：¥1000–3000 ｜ 仅全新（不含二手）</p>
+  <p>覆盖：小米/Redmi · 荣耀 · 联想 · OPPO · vivo · iQOO · 一加 · 三星 共 34 款（已剔除华为，保留全部荣耀）</p>
+</header>
+
+<div class="wrap">
+  <div class="note">
+    ⚠️ 价格为各平台「国补 / 百亿补贴 / 官网」近期到手价整理（抓取日 2026-07-11），<b>非单一平台</b>。电商价波动快，下单以平台实时页为准。评分（推荐分 0–100）由我按「性价比+性能+屏幕+生态+口碑」综合给出，非官方。华为机型已按你的要求全部移除；荣耀机型全部保留。
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tools">
+    <select id="fBrand"><option value="">全部品牌</option></select>
+    <input id="pmin" type="number" placeholder="最低价" style="width:90px" value="1000">
+    <input id="pmax" type="number" placeholder="最高价" style="width:90px" value="3000">
+    <select id="sort">
+      <option value="score">按推荐分↓</option>
+      <option value="priceAsc">按最低价↑</option>
+      <option value="priceDesc">按最低价↓</option>
+      <option value="brand">按品牌</option>
+    </select>
+    <input id="kw" placeholder="搜索型号/芯片" style="flex:1;min-width:160px">
+    <span id="count" style="font-size:12px;color:#6b7686"></span>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    数据来源：各品牌官网参数页、京东/天猫商品页、什么值得买、ZOL、IT之家、快科技、今日头条等公开信息，抓取于 2026-07-11。
+    本页为工具生成的对比参考，不构成购买建议；价格为估算到手价，实际以平台为准。
+  </footer>
+</div>
+
+<script>
+const DATA = [
+  /* ===== 小米 / Redmi ===== */
+  {brand:"小米",model:"小米平板 7",score:84,
+   screen:'11.2" 3.2K(3200×2136) 144Hz · 3:2 LCD',chip:"骁龙 7+ Gen3",battery:"8850mAh / 45W",weight:"约500g",
+   highlight:["800nit峰值","四扬声器 Dolby Atmos","HyperOS 2 / 4+6年更新"],
+   variants:[{cfg:"8+128",price:1999,note:"起售"},{cfg:"12+256",price:2299,note:""}],
+   review:"轻办公黄金比例屏，系统维护周期长（可升安卓19），性价比均衡。",src:"小米官网 / IT之家"},
+  {brand:"小米",model:"小米平板 7 Pro",score:86,
+   screen:'11.2" 3.2K 144Hz · 3:2 LCD',chip:"骁龙 8s Gen3",battery:"8850mAh / 67W",weight:"约500g",
+   highlight:["32MP前摄 / 50MP后摄","Wi-Fi 7","纳米柔光版可选"],
+   variants:[{cfg:"8+256",price:2499,note:"起售"},{cfg:"12+512",price:2899,note:""}],
+   review:"同尺寸最强影像与快充，轻办公生产力拉满，预算2500档首选之一。",src:"小米官网 / IT之家"},
+  {brand:"小米",model:"小米平板 6S Pro",score:85,
+   screen:'12.4" 3K(3048×2032) 144Hz',chip:"骁龙 8 Gen2",battery:"10000mAh / 120W",weight:"约590g",
+   highlight:["120W神仙秒充","PC级 WPS / 远控","大屏影音旗舰"],
+   variants:[{cfg:"8+256",price:2300,note:"国补"},{cfg:"12+512",price:2699,note:"京东活动"}],
+   review:"大屏+百瓦快充体验极佳，老款但性能仍在线，国补后很香。",src:"京东 / 慢慢买"},
+  {brand:"小米",model:"小米平板 6 Pro",score:80,
+   screen:'11" 2.8K 120Hz',chip:"骁龙 8+ Gen1",battery:"8600mAh / 67W",weight:"约490g",
+   highlight:["67W快充","金属一体机身","降价清仓期"],
+   variants:[{cfg:"8+256",price:1998,note:"活动价"}],
+   review:"上代旗舰芯，价格已探底，入门旗舰之选。",src:"京东 / ZOL"},
+  {brand:"Redmi",model:"Redmi Pad Pro",score:82,
+   screen:'12.1" 2.5K 120Hz · LCD',chip:"骁龙 7s Gen2",battery:"10000mAh / 33W",weight:"约571g",
+   highlight:["千元级支持触控笔","莱茵护眼四重认证","全金属机身"],
+   variants:[{cfg:"6+128",price:999,note:"国补"},{cfg:"12+256",price:1699,note:"常卖"}],
+   review:"千元大屏性价比标杆，学习追剧两相宜。",src:"小米官网 / 新浪数码"},
+  {brand:"Redmi",model:"Redmi Pad SE",score:74,
+   screen:'11" 1920×1200 90Hz',chip:"骁龙 680",battery:"8000mAh / 18W",weight:"约478g",
+   highlight:["90Hz同价位罕见","全金属一体机身","入门网课神器"],
+   variants:[{cfg:"6+128",price:899,note:"起售"},{cfg:"8+128",price:949,note:""}],
+   review:"纯入门定位，骁龙680性能一般，但护眼屏+大电池够用。",src:"ZOL / 小米官网"},
+  {brand:"Redmi",model:"REDMI Pad 2",score:78,
+   screen:'11" 高亮护眼屏',chip:"未公开(中端)",battery:"9000mAh",weight:"—",
+   highlight:["2025/8新款","长续航入门","护眼认证"],
+   variants:[{cfg:"基础版",price:1199,note:"起售"}],
+   review:"Redmi入门线更新款，续航突出，适合纯娱乐。",src:"小米商城家族页"},
+  {brand:"Redmi",model:"REDMI K Pad",score:81,
+   screen:'8.8" 3K 高刷',chip:"旗舰级(小屏游戏)",battery:"大电池",weight:"—",
+   highlight:["2025/6发布","小屏游戏平板","3K高分屏"],
+   variants:[{cfg:"基础版",price:2799,note:"起售"}],
+   review:"少数小尺寸高性能平板，握持玩游戏友好，价格偏上。",src:"小米商城家族页"},
+  {brand:"小米",model:"Xiaomi Pad 8",score:87,
+   screen:'11.2" 高清高刷',chip:"第四代骁龙 8s",battery:"大电池",weight:"—",
+   highlight:["2025/9发布","新一代神U","轻薄机身"],
+   variants:[{cfg:"基础版",price:2199,note:"起售"},{cfg:"高配",price:2499,note:""}],
+   review:"新平台能效比优秀，2500内少有的新款旗舰芯平板。",src:"小米商城家族页"},
+  {brand:"小米",model:"Xiaomi Pad 8 Pro",score:88,
+   screen:'11.2" 高清高刷',chip:"骁龙 8 至尊版",battery:"大电池",weight:"—",
+   highlight:["2025/9发布","顶级旗舰芯","2.5K+定位"],
+   variants:[{cfg:"基础版",price:2699,note:"起售"}],
+   review:"3000内就能上骁龙8至尊版，性能党闭眼入。",src:"小米商城家族页"},
+
+  /* ===== 荣耀 Honor（全部保留） ===== */
+  {brand:"荣耀",model:"荣耀平板 X9",score:72,
+   screen:'11" 护眼屏 · 莱茵低蓝光',chip:"骁龙 685",battery:"8300mAh",weight:"—",
+   highlight:["家长管控模式","不到千元","带娃网课首选"],
+   variants:[{cfg:"基础版",price:999,note:"暑促<1000"}],
+   review:"护眼+长续航，便宜大碗，适合儿童网课。",src:"今日头条 / 荣耀官网"},
+  {brand:"荣耀",model:"荣耀平板 X8 Pro",score:73,
+   screen:'11.5" 2000×1200',chip:"中端八核",battery:"大电池",weight:"—",
+   highlight:["入门性价比","全金属机身","护眼认证"],
+   variants:[{cfg:"6+128",price:899,note:"起售"},{cfg:"8+128",price:1199,note:""}],
+   review:"百元级大屏，日常追剧够用。",src:"ZOL"},
+  {brand:"荣耀",model:"荣耀平板 9",score:80,
+   screen:'12.1" 2560×1600',chip:"骁龙(中端)",battery:"大电池",weight:"—",
+   highlight:["柔光版可选","大屏影音","护眼绿洲屏"],
+   variants:[{cfg:"12+256",price:1238,note:"标准"},{cfg:"12+256 柔光",price:1649,note:"柔光版"}],
+   review:"大屏护眼+柔光书写，办公学习均衡。",src:"京东 / ZOL"},
+  {brand:"荣耀",model:"荣耀平板 10",score:83,
+   screen:'12.1" 2560×1600 120Hz',chip:"骁龙 7 Gen3",battery:"10100mAh / 35W",weight:"约525g",
+   highlight:["首款类纸柔光屏","AI超画质引擎","四重护眼认证"],
+   variants:[{cfg:"8+128",price:1274,note:"国补"},{cfg:"12+256 柔光",price:1869,note:"国补"}],
+   review:"千五档柔光屏+大电池，学生党性价比很高。",src:"今日头条 / 荣耀官网"},
+  {brand:"荣耀",model:"荣耀平板 V9",score:85,
+   screen:'11.5" 2.8K 柔光 144Hz',chip:"天玑 8350 至尊版",battery:"10100mAh",weight:"约475g",
+   highlight:["AG蚀刻类纸屏","475g轻薄","AI学习全家桶"],
+   variants:[{cfg:"8+256",price:1999,note:"首销起"},{cfg:"柔光版",price:2099,note:"+100"}],
+   review:"轻薄+类纸柔光，笔记手感好，图书馆党福音。",src:"今日头条 / 荣耀官网"},
+  {brand:"荣耀",model:"荣耀平板 GT",score:84,
+   screen:'11.5" 2.8K 144Hz 电竞屏',chip:"中高端旗舰芯",battery:"大电池",weight:"—",
+   highlight:["高刷电竞","国补千八起","游戏性价比"],
+   variants:[{cfg:"8+128",price:1899,note:"国补"},{cfg:"12+512",price:2799,note:"顶配"}],
+   review:"预算有限又想玩游戏，GT系列性价比突出。",src:"京东"},
+  {brand:"荣耀",model:"荣耀平板 GT2 Pro",score:90,
+   screen:'12.5" 165Hz 3K(3048×2032)',chip:"第三代骁龙 8 满血",battery:"10100mAh / 66W",weight:"约532g",
+   highlight:["165Hz电竞屏","幻影引擎超分超帧","八扬声器空间音频"],
+   variants:[{cfg:"8+128",price:2124,note:"国补"},{cfg:"12+256",price:2549,note:"国补"},{cfg:"16+512",price:2889,note:"国补"}],
+   review:"3000内少有的骁龙8Gen3+165Hz 3K屏，游戏影音双修，本档最强推荐。",src:"京东 / 荣耀官网"},
+  {brand:"荣耀",model:"荣耀 MagicPad 3",score:89,
+   screen:'13.3" 3.2K(3200×2136) 165Hz',chip:"第三代骁龙 8",battery:"12450mAh",weight:"约厚5.79mm",
+   highlight:["13.3巨屏续航王","一键AI生成PPT","跨苹果/安卓互传"],
+   variants:[{cfg:"12+256",price:2549,note:"国补"},{cfg:"16+512",price:3499,note:"官方(超区间)"}],
+   review:"大屏办公续航怪兽，国补后2549即可拿下，生产力首选。",src:"荣耀官网 / 今日头条"},
+
+  /* ===== 联想 ===== */
+  {brand:"联想",model:"拯救者 Y700 三代",score:86,
+   screen:'8.8" 骁龙8Gen3 165Hz',chip:"骁龙 8 Gen3",battery:"大电池",weight:"—",
+   highlight:["小屏游戏旗舰","双X轴线性马达","游戏视野模式"],
+   variants:[{cfg:"基础版",price:1732,note:"国补"}],
+   review:"手游党神机，小屏+旗舰芯+高刷，握持手感最佳。",src:"联想官网 / 京东"},
+  {brand:"联想",model:"小新 Pad Pro 12.7 (2025)",score:84,
+   screen:'12.7" 2.9K(2944×1840) 144Hz',chip:"天玑 8300",battery:"10200mAh / 45W",weight:"约615g",
+   highlight:["JBL四扬声器","莱茵无反射认证","1TB扩展"],
+   variants:[{cfg:"8+128",price:1444,note:"国补"},{cfg:"8+256",price:1699,note:"京东"}],
+   review:"1500内大屏高刷，续航逆天(79.6天待机)，影音性价比高。",src:"快科技 / ZOL / 联想官网"},
+  {brand:"联想",model:"小新平板 11",score:75,
+   screen:'2.5K 高亮护眼屏',chip:"天玑 6300",battery:"大电池",weight:"—",
+   highlight:["千元内入门","2.5K屏","学习轻办公"],
+   variants:[{cfg:"基础版",price:899,note:"起售"}],
+   review:"联想入门线，2.5K屏是亮点，性能够日常。",src:"联想官网"},
+
+  /* ===== OPPO ===== */
+  {brand:"OPPO",model:"OPPO Pad Air2",score:73,
+   screen:'11.4" 2.4K 90Hz',chip:"Helio G99",battery:"8000mAh / 33W",weight:"约538g",
+   highlight:["百元入门","支持MicroSD扩展","四扬声器"],
+   variants:[{cfg:"基础版",price:862,note:"国补起"}],
+   review:"纯入门，适合网课追剧，性能偏弱。",src:"今日头条"},
+  {brand:"OPPO",model:"OPPO Pad 2",score:82,
+   screen:'11.61" 2.8K 144Hz',chip:"天玑 9000",battery:"9510mAh / 67W",weight:"约552g",
+   highlight:["144Hz高刷","67W快充","杜比四扬声器"],
+   variants:[{cfg:"基础版",price:1500,note:"国补起"}],
+   review:"天玑9000性能接近骁龙8+，游戏体验优秀，千五档老将。",src:"OPPO官网 / 今日头条"},
+  {brand:"OPPO",model:"OPPO Pad 3",score:85,
+   screen:'11.6" 2.8K 144Hz LTPO',chip:"天玑 8350",battery:"9520mAh / 67W",weight:"约533g",
+   highlight:["LTPO自适应","远控PC","NFC一碰传"],
+   variants:[{cfg:"8+128",price:2099,note:"官方起"},{cfg:"8+256 柔光",price:1799,note:"国补"}],
+   review:"均衡生产力工具，远控PC是办公加分项。",src:"OPPO官网 / 京东"},
+  {brand:"OPPO",model:"OPPO Pad 3 Pro",score:89,
+   screen:'12.1" 3K OLED 144Hz',chip:"骁龙 8 Gen3 领先版",battery:"9510mAh / 67W",weight:"航空铝",
+   highlight:["3K OLED旗舰屏","900nit峰值","影音娱乐旗舰"],
+   variants:[{cfg:"基础版",price:2500,note:"国补起"}],
+   review:"OLED+骁龙8Gen3，影音党顶级选择，2500档真香。",src:"今日头条"},
+  {brand:"OPPO",model:"OPPO Pad 4 Pro",score:90,
+   screen:'13.2" 大屏旗舰',chip:"骁龙 8 至尊版",battery:"大电池",weight:"—",
+   highlight:["13.2巨屏","骁龙8至尊版","旗舰生产力"],
+   variants:[{cfg:"基础版",price:2804,note:"国补"},{cfg:"官方起",price:3299,note:"超区间"}],
+   review:"3000内巨屏旗舰芯，多任务/分屏生产力拉满。",src:"京东 / OPPO官网"},
+
+  /* ===== vivo ===== */
+  {brand:"vivo",model:"vivo Pad 3",score:83,
+   screen:'12.1" 2.8K 144Hz',chip:"骁龙 8s Gen3",battery:"10000mAh / 44W",weight:"约589g",
+   highlight:["8+128 2099起","六扬全景声","蓝心小V AI"],
+   variants:[{cfg:"8+128",price:2099,note:"起售"},{cfg:"12+256",price:2399,note:""}],
+   review:"性价比均衡，44W充电偏慢是短板。",src:"京东 / 识货"},
+  {brand:"vivo",model:"vivo Pad 3 Pro",score:89,
+   screen:'13" 3.1K(3096×2064) 144Hz',chip:"天玑 9300",battery:"11500mAh / 66W",weight:"—",
+   highlight:["900nit高亮","八扬声学系统","10.8cc音腔"],
+   variants:[{cfg:"8+128",price:2499,note:"起售"}],
+   review:"大屏影音旗舰，天玑9300性能猛，2499很能打。",src:"vivo官网 / 识货"},
+
+  /* ===== iQOO ===== */
+  {brand:"iQOO",model:"iQOO Pad 一代",score:80,
+   screen:'大屏高刷',chip:"天玑 9000+",battery:"大电池",weight:"—",
+   highlight:["百补入手","游戏向","OriginOS平板"],
+   variants:[{cfg:"基础版",price:2486,note:"百亿补贴"}],
+   review:"上代旗舰芯游戏平板，百补价划算。",src:"拼多多百亿补贴"},
+  {brand:"iQOO",model:"iQOO Pad 2",score:83,
+   screen:'12.1" 2.8K 144Hz',chip:"骁龙 8s Gen3",battery:"10000mAh / 44W",weight:"约589g",
+   highlight:["6扬全景声","USB 3.2 Gen1","2499起"],
+   variants:[{cfg:"8+128",price:2499,note:"起售"},{cfg:"12+512",price:3399,note:"超区间"}],
+   review:"与vivo Pad3同芯，游戏向调校，性价比一致。",src:"vivo官网 / 京东"},
+  {brand:"iQOO",model:"iQOO Pad 2 Pro",score:88,
+   screen:'13" 3.1K 144Hz',chip:"天玑 9300+",battery:"11500mAh / 66W",weight:"—",
+   highlight:["性能天花板","八扬声学","活动价下探"],
+   variants:[{cfg:"8+256",price:2398,note:"活动"},{cfg:"官方起",price:3399,note:"超区间"}],
+   review:"天玑9300+旗舰，活动价2398极香，追求极致性能冲它。",src:"京东 / ZOL"},
+
+  /* ===== 一加 ===== */
+  {brand:"一加",model:"一加平板 2",score:88,
+   screen:'12.1" 3K(3000×2120) 144Hz',chip:"天玑 9400+",battery:"10420mAh / 67W",weight:"约579g",
+   highlight:["3K 144Hz原彩屏","跑分超305万","5G通信共享"],
+   variants:[{cfg:"8+256",price:2799,note:"起售"},{cfg:"16+512",price:3599,note:"超区间"}],
+   review:"天玑9400+旗舰芯+3K屏，2799起性价比炸裂。",src:"IT之家 / 京东 / 新浪科技"},
+
+  /* ===== 三星 ===== */
+  {brand:"三星",model:"三星 Tab A9+",score:76,
+   screen:'11" 1920×1200',chip:"骁龙(中端)",battery:"大电池",weight:"—",
+   highlight:["四扬声器杜比全景声","5G版可选","国际品牌"],
+   variants:[{cfg:"64+4",price:1199,note:"起售"},{cfg:"8+128",price:1699,note:""}],
+   review:"入门国际品牌，系统干净，性能一般但胜在稳定。",src:"三星商城 / ZOL"},
+  {brand:"三星",model:"三星 Tab S9 FE",score:84,
+   screen:'10.9" 2304×1440 90Hz',chip:"Exynos 1380",battery:"7760mAh",weight:"—",
+   highlight:["IP68防水防尘","自带S Pen","低蓝光认证"],
+   variants:[{cfg:"8+128",price:2399,note:"国补/活动"},{cfg:"官方起",price:2999,note:"超区间"}],
+   review:"带笔+IP68的唯一国际品牌之选，书写绘画体验好。",src:"三星商城 / 三星官网"}
+];
+
+const brands = [...new Set(DATA.map(d=>d.brand))].sort();
+const fb = document.getElementById('fBrand');
+brands.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;fb.appendChild(o);});
+
+function minPrice(d){return Math.min(...d.variants.map(v=>v.price));}
+function inRange(d,pmin,pmax){return d.variants.some(v=>v.price>=pmin&&v.price<=pmax);}
+
+function render(){
+  const brand=document.getElementById('fBrand').value;
+  const pmin=+document.getElementById('pmin').value||0;
+  const pmax=+document.getElementById('pmax').value||1e9;
+  const sort=document.getElementById('sort').value;
+  const kw=document.getElementById('kw').value.trim().toLowerCase();
+  let list=DATA.filter(d=>{
+    if(brand&&d.brand!==brand)return false;
+    if(!inRange(d,pmin,pmax))return false;
+    if(kw&&!(d.model.toLowerCase().includes(kw)||d.chip.toLowerCase().includes(kw)||d.brand.toLowerCase().includes(kw)))return false;
+    return true;
+  });
+  if(sort==='score')list.sort((a,b)=>b.score-a.score);
+  else if(sort==='priceAsc')list.sort((a,b)=>minPrice(a)-minPrice(b));
+  else if(sort==='priceDesc')list.sort((a,b)=>minPrice(b)-minPrice(a));
+  else if(sort==='brand')list.sort((a,b)=>a.brand.localeCompare(b.brand,'zh')||b.score-a.score);
+
+  const grid=document.getElementById('grid');
+  grid.innerHTML=list.map(d=>{
+    const sc=d.score>=90?'s90':d.score>=80?'s80':d.score>=70?'s70':'';
+    const vars=d.variants.map(v=>{
+      const over=v.price>pmin&&v.price>pmax?' over':'';
+      return `<div class="pvar${over}"><span class="cfg">${v.cfg}${v.note?` <small>(${v.note})</small>`:''}</span><span class="price">¥${v.price}</span></div>`;
+    }).join('');
+    const pills=d.highlight.map(h=>`<span class="pill">${h}</span>`).join('');
+    return `<div class="card">
+      <div class="chead"><div><span class="brandtag">${d.brand}</span><h3>${d.model}</h3></div>
+      <span class="score ${sc}">${d.score}分</span></div>
+      <div class="spec"><b>屏幕：</b>${d.screen}　|　<b>芯片：</b>${d.chip}</div>
+      <div class="spec"><b>电池：</b>${d.battery}　|　<b>重量：</b>${d.weight}</div>
+      <div style="margin:6px 0">${pills}</div>
+      <div class="pvars">${vars}</div>
+      <div class="rev"><b>用户评价：</b>${d.review}</div>
+      <div class="src">来源：${d.src}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('count').textContent=`共 ${list.length} 款`;
+}
+
+function renderStats(){
+  const s=document.getElementById('stats');
+  const total=DATA.length;
+  const brandN=brands.length;
+  const minAll=Math.min(...DATA.map(minPrice));
+  const maxAll=Math.max(...DATA.flatMap(d=>d.variants.map(v=>v.price)));
+  s.innerHTML=`
+    <div class="stat"><b>${total}</b><span>在榜机型</span></div>
+    <div class="stat"><b>${brandN}</b><span>覆盖品牌</span></div>
+    <div class="stat"><b>¥${minAll}</b><span>最低到手价</span></div>
+    <div class="stat"><b>¥${maxAll}</b><span>最高标价(含超区间)</span></div>`;
+}
+
+['fBrand','pmin','pmax','sort','kw'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',render);
+  document.getElementById(id).addEventListener('change',render);
+});
+renderStats();
+render();
+</script>
+</body>
+</html>

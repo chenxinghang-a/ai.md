@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>暑假50天排期表 · 7/14–9/1</title>
+<style>
+  :root{--bg:#f5f7fa;--card:#fff;--ink:#1f2937;--mut:#6b7280;--line:#e5e7eb;
+        --grn:#16a34a;--grnB:#dcfce7;--red:#dc2626;--redB:#fee2e2;--blu:#2563eb;--bluB:#dbeafe;
+        --amb:#d97706;--ambB:#fef3c7;--pur:#7c3aed;--purB:#ede9fe;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;line-height:1.6}
+  .wrap{max-width:920px;margin:0 auto;padding:24px 18px 60px}
+  h1{font-size:24px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:14px;margin-bottom:18px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px}
+  button{cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 14px;border-radius:8px;font-size:13px}
+  button:hover{background:#f0f4f8}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  h2{font-size:18px;margin:0 0 12px;display:flex;align-items:center;gap:8px}
+  h3{font-size:15px;margin:14px 0 6px}
+  .note{border:1px solid var(--amb);background:var(--ambB);color:#7c2d12;padding:10px 14px;border-radius:10px;font-size:13.5px;margin:10px 0}
+  .info{border:1px solid var(--blu);background:var(--bluB);color:#1e3a8a;padding:10px 14px;border-radius:10px;font-size:13.5px;margin:10px 0}
+  /* 作息 */
+  .clock{display:grid;grid-template-columns:88px 1fr 78px;gap:6px;font-size:14px}
+  .clock div{padding:7px 10px;border-radius:8px;background:#f8fafc;border:1px solid var(--line)}
+  .clock .t{background:#eef2f7;color:var(--mut);font-variant-numeric:tabular-nums;text-align:center}
+  .clock .h{text-align:center;font-weight:600}
+  .c-math{background:var(--grnB);border-color:#bbf7d0}
+  .c-eng{background:var(--bluB);border-color:#bfdbfe}
+  .c-hw{background:var(--purB);border-color:#ddd6fe}
+  .c-rest{background:#f1f5f9;border-color:var(--line);color:var(--mut)}
+  /* 阶段总览 */
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:600}
+  /* 周卡 */
+  .wk{border-left:5px solid var(--pur);background:var(--card);border:1px solid var(--line);border-left:5px solid var(--pur);border-radius:10px;padding:14px 16px;margin:14px 0}
+  .wk .hd{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+  .wk .ttl{font-size:16px;font-weight:700}
+  .wk .dt{color:var(--mut);font-size:13px}
+  .wk .rest{color:var(--red);font-size:12.5px;margin-top:2px}
+  .cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-top:10px}
+  @media(max-width:680px){.cols{grid-template-columns:1fr}.clock{grid-template-columns:64px 1fr 60px}}
+  .col{border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px}
+  .col h4{margin:0 0 5px;font-size:13.5px}
+  .col.m h4{color:var(--grn)} .col.e h4{color:var(--blu)} .col.h h4{color:var(--pur)}
+  .col ul{margin:0;padding-left:18px} .col li{margin:2px 0}
+  .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .tag.p{background:var(--purB);color:#5b21b6}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--mut);margin:8px 0}
+  .dot{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  .res a{color:var(--blu);text-decoration:none} .res a:hover{text-decoration:underline}
+  .res li{margin:4px 0;font-size:13.5px}
+  .ck{accent-color:var(--pur);width:16px;height:16px}
+  .wktop{display:flex;align-items:center;gap:8px}
+  .wktop input{margin:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📅 暑假50天排期表</h1>
+  <div class="sub">2026/7/14 – 2026/9/1 ｜ 上5休2 ｜ 每天学习 6 小时 ｜ 三块并行：高数 · 英语四级 · 硬件(单片机)</div>
+
+  <div class="bar">
+    <button onclick="window.print()">🖨️ 打印 / 存PDF</button>
+    <button onclick="document.querySelectorAll('.ck').forEach(c=>c.checked=true)">✅ 全勾</button>
+    <button onclick="document.querySelectorAll('.ck').forEach(c=>c.checked=false)">⬜ 清空</button>
+  </div>
+
+  <div class="info">📌 总账：50天 = <b>36个学习日</b> + 14个休息日。9/1（开学前一天）作<b>轻量收尾日</b>。休息日<b>完全不碰学习</b>（最多磨耳朵听点英语当背景音）。git 你早有了，项目直接建仓库即可，不列入任务。</div>
+
+  <div class="card">
+    <h2>⏰ 每日作息模板（学习日）</h2>
+    <div class="clock">
+      <div class="t">08:30</div><div class="c-math"><b>高数</b> 2h — 晨间脑子最清醒，啃计算/概念</div><div class="h c-math">2h</div>
+      <div class="t">10:30</div><div class="c-rest">休息 15 分钟（喝水/走动，别刷手机）</div><div class="h c-rest">15m</div>
+      <div class="t">10:45</div><div class="c-eng"><b>英语四级</b> 1.5h — 词汇 + 听力/阅读/写译轮换</div><div class="h c-eng">1.5h</div>
+      <div class="t">12:15</div><div class="c-rest">午饭 + 午休（建议躺平 30–45 分钟）</div><div class="h c-rest">~1.5h</div>
+      <div class="t">14:00</div><div class="c-hw"><b>硬件 / 编程</b> 2.5h — 看视频 + 动手焊/写代码/调板子</div><div class="h c-hw">2.5h</div>
+      <div class="t">16:30</div><div class="c-rest">复盘 30 分钟（记笔记/提交git/整理问题）</div><div class="h c-rest">30m</div>
+    </div>
+    <div class="note">🔧 <b>依赖提醒</b>：焊接进阶（拆焊+贴片）要等<b>焊接工具到货</b>。到货前那几天硬件块先改做「C嵌入式迁移 + 立创EDA画板(电脑端) + 看江协预习」；工具一到，插进对应周补上动手。</div>
+  </div>
+
+  <div class="card">
+    <h2>🗺️ 四阶段总览</h2>
+    <table>
+      <tr><th>阶段</th><th>日期</th><th>学习日</th><th>核心任务</th></tr>
+      <tr><td><b>A 地基</b></td><td>7/14 – 7/25</td><td>10天</td><td>C嵌入式迁移 · 基础补强(万用表/datasheet/调试) · 焊接进阶(到货后) · 高数复习 · 四级起步</td></tr>
+      <tr><td><b>B 画板+Arduino</b></td><td>7/28 – 8/8</td><td>10天</td><td>立创EDA画板→嘉立创打样 · Arduino外设 · 高数预习(多元/级数) · 四级阅读/翻译</td></tr>
+      <tr><td><b>C STM32核心</b></td><td>8/11 – 8/22</td><td>10天</td><td>江协STM32(跟套件):GPIO/中断/定时器/PWM/串口/ADC · 高数(微分方程/傅里叶/复数) · 四级听力/写译</td></tr>
+      <tr><td><b>D 项目+收尾</b></td><td>8/25 – 9/1</td><td>6天</td><td>小项目(温控风扇/循迹) · 高数错题总复习 · 四级全真模拟 · 9/1轻量收尾</td></tr>
+    </table>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--grn)"></span>高数</span>
+      <span><span class="dot" style="background:var(--blu)"></span>英语四级</span>
+      <span><span class="dot" style="background:var(--pur)"></span>硬件/编程</span>
+      <span><span class="dot" style="background:#cbd5e1"></span>休息</span>
+    </div>
+  </div>
+
+  <!-- ===== 周卡 ===== -->
+  <h2>📆 周计划（7周 · 36个学习日）</h2>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第1周 · 地基启动</div></div><div class="dt">7/14 – 7/20</div></div>
+    <div class="rest">休息日：7/19(日)、7/20(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>函数/极限/连续 复习</li><li>夹逼/两个重要极限</li><li>对应大一下已学，先找回手感</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day1–5（50词/天）</li><li>短对话听力入门</li><li>建立单词本(带中文)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>装 VS Code+GCC 环境</li><li>C嵌入式迁移：位运算/结构体指针小程序</li><li>万用表档位认知 · datasheet英文词</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第2周 · C收尾+焊接+基础</div></div><div class="dt">7/21 – 7/27</div></div>
+    <div class="rest">休息日：7/26(日)、7/27(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>导数与微分</li><li>不定积分(换元/分部)</li><li>错题本开记</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day6–10</li><li>听力短对话精听</li><li>长难句拆主谓宾</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>读江协 HAL 库代码(巩固C)</li><li><b>焊接进阶：拆焊+贴片</b>(工具到货后)</li><li>万用表实测练习(量电压/通断)</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第3周 · 画板 + Arduino</div></div><div class="dt">7/28 – 8/3</div></div>
+    <div class="rest">休息日：8/2(日)、8/3(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>定积分与几何/物理应用</li><li>多元函数入门(空间解析)</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day11–15</li><li>长篇阅读技巧(定位法)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>立创EDA画第一块板→嘉立创免费打样</li><li>Arduino：点灯 + 按键 + 串口打印</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第4周 · Arduino外设 + 多元</div></div><div class="dt">8/4 – 8/10</div></div>
+    <div class="rest">休息日：8/9(日)、8/10(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>偏导数 / 全微分</li><li>二重积分</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day16–20</li><li>翻译模板(带中文翻译)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>Arduino：PWM调光/舵机</li><li>外部中断 + OLED(I2C)显示</li><li>打样板子回来自己焊好点亮</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第5周 · STM32入门</div></div><div class="dt">8/11 – 8/17</div></div>
+    <div class="rest">休息日：8/16(日)、8/17(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>常微分方程</li><li>无穷级数</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day21–25</li><li>听力精听(听写)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>江协STM32：建工程/时钟/延时</li><li>GPIO点灯 + 按键(跟套件接线)</li><li>ST-Link 烧录跑通</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第6周 · STM32外设</div></div><div class="dt">8/18 – 8/24</div></div>
+    <div class="rest">休息日：8/23(日)、8/24(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>傅里叶级数(直观)</li><li>复数运算(复变前置)</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day26–30</li><li>写作模板(带翻译轮椅版)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>江协：定时器/中断/PWM</li><li>串口UART + ADC采样</li><li>传感器(温湿度/红外)读数据</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="wk">
+    <div class="hd"><div><div class="ttl">第7周 · 项目实战 + 收尾</div></div><div class="dt">8/25 – 9/1</div></div>
+    <div class="rest">休息日：8/30(日)、8/31(一)</div>
+    <div class="cols">
+      <div class="col m"><h4>🟢 高数</h4><ul><li>综合复习 + 错题重做</li><li>为开学摸底/考试保温</li></ul></div>
+      <div class="col e"><h4>🔵 英语四级</h4><ul><li>词汇 Day31–35</li><li>全真模拟 1 套(计时)</li></ul></div>
+      <div class="col h"><h4>🟣 硬件</h4><ul><li>小项目：温控风扇 / 红外循迹</li><li>传感器+电机驱动+PWM整合</li><li>9/1：整理git仓库/笔记 · 开学准备</li></ul></div>
+    </div>
+    <div class="wktop" style="margin-top:10px"><input type="checkbox" class="ck"><span style="font-size:13px;color:var(--mut)">本周完成勾选</span></div>
+  </div>
+
+  <div class="card res">
+    <h2>🔗 资源速查</h2>
+    <h3>高等数学</h3>
+    <ul>
+      <li><a href="https://search.bilibili.com/all?keyword=宋浩老师高等数学" target="_blank">B站·宋浩老师 高等数学</a>（同济版，极限/导数/积分/级数全覆盖）</li>
+      <li><a href="https://search.bilibili.com/all?keyword=3Blue1Brown微积分的本质" target="_blank">B站·3Blue1Brown 微积分的本质</a>（直观理解，建立直觉）</li>
+      <li><a href="https://www.icourse163.org/search?keyword=高等数学" target="_blank">中国大学MOOC·高等数学</a>（系统课，可考证）</li>
+    </ul>
+    <h3>英语四级 CET-4</h3>
+    <ul>
+      <li><a href="https://search.bilibili.com/all?keyword=英语四级词汇" target="_blank">B站·四级词汇系统课</a>（带翻译讲解，基础弱友好）</li>
+      <li><a href="https://search.bilibili.com/all?keyword=英语四级听力精听" target="_blank">B站·四级听力精听训练</a></li>
+      <li><a href="https://search.bilibili.com/all?keyword=英语四级写作翻译模板" target="_blank">B站·四级写作翻译模板</a>（万能模板+中文翻译）</li>
+    </ul>
+    <h3>硬件 / 编程</h3>
+    <ul>
+      <li><a href="网课链接导航.html" target="_blank">👉 网课链接导航.html</a>（C语言/立创EDA/江协STM32/基础补强 全链接，本文件夹内）</li>
+      <li><a href="硬件自学完整手册.html" target="_blank">👉 硬件自学完整手册.html</a>（知识地图/采购/项目/比赛/招聘，本文件夹内）</li>
+    </ul>
+    <div class="note">⚠️ 上面高数/英语是平台搜索兜底链接（100%有效）。具体课程页我另在「网课链接导航.html」里补了精确链接，打开那页看「📚 基础补强」和新增板块即可。</div>
+  </div>
+
+  <div class="info">✅ 这套排期把三块都铺满了：高数约 <b>72h</b>、英语约 <b>54h</b>、硬件约 <b>90h</b>。优先级建议：<b>硬件(就业硬通货) ≥ 高数(大二命脉) > 英语(四级刷分)</b>，但每天三块都碰，别偏科。卡住就回看对应周资源，别硬憋。</div>
+</div>
+</body>
+</html>

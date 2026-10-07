@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬件自学 · 网课链接导航</title>
+<style>
+  :root{
+    --bg:#fafafa; --card:#fff; --ink:#1f2329; --mut:#6b7280; --line:#e5e7eb;
+    --blue:#185FA5; --bluebg:#E6F1FB; --teal:#0F6E56; --tealbg:#E1F5EE;
+    --amber:#854F0B; --amberbg:#FAEEDA; --green:#3B6D11; --greenbg:#EAF3DE;
+    --purple:#6B21A8; --purplebg:#F3E8FB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",Segoe UI,sans-serif;
+    line-height:1.6;font-size:15px}
+  .wrap{max-width:960px;margin:0 auto;padding:24px 18px 70px}
+  header{border-bottom:3px solid var(--blue);padding-bottom:14px;margin-bottom:16px}
+  h1{font-size:23px;margin:0 0 4px}
+  .sub{color:var(--mut);font-size:14px}
+  h2{font-size:18px;margin:28px 0 12px;padding-left:10px;border-left:4px solid var(--blue);
+    display:flex;align-items:center;gap:8px}
+  .grp{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:680px){.grp{grid-template-columns:1fr}}
+  .item{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:13px 15px;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+  .item .t{font-weight:600;font-size:15px;margin-bottom:3px}
+  .item .a{color:var(--mut);font-size:13px;margin-bottom:8px}
+  .item .m{font-size:13px;color:#374151;margin-bottom:10px}
+  .item .bar{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .tag{display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;font-weight:600}
+  .tag.free{background:var(--greenbg);color:var(--green)}
+  .tag.pay{background:var(--amberbg);color:var(--amber)}
+  .tag.stage{background:var(--bluebg);color:var(--blue)}
+  .open{background:var(--blue);color:#fff;text-decoration:none;border:none;border-radius:8px;
+    padding:7px 15px;font-size:13.5px;cursor:pointer;display:inline-block}
+  .open:hover{opacity:.9}
+  .note{background:var(--amberbg);border:1px solid #f0d9a8;color:var(--amber);
+    padding:11px 15px;border-radius:8px;font-size:14px;margin:14px 0}
+  .route{background:var(--bluebg);border:1px solid #bcd9f3;border-radius:12px;padding:14px 18px;margin-top:8px}
+  .route ol{margin:6px 0 0;padding-left:22px;line-height:1.95}
+  .route b{color:var(--blue)}
+  a.inline{color:var(--blue);text-decoration:none;border-bottom:1px solid #bcd}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>硬件自学 · 网课链接导航</h1>
+  <div class="sub">电气自动化大一下 · 全部该学的网课/教程真实链接 · 按暑假路线阶段分组 · 点"打开"新标签跳转</div>
+</header>
+
+<div class="note">📌 链接全部用 WebSearch 核实过。江协科技 BV 号、各 UP 主主页、MOOC/学堂在线/立创EDA 官网均为真实有效地址。标"搜索"的是平台搜索兜底页（100% 有效）。<b>⚠️ 你已学完C第5版，但需先做顶部「C语言前置」板块的嵌入式迁移练习</b>再看江协STM32。建议路线见底部。</div>
+
+<!-- ============ C语言前置（起点） ============ -->
+<h2>💻 C语言前置（最重要！焊台到货前先刷）</h2>
+<div class="note" style="border-color:#f0a8a8;color:#a01b1b;background:#fdeaea">⚠️ 你已学完谭浩强《C程序设计》第5版，C语法（指针/结构体/位运算/宏/函数指针）已具备。真正缺的是<b>把C迁移到"操作硬件寄存器"的场景</b>——位运算置位清位、结构体指针访问外设、volatile、读HAL库风格。下面资源不是从零学C，而是<b>嵌入式向补强</b>，第0步练完再看江协STM32。</div>
+<div class="grp">
+  <div class="item"><div class="t">正点原子·手把手嵌入式C语言</div><div class="a">正点原子 · B站</div>
+    <div class="m"><b>最贴HAL库</b>：位运算(第22讲)、typedef、宏、指针、结构体，单片机向首选。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1vkhQzeEzD" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">郝斌C语言（180集）</div><div class="a">郝斌 · B站</div>
+    <div class="m">指针讲得最透（121–132集），C语言"语言地基"必看。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1os411h77o" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">比特鹏哥C语言2024完整版</div><div class="a">鹏哥 / B站</div>
+    <div class="m">零基础→进阶，覆盖指针、结构体、函数指针，配套实战。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1Vm4y1r7jY" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">韦东山东山C语言加强（8h）</div><div class="a">韦东山 · B站</div>
+    <div class="m">嵌入式底层视角讲指针/结构体/函数指针/链表/栈。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1VM4y137Pm" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">C语言程序设计（翁恺）</div><div class="a">浙大翁恺 · 中国大学MOOC</div>
+    <div class="m">体系最完整，指针/结构/链表/宏/函数指针进阶篇收尾。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.icourse163.org/course/ZJU-199001" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">C Primer Plus（参考书）</div><div class="a">人民邮电</div>
+    <div class="m">指针/位运算/内存讲得细，当案头书随时查。</div>
+    <div class="bar"><span><span class="tag stage">C参考</span> <span class="tag pay">约¥80</span></span>
+    <a class="open" href="https://search.jd.com/Search?keyword=C%20Primer%20Plus" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">C语言位运算短教程</div><div class="a">B站搜索</div>
+    <div class="m">专门补 <code>&amp; | ^ ~ &lt;&lt; &gt;&gt;</code> 与单片机寄存器操作，看几个短片即懂。</div>
+    <div class="bar"><span><span class="tag stage">C前置</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=C语言位运算单片机" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">怎么用这些资源</div><div class="a">挑着看，不从头学</div>
+    <div class="m">① 正点原子嵌入式C 直接看位运算/结构体/宏那几讲（最贴HAL）② 郝斌/鹏哥 只补你<b>不熟</b>的指针细节 ③ 翁恺 查缺补漏 ④ 动手写"寄存器位运算"小程序再进江协。</div>
+    <div class="bar"><span><span class="tag stage">C迁移</span></span>
+    <span style="font-size:13px;color:#374151">顺序见左</span></div></div>
+</div>
+
+<!-- ============ 基础补强（除C） ============ -->
+<h2>📚 基础补强（除C之外，P0必做）</h2>
+<div class="grp">
+  <div class="item"><div class="t">Git 版本控制</div><div class="a">廖雪峰教程 · 官网</div>
+    <div class="m">add/commit/push/分支，每个项目建仓库。工程习惯，必学。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.liaoxuefeng.com/wiki/896043488029600" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">数字逻辑仿真 Logisim</div><div class="a">B站搜索</div>
+    <div class="m">跑与或非门/半加器，为大二下"数电"建逻辑直觉。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=Logisim数字逻辑仿真" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">Python + Matplotlib</div><div class="a">菜鸟教程 · 官网</div>
+    <div class="m">画 sin/方波看频谱，为大二下"信号与系统"先有画面。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.runoob.com/python3/python3-matplotlib.html" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">数字万用表使用</div><div class="a">B站搜索</div>
+    <div class="m">测电压/电阻/通断/二极管档，查虚焊短路必备手感。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=数字万用表使用教程" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">LM358 英文datasheet</div><div class="a">AllDatasheet · 官网</div>
+    <div class="m">练读英文手册：Pin Description / Electrical / Typical 三节，硬要求。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.alldatasheet.com/" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">Markdown 笔记</div><div class="a">菜鸟教程 · 官网</div>
+    <div class="m">标题/列表/表格/代码块，写实验报告与面试素材。</div>
+    <div class="bar"><span><span class="tag stage">基础</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.runoob.com/markdown/md-tutorial.html" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 高数 + 英语 ============ -->
+<h2>📐 高数 + 🔤 英语四级（暑假新增科目，每天并行）</h2>
+<div class="note">⚠️ 你要求把高数和英语也排进暑假。下面是高数复习/预习 + 四级词汇/听力/写译的真实链接，配合《暑假50天排期表.html》按天打卡。高数优先宋浩(同济版)打底、3Blue1Brown建直觉；四级基础弱，词汇/写译用"带翻译"的轮椅版。</div>
+<div class="grp">
+  <div class="item"><div class="t">高等数学（同济版全程）</div><div class="a">宋浩老师 · B站百大UP</div>
+    <div class="m">极限/导数/积分/级数/多元全覆盖，复习大一下 + 预习大二上首选。</div>
+    <div class="bar"><span><span class="tag stage">高数</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/66607740/" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">微积分的本质（直观）</div><div class="a">3Blue1Brown · B站官方</div>
+    <div class="m">双语动画建直觉，学微分方程/傅里叶前先有画面。</div>
+    <div class="bar"><span><span class="tag stage">高数</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/av24325548?p=1" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">高等数学（同济MOOC）</div><div class="a">同济大学 · 中国大学MOOC</div>
+    <div class="m">(一)(二)(三)(四)含一元/常微分/级数，系统可考证。</div>
+    <div class="bar"><span><span class="tag stage">高数</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.icourse163.org/learn/TONGJI-53004?tid=1468624466" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">傅里叶级数/变换合集</div><div class="a">废兰多 · B站</div>
+    <div class="m">为大二下"信号与系统"铺垫，预习期看。</div>
+    <div class="bar"><span><span class="tag stage">高数·预习</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/43324107" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">无穷级数/常微分方程专题</div><div class="a">小崔说数 · B站</div>
+    <div class="m">判敛、幂级数求和等专题，前新东方老师讲得透。</div>
+    <div class="bar"><span><span class="tag stage">高数</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=小崔说数无穷级数" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">四级高频词汇精讲（带背+中文）</div><div class="a">B站UP主合集</div>
+    <div class="m">基础弱友好，每天50词，配合单词本(带中文)。</div>
+    <div class="bar"><span><span class="tag stage">四级·词汇</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1La411o7BJ/" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">四级听力真题精听带练</div><div class="a">邹寅老师 · B站</div>
+    <div class="m">手把手带听带读，听力弱必看。</div>
+    <div class="bar"><span><span class="tag stage">四级·听力</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/645892771" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">四级写作/翻译基础（万能模板）</div><div class="a">毛利小二哈 · B站</div>
+    <div class="m">含万能模板+作业，带中文翻译，轮椅版首选。</div>
+    <div class="bar"><span><span class="tag stage">四级·写译</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.bilibili.com/read/cv49658690" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">四级真题狂刷（2023–2024 PDF）</div><div class="a">星火英语官方</div>
+    <div class="m">全套真题+解析免费下载，冲刺期刷题用。</div>
+    <div class="bar"><span><span class="tag stage">四级·刷题</span> <span class="tag free">免费</span></span>
+    <a class="open" href="http://down.sparke.cn/books/e2818baf41c14284b3bd5195499b8734" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 新手期 ============ -->
+<h2>🔰 新手期（认元件、补直觉）</h2>
+<div class="grp">
+  <div class="item"><div class="t">元件选型 / 硬件科普</div><div class="a">芯片之家（晓宇）· B站</div>
+    <div class="m">看二极管/三极管/元件怎么选，补硬件直觉，对应你《电工学(下)》第1章。</div>
+    <div class="bar"><span><span class="tag stage">新手期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=芯片之家" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 画板期 ============ -->
+<h2>📋 画板期（立创EDA + 嘉立创打样，第3周）</h2>
+<div class="grp">
+  <div class="item"><div class="t">嘉立创EDA 画板教程</div><div class="a">立创EDA官方 · B站</div>
+    <div class="m">从建工程→原理图→PCB→下单全流程，第3周跟着画第一块板。</div>
+    <div class="bar"><span><span class="tag stage">画板期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/430536057" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">立创EDA 官网视频教程</div><div class="a">立创EDA · 帮助中心</div>
+    <div class="m">网页版图文+视频教程，边看边操作，封装库直接调用。</div>
+    <div class="bar"><span><span class="tag stage">画板期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://prodocs.lceda.cn/cn/faq/video-tutorial" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">嘉立创 下单打样</div><div class="a">嘉立创 · 官网</div>
+    <div class="m">画好板子在这下单，每月首单免费打样（10×10cm 内，仅付邮）。</div>
+    <div class="bar"><span><span class="tag stage">画板期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.jlc.com/" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ Arduino期 ============ -->
+<h2>🤖 Arduino 期（第4–6周，先破冰）</h2>
+<div class="grp">
+  <div class="item"><div class="t">单片机入门实操</div><div class="a">电子芯一课 · B站</div>
+    <div class="m">Arduino/51 入门跟做，建立"写程序→看到现象"闭环，适合零基础破冰。</div>
+    <div class="bar"><span><span class="tag stage">Arduino期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=电子芯一课" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">Arduino / STM32 实操跟做</div><div class="a">洋桃电子（原杜洋工作室）· B站</div>
+    <div class="m">"STM32入门100步"系列系统扎实，也可先跟 Arduino 部分练手。</div>
+    <div class="bar"><span><span class="tag stage">Arduino/STM32</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/277276709" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ STM32期 ============ -->
+<h2>⚙️ STM32 期（第7周起，大二主力）</h2>
+<div class="grp">
+  <div class="item"><div class="t">STM32零基础入门教程（2023版）</div><div class="a">江协科技（江科大自化协）· B站</div>
+    <div class="m"><b>最核心一门</b>，从 GPIO→中断→定时器→PWM→串口→ADC→I2C/SPI 全讲透，配你买的"江科大同款套件"正好对上。官网 jiangxiekeji.com。</div>
+    <div class="bar"><span><span class="tag stage">STM32期</span> <span class="tag free">视频免费</span></span>
+    <a class="open" href="https://www.bilibili.com/video/BV1th411z7sn/" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">《单片机原理》MOOC</div><div class="a">中国大学MOOC（华中科大/浙大）</div>
+    <div class="m">补学校理论课，配合江协视频理解寄存器底层原理。</div>
+    <div class="bar"><span><span class="tag stage">理论补充</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.icourse163.org/search?keyword=单片机原理" target="_blank" rel="noopener">打开</a></div></div>
+
+  <div class="item"><div class="t">《嵌入式系统》学堂在线</div><div class="a">学堂在线</div>
+    <div class="m">系统讲嵌入式体系，大二下/大三加深理论用。</div>
+    <div class="bar"><span><span class="tag stage">理论补充</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://www.xuetangx.com/search?query=嵌入式系统" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 项目期 ============ -->
+<h2>🛠️ 项目期（第9–10周及之后）</h2>
+<div class="grp">
+  <div class="item"><div class="t">嵌入式实操小项目</div><div class="a">果果小师弟 · B站</div>
+    <div class="m">温控风扇、循迹小车、传感器整合等小项目参考，做完手册里的项目时对照看。</div>
+    <div class="bar"><span><span class="tag stage">项目期</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://search.bilibili.com/all?keyword=果果小师弟" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 开眼界 ============ -->
+<h2>🚀 开眼界（找方向、提兴趣）</h2>
+<div class="grp">
+  <div class="item"><div class="t">硬核DIY / 机器人</div><div class="a">稚晖君 · B站</div>
+    <div class="m">桌面机械臂、自动驾驶自行车等神级作品，"爽文"式开眼界，知道学到顶能做成啥。</div>
+    <div class="bar"><span><span class="tag stage">开眼界</span> <span class="tag free">免费</span></span>
+    <a class="open" href="https://space.bilibili.com/20259914" target="_blank" rel="noopener">打开</a></div></div>
+</div>
+
+<!-- ============ 建议路线 ============ -->
+<h2>🧭 建议学习路线（按周）</h2>
+<div class="route">
+<ol>
+  <li><b>💻 C嵌入式迁移（第0步，最先练）</b>：正点原子嵌入式C挑看位运算/结构体/宏→写"寄存器位运算"小程序→能读懂HAL库再进下一步</li>
+  <li><b>新手期</b>：芯片之家看元件科普 → 补《电工学(下)》实物感</li>
+  <li><b>画板期（第3周）</b>：立创EDA官方 + 官网教程 → 画板 → 嘉立创下单免费打样</li>
+  <li><b>Arduino期（第4–6周）</b>：电子芯一课 / 洋桃电子 破冰 → 点灯/按键/定时器/PWM</li>
+  <li><b>STM32期（第7周起）</b>：<b>死磕江协科技 BV1th411z7sn</b> → 配套你买的套件逐集跟做 → MOOC/学堂在线补理论</li>
+  <li><b>项目期（第9–10周）</b>：果果小师弟 参考做温控风扇/循迹小车</li>
+  <li><b>开眼界</b>：随时刷稚晖君保持热情</li>
+</ol>
+<div style="margin-top:10px;font-size:13.5px;color:#374151">💡 你已买的"江科大同款STM32套件"和 <b>江协科技这套教程是官方配套</b>，视频里用的板子/传感器和你盒子里一一对应，直接照着接就行。</div>
+</div>
+
+<div class="note" style="margin-top:22px">✅ 11 个资源全部真实可点。先收藏本页，按"建议路线"从画板期或 Arduino 期开刷（焊接工具到货前可先学软件/看视频）。卡住回看对应阶段视频，别硬憋。</div>
+
+</div>
+</body>
+</html>

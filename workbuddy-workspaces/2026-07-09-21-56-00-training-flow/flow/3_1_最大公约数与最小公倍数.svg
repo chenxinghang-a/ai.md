@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="908" font-family="'Microsoft YaHei','SimSun',sans-serif">
+<defs><marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#333"/></marker></defs>
+<line x1="260.0" y1="82" x2="260.0" y2="132" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="190" x2="260.0" y2="240" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="298" x2="260.0" y2="348" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="452" x2="260.0" y2="502" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<rect x="266.0" y="465.0" width="26" height="20" fill="#fff"/>
+<text x="279.0" y="480.0" font-size="15" fill="#b00" text-anchor="middle">否</text>
+<line x1="260.0" y1="560" x2="260.0" y2="610" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="668" x2="260.0" y2="718" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<line x1="260.0" y1="776" x2="260.0" y2="826" stroke="#333" stroke-width="2" marker-end="url(#a)"/>
+<rect x="160.0" y="30" width="200" height="52" rx="26.0" ry="26.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="260.0" y="62.0" font-size="16" fill="#222" text-anchor="middle">开始</text>
+<rect x="100.0" y="132" width="320" height="58" rx="14" ry="14" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="260.0" y="167.0" font-size="16" fill="#222" text-anchor="middle">① 输入两个正整数 a,b</text>
+<rect x="100.0" y="240" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="275.0" font-size="16" fill="#222" text-anchor="middle">② m=a , n=b</text>
+<polygon points="260.0,348 380.0,400.0 260.0,452 140.0,400.0" fill="#e8f0fe" stroke="#1a56b0" stroke-width="2"/>
+<text x="260.0" y="406.0" font-size="16" fill="#16335c" text-anchor="middle">③ n != 0 ? (循环条件)</text>
+<rect x="100.0" y="502" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="537.0" font-size="16" fill="#222" text-anchor="middle">④ 辗转相除 temp=m%n ; m=n ; n=temp</text>
+<rect x="100.0" y="610" width="320" height="58" rx="8" ry="8" fill="#eef3fb" stroke="#3a6ea5" stroke-width="2"/>
+<text x="260.0" y="645.0" font-size="16" fill="#222" text-anchor="middle">⑤ gcd=m ; lcm=a*b/gcd</text>
+<rect x="100.0" y="718" width="320" height="58" rx="14" ry="14" fill="#fde9c8" stroke="#b5791f" stroke-width="2"/>
+<text x="260.0" y="753.0" font-size="16" fill="#222" text-anchor="middle">⑥ 输出 gcd 和 lcm</text>
+<rect x="160.0" y="826" width="200" height="52" rx="26.0" ry="26.0" fill="#d7f0d2" stroke="#2e7d32" stroke-width="2"/>
+<text x="260.0" y="858.0" font-size="16" fill="#222" text-anchor="middle">结束</text>
+</svg>

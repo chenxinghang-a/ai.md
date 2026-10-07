@@ -1,0 +1,7 @@
+﻿
+Name           Used (GB)     Free (GB) Provider      Root                      
+----           ---------     --------- --------      ----                      
+C                 381.64         80.95 FileSystem    C:\                       
+D                 300.20        165.54 FileSystem    D:\                       
+
+

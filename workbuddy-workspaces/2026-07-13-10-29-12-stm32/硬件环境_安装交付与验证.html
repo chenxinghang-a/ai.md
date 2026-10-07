@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>硬件开发环境·安装交付与验证指南</title>
+<style>
+  body{font-family:-apple-system,"Microsoft YaHei",sans-serif;max-width:900px;margin:24px auto;padding:0 16px;color:#1f2937;background:#f7f8fa}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#6b7280;font-size:13px;margin-bottom:18px}
+  .card{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  h2{font-size:15px;margin:0 0 10px}
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid #f0f0f0}
+  th{color:#6b7280;font-weight:600;font-size:12.5px}
+  .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:11.5px;font-weight:700}
+  .t-ok{background:#dcfce7;color:#15803d}
+  .t-run{background:#fef3c7;color:#b45309}
+  .t-you{background:#ffe4e6;color:#be123c}
+  .note{border-left:3px solid #2563eb;background:#eff6ff;padding:8px 12px;font-size:12.5px;color:#1e40af;border-radius:0 8px 8px 0;margin-top:6px}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12px}
+  ol,ul{margin:6px 0 0;padding-left:20px;font-size:13px;line-height:1.8}
+  .step{background:#fafafa;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 12px;margin:8px 0}
+</style>
+</head>
+<body>
+<h1>🛠️ 硬件开发环境·安装交付与验证指南</h1>
+<div class="sub">生成于 2026-07-15 · 你机器无 VPN（winget 源不可达，全部走官网/镜像直连）· sandbox 非管理员（系统驱动需你点 bat）</div>
+
+<div class="card">
+  <h2>✅ 已装好（直接可用）</h2>
+  <table>
+    <tr><th>软件</th><th>说明 / 路径</th></tr>
+    <tr><td>VS Code</td><td>代码编辑器主战场</td></tr>
+    <tr><td>VS Code 插件</td><td>C/C++、PlatformIO IDE、Serial Monitor（串口监视，替代 SSCOM）</td></tr>
+    <tr><td>Git</td><td>版本控制（你早有，已更新）</td></tr>
+    <tr><td>Arduino IDE 2.3.4</td><td><code>C:\Users\cxx\AppData\Local\Programs\Arduino IDE\Arduino IDE.exe</code></td></tr>
+    <tr><td>Python 3.12.8</td><td>设为默认 <code>python</code>（managed 受信路径，绕开系统安装器被杀软拦）</td></tr>
+    <tr><td>Python 3.13 / 3.14</td><td>managed，备用</td></tr>
+  </table>
+</div>
+
+<div class="card">
+  <h2>⏳ 后台安装中（自动续传，约 20 分钟）</h2>
+  <table>
+    <tr><th>软件</th><th>说明</th></tr>
+    <tr><td>STM32CubeIDE 1.16.1</td><td>官方免登录直链下载中（ST 官网限速 ~800KB/s，断点续传循环跑）。装完自带 ST-Link 驱动，江协 STM32 教程就用它</td></tr>
+  </table>
+  <div class="note">这步是客观限速，急不得。装完后开始菜单会出现 STM32CubeIDE，无需你操作。</div>
+</div>
+
+<div class="card">
+  <h2>🔴 现在就做：装驱动（右键管理员运行）</h2>
+  <div class="step">
+    <b>1.</b> 打开资源管理器，进 <code>C:\Users\cxx\Downloads</code><br>
+    <b>2.</b> 找到 <code>install_drivers.bat</code>，<b>右键 → 以管理员身份运行</b><br>
+    <b>3.</b> 按提示完成 CH340/CH341、CP210x 驱动安装（ST-Link 随 CubeIDE 自动带，若没出现再单独处理）<br>
+    <b>4.</b> 装完建议重启一次电脑
+  </div>
+  <div class="note">为什么不能我代装：sandbox 是非管理员环境，写系统驱动库需要 UAC 提权弹窗，无头环境点不了"允许"。bat 已备好，你点一下即可。包都已下好：<code>CH341SER.exe</code>、<code>cp210x_drv\</code>。</div>
+</div>
+
+<div class="card">
+  <h2>✅ 验证清单（都装完后逐项过）</h2>
+  <ol>
+    <li><b>Python</b>：Win+R 输入 <code>cmd</code> → <code>python --version</code> 应显示 3.12.8</li>
+    <li><b>Arduino</b>：打开 Arduino IDE → 文件→示例→01.Basics→Blink → 选板子(UNO) → 编译（✔）不报错</li>
+    <li><b>CubeIDE</b>：开始菜单开 STM32CubeIDE → File→New→STM32 Project → 选 STM32F103C8Tx → 生成代码 → 编译（锤子）通过</li>
+    <li><b>ST-Link</b>：套件 ST-Link 插 USB → 设备管理器"通用串行总线设备"出现 <code>STM32 STLink</code> 且无黄叹号</li>
+    <li><b>CH340</b>：插 USB-TTL 模块 → 设备管理器"端口"出现 <code>USB-SERIAL CH340 (COMx)</code></li>
+  </ol>
+</div>
+
+<div class="card">
+  <h2>📌 排错</h2>
+  <ul>
+    <li>设备管理器有黄叹号/未知设备 → 重跑 install_drivers.bat（管理员）</li>
+    <li>ST-Link 不识别 → 从 CubeIDE 安装目录找 ST-Link 驱动，或 ST 官网下 en.stsw-link009.zip 双击 dpinst_amd64.exe</li>
+    <li>Arduino 编译报缺板包 → 开发板管理器搜 "Arduino AVR" 安装</li>
+    <li>python 不是 3.12.8 → 重启终端；仍不对就把 <code>C:\Users\cxx\.workbuddy\binaries\python\versions\3.12.8</code> 置顶 PATH</li>
+  </ul>
+</div>
+</body>
+</html>
