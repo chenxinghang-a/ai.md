@@ -36,5 +36,34 @@ __pycache__/
 *.env
 *.key
 
+# Browser session state (contains live cookies/credentials)
+.browser_cmd.txt
+.browser_cookies.json
+.browser_ref.json
+.browser_state.json
+.browser_server.log
+
+# Exam-platform automation (hardcoded student id / password / screenshots)
+_quiz_*.cjs
+_quiz_*.mjs
+_gaokao_quiz.py
+.quiz_answers.txt
+.quiz_status.txt
+quiz_*.png
+shot_*.png
+step_*.png
+_exam_*.html
+_study_list.html
+quiz_page.html
+
+# Personal documents (name / student id, keep off the public repo)
+career_plan.js
+smart_manufacturing.js
+职业生涯规划书.docx
+职业生涯规划书_姓名学号.docx
+通知作业_实训安全培训.docx
+通知作业_实训安全培训.html
+通知作业_实训安全培训.txt
+
 # Single char filename artifact
 '
